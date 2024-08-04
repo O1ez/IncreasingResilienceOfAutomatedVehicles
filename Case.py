@@ -1,15 +1,17 @@
 import math
 
+from tabulate import tabulate
+
 from TruthTableOut import TruthTableOut
 import scipy
 
 
 class Case:
-    def __init__(self, variableCount, minSize, probBitFlipped, sociallyAcceptable):
+    def __init__(self, variableCount, minSize, probBitFlipped, tolerance):
         self.variableCount = variableCount
         self.minSize = minSize
         self.probBitFlipped = probBitFlipped
-        self.sociallyAcceptable = sociallyAcceptable
+        self.tol = tolerance
         self.rowCount = pow(2, variableCount)
         self.tableIn = []
         self.tableOut = []
@@ -28,18 +30,29 @@ class Case:
                 self.tableOut.append(TruthTableOut.DONTCARE)
             else:
                 self.tableOut.append(TruthTableOut.TRUE)
+
         self.acceptableFalsePositive = self.getFalsePositive()
-        self.acceptableTruePositive = self.getTruePositive()[0]
-        self.maxTruePositive = self.getTruePositive()[1]
+        if bool(self.acceptableFalsePositive):
+            tpOut = self.getTruePositive()
+            self.acceptableTruePositive = tpOut[0]
+            table = zip(self.acceptableFalsePositive.keys(), self.acceptableFalsePositive.values(),
+                        self.acceptableTruePositive.values())
+            print(tabulate(table, headers=["x", "fp", "tp"], floatfmt=".4f"))
 
-        dontCaresSet = self.maxTruePositive[1]
-        maxTruePositive = self.maxTruePositive[0]
-        falsePositive = self.acceptableFalsePositive[dontCaresSet]
-        self.solution = {dontCaresSet, maxTruePositive, falsePositive}
-
+            dontCaresSet = tpOut[1]
+            maxTruePositive = (self.acceptableTruePositive[dontCaresSet])
+            falsePositive = (self.acceptableFalsePositive[dontCaresSet])
+            self.solution = [dontCaresSet, maxTruePositive, falsePositive]
+            print("The Solution is:\n x=" + str(round(self.solution[0], 3)) + "  tp=" + str(
+                round(self.solution[1], 3)) + "  fp=" + str(
+                round(self.solution[2], 3)))
+        else:
+            print("Case not socially acceptable")
+            self.solution = []
 
     def getSolution(self):
         return self.solution
+
     def getFalsePositive(self):
         # i represent bits flipped
         sol = {}
@@ -58,15 +71,9 @@ class Case:
                     sol[j] += factor * p * j
                 else:
                     sol[j] += factor * p
-        print("These are the false positive probabilities for different evaluations of the Don't Cares")
-        for i in sol:
-            print(i, sol[i]*100, "%")
-        print("These are the false positive probabilities that are acceptable")
         # map consisting of keys Dont Cares set and values correlated false positive
         acceptableFalsePositive = {key: value for key, value in sol.items() if
-                                   value < self.sociallyAcceptable}
-        for i in acceptableFalsePositive:
-            print(i, acceptableFalsePositive[i] * 100, '%')
+                                   value < self.tol}
         return acceptableFalsePositive
 
     def getTruePositive(self):
@@ -87,23 +94,17 @@ class Case:
                     bitsFlipped = j + m
                     #TODO: How to incorporate 0 bits flipped??
                     #p = pow(self.probBitFlipped, bitsFlipped) if bitsFlipped > 0 else pow(1-self.probBitFlipped, 3)
-                    p = pow(self.probBitFlipped, bitsFlipped) * pow(1-self.probBitFlipped, self.variableCount-self.probBitFlipped)
+                    p = pow(self.probBitFlipped, bitsFlipped) * pow(1 - self.probBitFlipped,
+                                                                    self.variableCount - self.probBitFlipped)
 
                     bitsSet = i + j - m
                     xPresent = bitsSet < self.minSize
                     # for every value x can take i.e. 0..Don'tCareCount
-                    for l in range(0, dcCount+1):
+                    for l in range(0, dcCount + 1):
                         if xPresent:
                             sol[l] += factor * p * l
                         else:
                             sol[l] += factor * p
-        print("These are the true positive probabilities for different evaluations of the Don't Cares")
-        for i in sol:
-            print(i, sol[i] * 100, '%')
-        print("These are the true positive probabilities for the acceptable fp")
         acceptableTruePositive = {key: value for key, value in sol.items() if key in self.acceptableFalsePositive}
-        for i in acceptableTruePositive:
-            print(i, acceptableTruePositive[i] * 100, '%')
-        maxTP = max(zip(acceptableTruePositive.values(), acceptableTruePositive.keys()))
-        print("Maximal tp rate is achieved at ", maxTP[0], " with ", maxTP[1], " Don't Cares set")
-        return acceptableTruePositive, maxTP
+        x_maxTp = max(acceptableTruePositive, key=acceptableTruePositive.get)
+        return acceptableTruePositive, x_maxTp
