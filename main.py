@@ -13,17 +13,17 @@ if __name__ == '__main__':
     #print("Test:")
     #testCase = Case(3, 2, 0.003, 0.05)
 
-    print('Welcome. \nUse test cases?(y/n)')
+    print('Use test cases?(y/n)')
     if input() == "y":
         #Test case inputs
         #size of object
-        size = 6
+        size = 4
         #number of inputs
         inputCount = 6
         #probability that one bit is flipped
-        p = 0.05
+        p = 0.005
         #maximal value false positive is allowed to be
-        tol = 0.01
+        tol = 0.3
 
     else:
         print("How big is the object?")
