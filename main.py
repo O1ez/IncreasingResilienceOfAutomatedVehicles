@@ -15,10 +15,15 @@ if __name__ == '__main__':
 
     print('Welcome. \nUse test cases?(y/n)')
     if input() == "y":
+        #Test case inputs
+        #size of object
         size = 6
+        #number of inputs
         inputCount = 6
-        p = 0.003
-        tol = 0.05
+        #probability that one bit is flipped
+        p = 0.05
+        #maximal value false positive is allowed to be
+        tol = 0.01
 
     else:
         print("How big is the object?")
@@ -33,12 +38,14 @@ if __name__ == '__main__':
         print("How high is the socially accepted tolerance for false positives?")
         tol = int(input())
 
+    #minsize describes minimum count of Variables that have to be true to detect the object
+    #make Cases for minsize = (1..realObjectSize)
     caseSols = []
     for i in range(1, size + 1):
-        print("\n\nCase: " + str(i))
+        print("\n\nCase: k=" + str(i))
         case = Case(inputCount, i, p, tol)
         sol = case.solution
         if sol:
-            caseSols.append([i, sol[0], round(sol[1], 2), round(sol[2], 5)])
+            caseSols.append([i, sol[0], round(sol[2], 5), round(sol[1], 5)])
 
-    print("\n\n"+tabulate(caseSols, headers=['minSize', 'x', 'tp', 'fp']))
+    print("\n\n"+tabulate(caseSols, headers=['minSize', 'x', 'fp', 'tp']))
