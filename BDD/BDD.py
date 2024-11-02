@@ -68,6 +68,50 @@ class BDD:
                 print(f"{indent}└────", end=" ")
                 self.display(node.right, level + 1)
 
+    def generate_latex(self, node=None, level = 0):
+        node = self.root
+        out = open("BDD\out\output.tex", "w")
+        out.write ("\\documentclass{article} \n\
+\\usepackage{tikz-qtree} \n\
+    \\begin{document} \n\
+        \\begin{center} \n\
+            \\tikzset{every tree node/.style={minimum width=2em,draw,circle},\
+            blank/.style={draw=none}, %nodes are round\n\
+            leaf/.style={draw, rectangle}, %leafs are square \n\
+            edge from parent/.style= \n\
+            {draw, edge from parent path={(\\tikzparentnode) -- (\\tikzchildnode)}}, \n\
+            level distance=1.5cm} \n\
+                \\begin{tikzpicture} \n\
+                    \\Tree\n\
+                   ")
+        self.rec(node, level, out, False)
+        out.write("          \\end{tikzpicture} \n\
+                        \\end{center} \n\
+                    \\end{document}\n")
+        print("File generated")
+
+
+    def rec(self, node, level, out, side):
+        indent = "  " * level + "                    "
+        if node.isLeaf(): 
+            if side:
+                out.write (f"\\edge[]; \\node[leaf]{{{node.value}}};\n")
+            else:             
+                out.write (f"\\edge[dashed]; \\node[leaf]{{{node.value}}};\n")
+        else:
+            out.write("[."+node.var+"\n"+indent+"\edge[dashed];\n")
+            if node.left:
+                out.write(indent)
+                self.rec(node.left, level + 1, out, 0)
+            else:
+                 out.write (indent + "\\edge[blank]; \\node[blank]{};\n \\\left")
+            if node.right:
+                out.write(indent)
+                self.rec(node.right, level + 1, out, 1)
+            else:
+                 out.write (indent + "\\edge[blank]; \\node[blank]{};\n \\\right")
+            out.write(indent+"]\n")
+
     #def reduce(self):
         #self.removeNodesWithSameChildren()
         #self.removeDuplicateTerminalNodes()
@@ -85,5 +129,5 @@ v = ['A', 'B', 'C']
 bdd = BDD(e, v)
 
 print("Binary Decision Diagram (BDD):")
+bdd.generate_latex(bdd.root)
 bdd.display(bdd.root)
-
