@@ -1,9 +1,17 @@
 \documentclass{article} 
-\usepackage{tikz-qtree} 
+\usepackage{tikz-qtree}
+\usepackage{tikz}
+\usetikzlibrary{positioning} 
     \begin{document} 
         \begin{center} 
             \tikzset{every tree node/.style={minimum width=2em,draw,circle},            blank/.style={draw=none}, %nodes are round
             leaf/.style={draw, rectangle}, %leafs are square 
+            zeroarrow/.style = {-stealth,dashed},
+            onearrow/.style = {-stealth,solid},
+            c/.style = {circle,draw,solid,minimum width=2em,
+                  minimum height=2em},
+            r/.style = {rectangle,draw,solid,minimum width=2em,
+                  minimum height=2em}
             edge from parent/.style= 
             {draw, edge from parent path={(\tikzparentnode) -- (\tikzchildnode)}}, 
             level distance=1.5cm} 
@@ -39,5 +47,24 @@
                       ]
                     ]
           \end{tikzpicture} 
+
+          \begin{tikzpicture}[node distance=1cm and 1cm]\footnotesize
+            \node[c] (a) {a};
+            \node[c] (b) [below right=of a] {b};
+            \node[c] (c) [below left=of b] {c};
+            \node[c] (d) [below=of c] {d};
+            \node[r] (final-one) [below right=of d,xshift=-2pt] {1};
+            \node[r] (final-zero) [below left=of d] {0};
+         
+            \draw[onearrow] (a) -- (b);
+            \draw[onearrow] (b) -- (final-one);
+            \draw[onearrow] (c) -- (d); 
+            \draw[onearrow] (d) -- (final-one);
+         
+            \draw[zeroarrow] (a) -- (c);
+            \draw[zeroarrow] (c) -- (final-zero);
+            \draw[zeroarrow] (b) -- (c);
+            \draw[zeroarrow] (d) -- (final-zero);
+         \end{tikzpicture}
                         \end{center} 
                     \end{document}

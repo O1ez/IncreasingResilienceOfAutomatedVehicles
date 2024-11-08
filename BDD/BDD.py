@@ -22,6 +22,7 @@ class BDD:
         self.variables = variables  # List of variables
         self.expression = expression
         self.current_assignment = {}
+        self.leaves= set()
         self.root = self.build(0)  # Build the BDD starting from the first variable index
 
     def build(self, var_index):
@@ -30,6 +31,8 @@ class BDD:
         if var_index == len(self.variables):
             assignment = {var: val for var, val in self.current_assignment.items()}  # copies current_assignment
             value = evaluate_expression(self.expression, assignment)
+            if value not in self.leaves.value:
+                self.leave_values.append(BDDNode(value))
             return BDDNode(value=value)
 
         # Create node for false subtree and true subtree
@@ -49,6 +52,22 @@ class BDD:
             return self.evaluate(node.left, variables)
         else:
             return self.evaluate(node.right, variables)
+        
+    def reduce(self):
+        self.merge_leaves()
+
+    def merge_leaves(self, node=None):
+        if node is None:
+            node = self.root
+        if node.isLeaf():
+            return node.value
+        left = self.merge_leaves(node.left)
+        right = self.merge_leaves(node.right)
+        if left is not None:
+            node.left = next(leaf for leaf in self.leaves if leaf.value == left)
+        if right is not None:
+            node.left = next(leaf for leaf in self.leaves if leaf.value == right)
+        return None 
 
     #displays BDD graphically
     def display(self, node=None, level=0, output=None):
@@ -84,14 +103,14 @@ class BDD:
                 \\begin{tikzpicture} \n\
                     \\Tree\n\
                    ")
-        self.rec(node, level, out, False)
+        self.generate_latex_recursive(node, level, out, False)
         out.write("          \\end{tikzpicture} \n\
                         \\end{center} \n\
                     \\end{document}\n")
         print("File generated")
 
 
-    def rec(self, node, level, out, side):
+    def generate_latex_recursive(self, node, level, out, side):
         indent = "  " * level + "                    "
         if node.isLeaf(): 
             if side:
@@ -102,12 +121,12 @@ class BDD:
             out.write("[."+node.var+"\n"+indent+"\edge[dashed];\n")
             if node.left:
                 out.write(indent)
-                self.rec(node.left, level + 1, out, 0)
+                self.generate_latex_recursive(node.left, level + 1, out, 0)
             else:
                  out.write (indent + "\\edge[blank]; \\node[blank]{};\n \\\left")
             if node.right:
                 out.write(indent)
-                self.rec(node.right, level + 1, out, 1)
+                self.generate_latex_recursive(node.right, level + 1, out, 1)
             else:
                  out.write (indent + "\\edge[blank]; \\node[blank]{};\n \\\right")
             out.write(indent+"]\n")
