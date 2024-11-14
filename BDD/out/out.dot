@@ -1,31 +1,63 @@
 digraph{
-label="(A and B) or C\n\n"
-ABl[label=B]
-A -> ABl[style=dashed]
-ABlCl[label=C]
-ABl -> ABlCl[style=dashed]
-ABlClFalsel[label=False]
-ABlCl -> ABlClFalsel[style=dashed]
-ABlClFalser[label=False]
-ABlCl -> ABlClFalser
-ABlCr[label=C]
-ABl -> ABlCr
-ABlCrFalsel[label=False]
-ABlCr -> ABlCrFalsel[style=dashed]
-ABlCrFalser[label=False]
-ABlCr -> ABlCrFalser
-ABr[label=B]
-A -> ABr
-ABrCl[label=C]
-ABr -> ABrCl[style=dashed]
-ABrClFalsel[label=False]
-ABrCl -> ABrClFalsel[style=dashed]
-ABrClFalser[label=False]
-ABrCl -> ABrClFalser
-ABrCr[label=C]
-ABr -> ABrCr
-ABrCrTruel[label=True]
-ABrCr -> ABrCrTruel[style=dashed]
-ABrCrTruer[label=True]
-ABrCr -> ABrCrTruer
+label="((not A or B) and (not B or A)) and ((not C or D) and (not D or C))\n\n"
+1814491433616[label=A]1814491431952[label=B]
+1814491433616 -> 1814491431952[style=dashed]
+1814491431440[label=C]
+1814491431952 -> 1814491431440[style=dashed]
+1814491431056[label=D]
+1814491431440 -> 1814491431056[style=dashed]
+1814491431120[label=True]
+1814491431056 -> 1814491431120[style=dashed]
+1814491431184[label=False]
+1814491431056 -> 1814491431184
+1814491431248[label=D]
+1814491431440 -> 1814491431248
+1814491431312[label=False]
+1814491431248 -> 1814491431312[style=dashed]
+1814491431376[label=True]
+1814491431248 -> 1814491431376
+1814491431888[label=C]
+1814491431952 -> 1814491431888
+1814491431504[label=D]
+1814491431888 -> 1814491431504[style=dashed]
+1814491431568[label=False]
+1814491431504 -> 1814491431568[style=dashed]
+1814491431632[label=False]
+1814491431504 -> 1814491431632
+1814491431696[label=D]
+1814491431888 -> 1814491431696
+1814491431760[label=False]
+1814491431696 -> 1814491431760[style=dashed]
+1814491431824[label=False]
+1814491431696 -> 1814491431824
+1814491433488[label=B]
+1814491433616 -> 1814491433488
+1814491432016[label=C]
+1814491433488 -> 1814491432016[style=dashed]
+1814491432080[label=D]
+1814491432016 -> 1814491432080[style=dashed]
+1814491432208[label=False]
+1814491432080 -> 1814491432208[style=dashed]
+1814491432272[label=False]
+1814491432080 -> 1814491432272
+1814491432336[label=D]
+1814491432016 -> 1814491432336
+1814491432400[label=False]
+1814491432336 -> 1814491432400[style=dashed]
+1814491432464[label=False]
+1814491432336 -> 1814491432464
+1814491433424[label=C]
+1814491433488 -> 1814491433424
+1814491432912[label=D]
+1814491433424 -> 1814491432912[style=dashed]
+1814491432720[label=True]
+1814491432912 -> 1814491432720[style=dashed]
+1814491432848[label=False]
+1814491432912 -> 1814491432848
+1814491433296[label=D]
+1814491433424 -> 1814491433296
+1814491433040[label=False]
+1814491433296 -> 1814491433040[style=dashed]
+1814491433232[label=True]
+1814491433296 -> 1814491433232
 }

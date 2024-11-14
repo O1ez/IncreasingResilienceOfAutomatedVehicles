@@ -7,11 +7,28 @@ class BDDNode:
         self.left = left
         self.right = right
         self.value = value  # Terminal value (True or False for leaf nodes)
+        self.drawn = False
 
     def isLeaf(self):
         # Check if the node is a terminal node (leaf with True/False)
         return self.value is not None
-
+    
+    def __eq__(self, other):
+        if other is None or not isinstance(other, BDDNode):
+            return False
+        if self.isLeaf() and other.isLeaf():
+            return self.value == other.value
+        return (
+            self.var == other.var and
+            self.left == other.left and
+            self.right == other.right
+        )
+    
+    def __hash__(self):
+        # Hash für Leaf-Nodes basierend auf ihrem Wert, ansonsten auf (var, left, right)
+        if self.isLeaf():
+            return hash(self.value)
+        return hash((self.var, self.left, self.right))
 
 def evaluate_expression(expr, assignment):
     return eval(expr, {}, assignment)
@@ -55,20 +72,47 @@ class BDD:
             return self.evaluate(node.right, variables)
         
     def reduce(self):
-        self.merge_leafs()
+        self.remove_duplicate_subtree(self.root, mem = {})
+        self.merge_leafs(self.root)
+        self.remove_equivalent_child_nodes(self.root)
+        print("Reduction done.")
 
-    def merge_leafs(self, node=None):
-        if node is None:
-            node = self.root
+    def remove_duplicate_subtree(self, node, mem):
+        if node.isLeaf():
+            return node
+        if node in mem:
+            return mem[node]
+        node.left = self.remove_duplicate_subtree(node.left, mem)
+        node.right = self.remove_duplicate_subtree(node.right, mem)
+        if node in mem:
+            return mem[node]
+        mem[node] = node
+        return node
+
+    def merge_leafs(self, node):
         if node.isLeaf():
             return node.value
         left = self.merge_leafs(node.left)
-        right = self.merge_leafs(node.right)
         if left is not None:
             node.left = self.leafs.get(left)
+        right = self.merge_leafs(node.right)
         if right is not None:
-            node.left = self.leafs.get(right)
+            node.right = self.leafs.get(right)
         return None 
+
+    def remove_equivalent_child_nodes(self, node):
+        if node.left is not None:
+            eq_child_left = self.remove_equivalent_child_nodes(node.left)
+            if eq_child_left is not None:
+                node.left = eq_child_left
+        if node.right is not None:
+            eq_child_right = self.remove_equivalent_child_nodes(node.right)
+            if eq_child_right is not None:
+                node.right = eq_child_right
+        if node.left is not None and node.right is not None and id(node.left) == id(node.right):
+            return node.right
+        return None
+        
 
     #displays BDD graphically
     def display(self, node=None, level=0, output=None):
@@ -135,34 +179,41 @@ class BDD:
     def generateDot(self, filename="output", node=None):       
         node = self.root            
         out = open(f"BDD\\out\\{filename}.dot", "w")
-        out.write (f"digraph{{\nlabel=\"{self.expression}\\n\\n\"\n")
-        self.generate_dot_recursive(node, out, node.var)
+        out.write (f"digraph{{\nlabel=\"{self.expression}\\n\\n\"\n{id(node)}[label={node.var}]")
+        self.generate_dot_recursive(node, out)
         out.write("}")
         print("Dot File generated")
 
-    def generate_dot_recursive(self, node, out, nodeName):
-        if node.left is not None:
-            if node.left.var is not None:
-                child_node_name =f"{nodeName}{node.left.var}l"
-                out.write(f"{child_node_name}[label={node.left.var}]\n")
-                out.write(f"{nodeName} -> {child_node_name}[style=dashed]\n")
-                self.generate_dot_recursive(node.left, out, child_node_name)
-            elif node.left.value is not None:
-                child_node_name = f"{nodeName}{node.left.value}l"
-                out.write(f"{child_node_name}[label={node.left.value}]\n")
-                out.write(f"{nodeName} -> {child_node_name}[style=dashed]\n")
-        if node.right is not None:
-            if node.right.var is not None:
-                child_node_name = f"{nodeName}{node.left.var}r"
-                out.write(f"{child_node_name}[label={node.left.var}]\n")
-                out.write(f"{nodeName} -> {child_node_name}\n")
-                self.generate_dot_recursive(node.right, out, child_node_name)
-            elif node.right.value is not None:
-                child_node_name = f"{nodeName}{node.left.value}r"
-                out.write(f"{child_node_name}[label={node.left.value}]\n")
-                out.write(f"{nodeName} -> {child_node_name}\n")
+    def generate_dot_recursive(self, node, out):
+        if not node.drawn:
+            if node.left is not None:
+                child_node = node.left
+                if node.left.var is not None:
+                    out.write(f"{id(child_node)}[label={child_node.var}]\n")
+                    out.write(f"{id(node)} -> {id(child_node)}[style=dashed]\n")
+                    self.generate_dot_recursive(child_node, out)
+                elif node.left.value is not None:
+                    out.write(f"{id(child_node)}[label={child_node.value}]\n")
+                    out.write(f"{id(node)} -> {id(child_node)}[style=dashed]\n")
+            if node.right is not None:
+                child_node = node.right
+                if node.right.var is not None:
+                    out.write(f"{id(child_node)}[label={child_node.var}]\n")
+                    out.write(f"{id(node)} -> {id(child_node)}\n")
+                    self.generate_dot_recursive(node.right, out)
+                elif node.right.value is not None:
+                    out.write(f"{id(child_node)}[label={child_node.value}]\n")
+                    out.write(f"{id(node)} -> {id(child_node)}\n")
+            node.drawn = True
 
-        
+    def reset_draw(self, node):
+        if node.isLeaf():
+            node.drawn = False
+        if node.left is not None:
+            self.reset_draw(node.left)
+        if node.right is not None:
+            self.reset_draw(node.right)
+        node.drawn = False
        
 
     #def reduce(self):
@@ -178,7 +229,8 @@ class BDD:
 
 # Example:
 e = "(A and B) or C"
-v = ['A', 'B', 'C']
+e = "((not A or B) and (not B or A)) and ((not C or D) and (not D or C))"
+v = ['A', 'B', 'C', 'D']
 bdd = BDD(e, v)
 
 print("Binary Decision Diagram (BDD):")
@@ -188,4 +240,5 @@ bdd.generateDot(node=bdd.root, filename="out")
 bdd.reduce()
 bdd.display(bdd.root)
 bdd.generate_latex(node=bdd.root, filename="reduced_out")
+bdd.reset_draw(bdd.root)
 bdd.generateDot(node=bdd.root, filename="reduced_out")

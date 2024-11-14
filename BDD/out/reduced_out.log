@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.10.30)  14 NOV 2024 15:43
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.10.30)  14 NOV 2024 20:40
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -304,7 +304,7 @@ Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
  (c:/texlive/2024/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
-)) Warning: more than one edge given for a single child Warning: more than one edge given for a single child Warning: more than one edge given for a single child Warning: more than one edge given for a single child
+)) Warning: more than one edge given for a single child Warning: more than one edge given for a single child Warning: more than one edge given for a single child Warning: more than one edge given for a single child Warning: more than one edge given for a single child
 
 [1
 
@@ -315,15 +315,15 @@ L3 programming layer <2024-10-09>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 12299 strings out of 475493
- 257028 string characters out of 5776703
- 623296 words of memory out of 5000000
- 34772 multiletter control sequences out of 15000+600000
+ 12379 strings out of 475493
+ 258544 string characters out of 5776703
+ 633156 words of memory out of 5000000
+ 34852 multiletter control sequences out of 15000+600000
  558069 words of font info for 36 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
- 117i,9n,121p,524b,919s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 117i,9n,121p,524b,961s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb>
-Output written on reduced_out.pdf (1 page, 13432 bytes).
+Output written on reduced_out.pdf (1 page, 14876 bytes).
 PDF statistics:
  16 PDF objects out of 1000 (max. 8388607)
  10 compressed objects within 1 object stream

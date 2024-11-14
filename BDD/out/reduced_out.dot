@@ -1,31 +1,27 @@
 digraph{
-label="(A and B) or C\n\n"
-ABl[label=B]
-A -> ABl[style=dashed]
-ABlCl[label=C]
-ABl -> ABlCl[style=dashed]
-ABlClTruel[label=True]
-ABlCl -> ABlClTruel[style=dashed]
-ABlClTruer[label=True]
-ABlCl -> ABlClTruer
-ABlCr[label=C]
-ABl -> ABlCr
-ABlCrTruel[label=True]
-ABlCr -> ABlCrTruel[style=dashed]
-ABlCrTruer[label=True]
-ABlCr -> ABlCrTruer
-ABr[label=B]
-A -> ABr
-ABrCl[label=C]
-ABr -> ABrCl[style=dashed]
-ABrClTruel[label=True]
-ABrCl -> ABrClTruel[style=dashed]
-ABrClTruer[label=True]
-ABrCl -> ABrClTruer
-ABrCr[label=C]
-ABr -> ABrCr
-ABrCrTruel[label=True]
-ABrCr -> ABrCrTruel[style=dashed]
-ABrCrTruer[label=True]
-ABrCr -> ABrCrTruer
+label="((not A or B) and (not B or A)) and ((not C or D) and (not D or C))\n\n"
+1814491433616[label=A]1814491431952[label=B]
+1814491433616 -> 1814491431952[style=dashed]
+1814491431440[label=C]
+1814491431952 -> 1814491431440[style=dashed]
+1814491431056[label=D]
+1814491431440 -> 1814491431056[style=dashed]
+1814491430992[label=True]
+1814491431056 -> 1814491430992[style=dashed]
+1814491463632[label=False]
+1814491431056 -> 1814491463632
+1814491431248[label=D]
+1814491431440 -> 1814491431248
+1814491463632[label=False]
+1814491431248 -> 1814491463632[style=dashed]
+1814491430992[label=True]
+1814491431248 -> 1814491430992
+1814491463632[label=False]
+1814491431952 -> 1814491463632
+1814491433488[label=B]
+1814491433616 -> 1814491433488
+1814491463632[label=False]
+1814491433488 -> 1814491463632[style=dashed]
+1814491431440[label=C]
+1814491433488 -> 1814491431440
 }
