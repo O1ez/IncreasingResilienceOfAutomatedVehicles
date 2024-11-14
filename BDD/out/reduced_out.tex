@@ -1,0 +1,43 @@
+\documentclass{article} 
+\usepackage{tikz-qtree} 
+    \begin{document} 
+        \begin{center} 
+            \tikzset{every tree node/.style={minimum width=2em,draw,circle},            blank/.style={draw=none}, %nodes are round
+            leaf/.style={draw, rectangle}, %leafs are square 
+            edge from parent/.style= 
+            {draw, edge from parent path={(\tikzparentnode) -- (\tikzchildnode)}}, 
+            level distance=1.5cm} 
+                \begin{tikzpicture} 
+                    \Tree
+                   [.A
+                    \edge[dashed];
+                    [.B
+                      \edge[dashed];
+                      [.C
+                        \edge[dashed];
+                        \edge[dashed]; \node[leaf]{True};
+                        \edge[]; \node[leaf]{True};
+                        ]
+                      [.C
+                        \edge[dashed];
+                        \edge[dashed]; \node[leaf]{True};
+                        \edge[]; \node[leaf]{True};
+                        ]
+                      ]
+                    [.B
+                      \edge[dashed];
+                      [.C
+                        \edge[dashed];
+                        \edge[dashed]; \node[leaf]{True};
+                        \edge[]; \node[leaf]{True};
+                        ]
+                      [.C
+                        \edge[dashed];
+                        \edge[dashed]; \node[leaf]{True};
+                        \edge[]; \node[leaf]{True};
+                        ]
+                      ]
+                    ]
+          \end{tikzpicture} 
+                        \end{center} 
+                    \end{document}

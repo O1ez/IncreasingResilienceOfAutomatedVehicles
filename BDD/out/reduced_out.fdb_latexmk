@@ -1,9 +1,7 @@
 # Fdb version 4
-["pdflatex"] 1730815630.91883 "c:/Users/annan/OneDrive/Dokumente/Anna/saferThanPerception/SaferThanPerception/BDD/out/output.tex" "output.pdf" "output" 1730815631.68967 0
-  "c:/Users/annan/OneDrive/Dokumente/Anna/saferThanPerception/SaferThanPerception/BDD/out/output.tex" 1730815630 2858 226bee55d225022a1619b14880e84357 ""
-  "c:/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmr8.tfm" 1730246255 1292 21c1c5bfeaebccffdb478fd231a0997d ""
+["pdflatex"] 1731595394.48309 "c:/Users/annan/OneDrive/Dokumente/Anna/saferThanPerception/SaferThanPerception/BDD/out/reduced_out.tex" "reduced_out.pdf" "reduced_out" 1731595395.45764 0
+  "c:/Users/annan/OneDrive/Dokumente/Anna/saferThanPerception/SaferThanPerception/BDD/out/reduced_out.tex" 1731595393 1708 ed6a9b813b78236063f86fc358220153 ""
   "c:/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb" 1730246221 35752 024fb6c41858982481f6968b5fc26508 ""
-  "c:/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb" 1730246221 32726 39f0f9e62e84beb801509898a605dbd5 ""
   "c:/texlive/2024/texmf-dist/tex/context/base/mkii/supp-pdf.mkii" 1730246413 71627 94eb9990bed73c364d7f53f960cc8c5b ""
   "c:/texlive/2024/texmf-dist/tex/generic/pgf/basiclayer/pgfcore.code.tex" 1730247808 1016 1c2b89187d12a2768764b83b4945667c ""
   "c:/texlive/2024/texmf-dist/tex/generic/pgf/basiclayer/pgfcorearrows.code.tex" 1730247808 43820 1fef971b75380574ab35a0d37fd92608 ""
@@ -23,7 +21,6 @@
   "c:/texlive/2024/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreshade.code.tex" 1730247808 35249 abd4adf948f960299a4b3d27c5dddf46 ""
   "c:/texlive/2024/texmf-dist/tex/generic/pgf/basiclayer/pgfcoretransformations.code.tex" 1730247808 22012 81b34a0aa8fa1a6158cc6220b00e4f10 ""
   "c:/texlive/2024/texmf-dist/tex/generic/pgf/basiclayer/pgfcoretransparency.code.tex" 1730247808 8893 e851de2175338fdf7c17f3e091d94618 ""
-  "c:/texlive/2024/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibrarypositioning.code.tex" 1730247808 3937 3f208572dd82c71103831da976d74f1a ""
   "c:/texlive/2024/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibrarytopaths.code.tex" 1730247808 11518 738408f795261b70ce8dd47459171309 ""
   "c:/texlive/2024/texmf-dist/tex/generic/pgf/frontendlayer/tikz/tikz.code.tex" 1730247808 186782 af500404a9edec4d362912fe762ded92 ""
   "c:/texlive/2024/texmf-dist/tex/generic/pgf/libraries/pgflibraryplothandlers.code.tex" 1730247809 32995 ac577023e12c0e4bd8aa420b2e852d1a ""
@@ -92,10 +89,10 @@
   "c:/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1730246491 77129 aa3010669de0ee72d9164d9bddf80230 ""
   "c:/texlive/2024/texmf-var/web2c/pdftex/pdflatex.fmt" 1730246533 1952300 62e5dd3297d1cd523d95a2f153ebac84 ""
   "c:/texlive/2024/texmf.cnf" 1730246488 713 e69b156964470283e0530f5060668171 ""
-  "output.aux" 1730815631 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
-  "output.tex" 1730815630 2858 226bee55d225022a1619b14880e84357 ""
+  "reduced_out.aux" 1731595395 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
+  "reduced_out.tex" 1731595393 1708 ed6a9b813b78236063f86fc358220153 ""
   (generated)
-  "output.aux"
-  "output.log"
-  "output.pdf"
+  "reduced_out.aux"
+  "reduced_out.log"
+  "reduced_out.pdf"
   (rewritten before read)

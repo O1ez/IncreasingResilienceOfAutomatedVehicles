@@ -1,0 +1,31 @@
+digraph{
+label="(A and B) or C\n\n"
+ABl[label=B]
+A -> ABl[style=dashed]
+ABlCl[label=C]
+ABl -> ABlCl[style=dashed]
+ABlClTruel[label=True]
+ABlCl -> ABlClTruel[style=dashed]
+ABlClTruer[label=True]
+ABlCl -> ABlClTruer
+ABlCr[label=C]
+ABl -> ABlCr
+ABlCrTruel[label=True]
+ABlCr -> ABlCrTruel[style=dashed]
+ABlCrTruer[label=True]
+ABlCr -> ABlCrTruer
+ABr[label=B]
+A -> ABr
+ABrCl[label=C]
+ABr -> ABrCl[style=dashed]
+ABrClTruel[label=True]
+ABrCl -> ABrClTruel[style=dashed]
+ABrClTruer[label=True]
+ABrCl -> ABrClTruer
+ABrCr[label=C]
+ABr -> ABrCr
+ABrCrTruel[label=True]
+ABrCr -> ABrCrTruel[style=dashed]
+ABrCrTruer[label=True]
+ABrCr -> ABrCrTruer
+}

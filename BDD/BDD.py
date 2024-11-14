@@ -22,7 +22,7 @@ class BDD:
         self.variables = variables  # List of variables
         self.expression = expression
         self.current_assignment = {}
-        self.leaves= set()
+        self.leafs= {False: BDDNode(value=False), True:BDDNode(value=True)}
         self.root = self.build(0)  # Build the BDD starting from the first variable index
 
     def build(self, var_index):
@@ -31,8 +31,9 @@ class BDD:
         if var_index == len(self.variables):
             assignment = {var: val for var, val in self.current_assignment.items()}  # copies current_assignment
             value = evaluate_expression(self.expression, assignment)
-            if value not in self.leaves.value:
-                self.leave_values.append(BDDNode(value))
+            #leaf_vals = list(leaf.value for leaf in self.leafs)
+            #if value not in leaf_vals:
+            #    self.leafs.add(BDDNode(value))
             return BDDNode(value=value)
 
         # Create node for false subtree and true subtree
@@ -54,19 +55,19 @@ class BDD:
             return self.evaluate(node.right, variables)
         
     def reduce(self):
-        self.merge_leaves()
+        self.merge_leafs()
 
-    def merge_leaves(self, node=None):
+    def merge_leafs(self, node=None):
         if node is None:
             node = self.root
         if node.isLeaf():
             return node.value
-        left = self.merge_leaves(node.left)
-        right = self.merge_leaves(node.right)
+        left = self.merge_leafs(node.left)
+        right = self.merge_leafs(node.right)
         if left is not None:
-            node.left = next(leaf for leaf in self.leaves if leaf.value == left)
+            node.left = self.leafs.get(left)
         if right is not None:
-            node.left = next(leaf for leaf in self.leaves if leaf.value == right)
+            node.left = self.leafs.get(right)
         return None 
 
     #displays BDD graphically
@@ -87,9 +88,9 @@ class BDD:
                 print(f"{indent}└────", end=" ")
                 self.display(node.right, level + 1)
 
-    def generate_latex(self, node=None, level = 0):
-        node = self.root
-        out = open("BDD\out\output.tex", "w")
+    def generate_latex(self, filename="output", node=None, level = 0):
+        node = self.root          
+        out = open(f"BDD\\out\\{filename}.tex", "w")
         out.write ("\\documentclass{article} \n\
 \\usepackage{tikz-qtree} \n\
     \\begin{document} \n\
@@ -131,6 +132,39 @@ class BDD:
                  out.write (indent + "\\edge[blank]; \\node[blank]{};\n \\\right")
             out.write(indent+"]\n")
 
+    def generateDot(self, filename="output", node=None):       
+        node = self.root            
+        out = open(f"BDD\\out\\{filename}.dot", "w")
+        out.write (f"digraph{{\nlabel=\"{self.expression}\\n\\n\"\n")
+        self.generate_dot_recursive(node, out, node.var)
+        out.write("}")
+        print("Dot File generated")
+
+    def generate_dot_recursive(self, node, out, nodeName):
+        if node.left is not None:
+            if node.left.var is not None:
+                child_node_name =f"{nodeName}{node.left.var}l"
+                out.write(f"{child_node_name}[label={node.left.var}]\n")
+                out.write(f"{nodeName} -> {child_node_name}[style=dashed]\n")
+                self.generate_dot_recursive(node.left, out, child_node_name)
+            elif node.left.value is not None:
+                child_node_name = f"{nodeName}{node.left.value}l"
+                out.write(f"{child_node_name}[label={node.left.value}]\n")
+                out.write(f"{nodeName} -> {child_node_name}[style=dashed]\n")
+        if node.right is not None:
+            if node.right.var is not None:
+                child_node_name = f"{nodeName}{node.left.var}r"
+                out.write(f"{child_node_name}[label={node.left.var}]\n")
+                out.write(f"{nodeName} -> {child_node_name}\n")
+                self.generate_dot_recursive(node.right, out, child_node_name)
+            elif node.right.value is not None:
+                child_node_name = f"{nodeName}{node.left.value}r"
+                out.write(f"{child_node_name}[label={node.left.value}]\n")
+                out.write(f"{nodeName} -> {child_node_name}\n")
+
+        
+       
+
     #def reduce(self):
         #self.removeNodesWithSameChildren()
         #self.removeDuplicateTerminalNodes()
@@ -148,5 +182,10 @@ v = ['A', 'B', 'C']
 bdd = BDD(e, v)
 
 print("Binary Decision Diagram (BDD):")
-bdd.generate_latex(bdd.root)
+bdd.generate_latex(node = bdd.root, filename="out")
 bdd.display(bdd.root)
+bdd.generateDot(node=bdd.root, filename="out")
+bdd.reduce()
+bdd.display(bdd.root)
+bdd.generate_latex(node=bdd.root, filename="reduced_out")
+bdd.generateDot(node=bdd.root, filename="reduced_out")
