@@ -2,13 +2,16 @@ from collections import deque
 
 
 class BDDNode:
-    def __init__(self, var=None, left=None, right=None, parent=None, value=None, assignment=[]):
+    def __init__(self, var=None, left=None, right=None, parent=None, value=None, assignment=None):
         self.var = var  # The variable for decision (None for terminal nodes)
         self.left = left
         self.right = right
         self.parent = parent
         self.value = value  # Terminal value (True or False for leaf nodes)
-        self.assignment = assignment
+        if assignment is None:
+            self.assignment = []
+        else:
+            self.assignment = assignment
         self.drawn = False
 
     def isLeaf(self):
@@ -105,17 +108,17 @@ class BDD:
         
         child_node_left = self.merge_leafs(node.left)
         if child_node_left is not None:
-            leaf = self.leafs.get(child_node_left.value)
-            leaf.assignment.extend(child_node_left.assignment)
+            leaf = self.leafs[child_node_left.value]
+            leaf.assignment.extend(child_node_left.assignment.copy())
             node.left = leaf
 
         child_node_right = self.merge_leafs(node.right)
         if child_node_right is not None:
-            leaf = self.leafs.get(child_node_right.value)
-            leaf.assignment.extend(child_node_right.assignment)
+            leaf = self.leafs[child_node_right.value]
+            leaf.assignment.extend(child_node_right.assignment.copy())
             node.right = leaf
 
-        return None, None
+        return None
 
     def remove_equivalent_child_nodes(self, node):
         if node.left is not None:

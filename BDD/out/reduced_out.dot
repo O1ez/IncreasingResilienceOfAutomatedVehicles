@@ -1,21 +1,26 @@
 digraph{
 label="((not A or B) and (not B or A)) and ((not C or D) and (not D or C))\n\n"
-2144849805584[label=A]2144849805648[label="B {'A': False}"]
-2144849805584 -> 2144849805648[style=dashed]
-2144849805712[label="C {'A': False, 'B': False}
+2235520286544[label=A]2235520286608[label="B {'A': False}"]
+2235520286544 -> 2235520286608[style=dashed]
+2235520286672[label="C {'A': False, 'B': False}
 
 {'A': True, 'B': True}"]
-2144849805648 -> 2144849805712[style=dashed]
-2144849805776[label="D {'A': False, 'B': False, 'C': False}"]
-2144849805712 -> 2144849805776[style=dashed]
-2144849805456[label="True
+2235520286608 -> 2235520286672[style=dashed]
+2235520368720[label="D {'A': False, 'B': False, 'C': False}"]
+2235520286672 -> 2235520368720[style=dashed]
+2235520286416[label="True
 {'A': False, 'B': False, 'C': False, 'D': False}
 
+{'A': False, 'B': False, 'C': True, 'D': True}
+
+{'A': True, 'B': True, 'C': False, 'D': False}
+
+{'A': True, 'B': True, 'C': True, 'D': True}"]
+2235520368720 -> 2235520286416[style=dashed]
+2235520274768[label="False
 {'A': False, 'B': False, 'C': False, 'D': True}
 
 {'A': False, 'B': False, 'C': True, 'D': False}
-
-{'A': False, 'B': False, 'C': True, 'D': True}
 
 {'A': False, 'B': True, 'C': False, 'D': False}
 
@@ -33,22 +38,16 @@ label="((not A or B) and (not B or A)) and ((not C or D) and (not D or C))\n\n"
 
 {'A': True, 'B': False, 'C': True, 'D': True}
 
-{'A': True, 'B': True, 'C': False, 'D': False}
-
 {'A': True, 'B': True, 'C': False, 'D': True}
 
-{'A': True, 'B': True, 'C': True, 'D': False}
-
-{'A': True, 'B': True, 'C': True, 'D': True}"]
-2144849805776 -> 2144849805456[style=dashed]
-2144849871504[label="False
-{'A': False, 'B': False, 'C': False, 'D': False}
-
+{'A': True, 'B': True, 'C': True, 'D': False}"]
+2235520368720 -> 2235520274768
+2235520370704[label="D {'A': False, 'B': False, 'C': True}"]
+2235520286672 -> 2235520370704
+2235520274768[label="False
 {'A': False, 'B': False, 'C': False, 'D': True}
 
 {'A': False, 'B': False, 'C': True, 'D': False}
-
-{'A': False, 'B': False, 'C': True, 'D': True}
 
 {'A': False, 'B': True, 'C': False, 'D': False}
 
@@ -66,24 +65,23 @@ label="((not A or B) and (not B or A)) and ((not C or D) and (not D or C))\n\n"
 
 {'A': True, 'B': False, 'C': True, 'D': True}
 
-{'A': True, 'B': True, 'C': False, 'D': False}
-
 {'A': True, 'B': True, 'C': False, 'D': True}
 
-{'A': True, 'B': True, 'C': True, 'D': False}
-
-{'A': True, 'B': True, 'C': True, 'D': True}"]
-2144849805776 -> 2144849871504
-2144849807760[label="D {'A': False, 'B': False, 'C': True}"]
-2144849805712 -> 2144849807760
-2144849871504[label="False
+{'A': True, 'B': True, 'C': True, 'D': False}"]
+2235520370704 -> 2235520274768[style=dashed]
+2235520286416[label="True
 {'A': False, 'B': False, 'C': False, 'D': False}
 
+{'A': False, 'B': False, 'C': True, 'D': True}
+
+{'A': True, 'B': True, 'C': False, 'D': False}
+
+{'A': True, 'B': True, 'C': True, 'D': True}"]
+2235520370704 -> 2235520286416
+2235520274768[label="False
 {'A': False, 'B': False, 'C': False, 'D': True}
 
 {'A': False, 'B': False, 'C': True, 'D': False}
-
-{'A': False, 'B': False, 'C': True, 'D': True}
 
 {'A': False, 'B': True, 'C': False, 'D': False}
 
@@ -101,22 +99,16 @@ label="((not A or B) and (not B or A)) and ((not C or D) and (not D or C))\n\n"
 
 {'A': True, 'B': False, 'C': True, 'D': True}
 
-{'A': True, 'B': True, 'C': False, 'D': False}
-
 {'A': True, 'B': True, 'C': False, 'D': True}
 
-{'A': True, 'B': True, 'C': True, 'D': False}
-
-{'A': True, 'B': True, 'C': True, 'D': True}"]
-2144849807760 -> 2144849871504[style=dashed]
-2144849805456[label="True
-{'A': False, 'B': False, 'C': False, 'D': False}
-
+{'A': True, 'B': True, 'C': True, 'D': False}"]
+2235520286608 -> 2235520274768
+2235520526352[label="B {'A': True}"]
+2235520286544 -> 2235520526352
+2235520274768[label="False
 {'A': False, 'B': False, 'C': False, 'D': True}
 
 {'A': False, 'B': False, 'C': True, 'D': False}
-
-{'A': False, 'B': False, 'C': True, 'D': True}
 
 {'A': False, 'B': True, 'C': False, 'D': False}
 
@@ -134,84 +126,12 @@ label="((not A or B) and (not B or A)) and ((not C or D) and (not D or C))\n\n"
 
 {'A': True, 'B': False, 'C': True, 'D': True}
 
-{'A': True, 'B': True, 'C': False, 'D': False}
-
 {'A': True, 'B': True, 'C': False, 'D': True}
 
-{'A': True, 'B': True, 'C': True, 'D': False}
-
-{'A': True, 'B': True, 'C': True, 'D': True}"]
-2144849807760 -> 2144849805456
-2144849871504[label="False
-{'A': False, 'B': False, 'C': False, 'D': False}
-
-{'A': False, 'B': False, 'C': False, 'D': True}
-
-{'A': False, 'B': False, 'C': True, 'D': False}
-
-{'A': False, 'B': False, 'C': True, 'D': True}
-
-{'A': False, 'B': True, 'C': False, 'D': False}
-
-{'A': False, 'B': True, 'C': False, 'D': True}
-
-{'A': False, 'B': True, 'C': True, 'D': False}
-
-{'A': False, 'B': True, 'C': True, 'D': True}
-
-{'A': True, 'B': False, 'C': False, 'D': False}
-
-{'A': True, 'B': False, 'C': False, 'D': True}
-
-{'A': True, 'B': False, 'C': True, 'D': False}
-
-{'A': True, 'B': False, 'C': True, 'D': True}
-
-{'A': True, 'B': True, 'C': False, 'D': False}
-
-{'A': True, 'B': True, 'C': False, 'D': True}
-
-{'A': True, 'B': True, 'C': True, 'D': False}
-
-{'A': True, 'B': True, 'C': True, 'D': True}"]
-2144849805648 -> 2144849871504
-2144849963152[label="B {'A': True}"]
-2144849805584 -> 2144849963152
-2144849871504[label="False
-{'A': False, 'B': False, 'C': False, 'D': False}
-
-{'A': False, 'B': False, 'C': False, 'D': True}
-
-{'A': False, 'B': False, 'C': True, 'D': False}
-
-{'A': False, 'B': False, 'C': True, 'D': True}
-
-{'A': False, 'B': True, 'C': False, 'D': False}
-
-{'A': False, 'B': True, 'C': False, 'D': True}
-
-{'A': False, 'B': True, 'C': True, 'D': False}
-
-{'A': False, 'B': True, 'C': True, 'D': True}
-
-{'A': True, 'B': False, 'C': False, 'D': False}
-
-{'A': True, 'B': False, 'C': False, 'D': True}
-
-{'A': True, 'B': False, 'C': True, 'D': False}
-
-{'A': True, 'B': False, 'C': True, 'D': True}
-
-{'A': True, 'B': True, 'C': False, 'D': False}
-
-{'A': True, 'B': True, 'C': False, 'D': True}
-
-{'A': True, 'B': True, 'C': True, 'D': False}
-
-{'A': True, 'B': True, 'C': True, 'D': True}"]
-2144849963152 -> 2144849871504[style=dashed]
-2144849805712[label="C {'A': False, 'B': False}
+{'A': True, 'B': True, 'C': True, 'D': False}"]
+2235520526352 -> 2235520274768[style=dashed]
+2235520286672[label="C {'A': False, 'B': False}
 
 {'A': True, 'B': True}"]
-2144849963152 -> 2144849805712
+2235520526352 -> 2235520286672
 }
