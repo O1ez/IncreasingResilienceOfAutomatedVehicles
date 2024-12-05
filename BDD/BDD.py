@@ -2,7 +2,7 @@ from itertools import product
 from collections import deque
 
 class BDDNode:
-    def __init__(self, var=None, left=None, right=None, parent = None, value=None, assignment = None):
+    def __init__(self, var=None, left=None, right=None, parent = None, value=None, assignment = []):
         self.var = var  # The variable for decision (None for terminal nodes)
         self.left = left
         self.right = right
@@ -45,26 +45,28 @@ class BDD:
         self.root = self.build(0)  # Build the BDD starting from the first variable index
         
 
-    def build(self, var_index, current_assignment = {}):
+    def build(self, var_index, current_assignment ={}):
         # end of recursion if node is a leaf
         if var_index == len(self.variables):
             assignment = {var: val for var, val in current_assignment.items()}  # copies current_assignment
             value = evaluate_expression(self.expression, assignment)
             self.evaluation[tuple(assignment.items())] = value
-            leaf = BDDNode(value=value)
-            leaf.assignment = assignment  # Assign the final assignment to the leaf
+            leaf = BDDNode(value=value, assignment=assignment)
             return leaf
         
         #initiate node
         var = self.variables[var_index]
-        currentNode = BDDNode(var=var, assignment={var: val for var, val in current_assignment.items()})
+        currentNode = BDDNode(var=var)
+        currentNode.assignment.append(assignment={var: val for var, val in current_assignment.items()})
         # Create node for false subtree and true subtree
-        current_assignment[var] = False
-        leftNode = self.build(var_index + 1, current_assignment)
+        current_assignment_left = current_assignment.copy()
+        current_assignment_left[var] = False
+        leftNode = self.build(var_index + 1, current_assignment_left)
         currentNode.left = leftNode
 
-        current_assignment[var] = True
-        rightNode = self.build(var_index + 1, current_assignment)
+        current_assignment_right = current_assignment.copy()
+        current_assignment_right[var] = True
+        rightNode = self.build(var_index + 1, current_assignment_right)
         currentNode.right = rightNode
         return currentNode
 
@@ -138,7 +140,7 @@ class BDD:
                     out.write(f"{id(node)} -> {id(child_node)}[style=dashed]\n")
                     self.generate_dot_recursive(child_node, out)
                 elif node.left.value is not None:
-                    out.write(f"{id(child_node)}[label={child_node.value}]\n")
+                    out.write(f"{id(child_node)}[label=\"{child_node.value}\n{str(child_node.assignment)}\"]\n")
                     out.write(f"{id(node)} -> {id(child_node)}[style=dashed]\n")
             #draw right childnode
             if node.right is not None:
@@ -148,7 +150,7 @@ class BDD:
                     out.write(f"{id(node)} -> {id(child_node)}\n")
                     self.generate_dot_recursive(node.right, out)
                 elif node.right.value is not None:
-                    out.write(f"{id(child_node)}[label={child_node.value}]\n")
+                    out.write(f"{id(child_node)}[label=\"{child_node.value}\n{str(child_node.assignment)}\"]\n")
                     out.write(f"{id(node)} -> {id(child_node)}\n")
             node.drawn = True
 
