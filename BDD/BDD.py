@@ -1,8 +1,8 @@
-from itertools import product
 from collections import deque
 
+
 class BDDNode:
-    def __init__(self, var=None, left=None, right=None, parent = None, value=None, assignment = []):
+    def __init__(self, var=None, left=None, right=None, parent=None, value=None, assignment=[]):
         self.var = var  # The variable for decision (None for terminal nodes)
         self.left = left
         self.right = right
@@ -14,23 +14,24 @@ class BDDNode:
     def isLeaf(self):
         # Check if the node is a terminal node (leaf with True/False)
         return self.value is not None
-    
+
     def __eq__(self, other):
         if other is None or not isinstance(other, BDDNode):
             return False
         if self.isLeaf() and other.isLeaf():
             return self.value == other.value
         return (
-            self.var == other.var and
-            self.left == other.left and
-            self.right == other.right
+                self.var == other.var and
+                self.left == other.left and
+                self.right == other.right
         )
-    
+
     def __hash__(self):
         # Hash für Leaf-Nodes basierend auf ihrem Wert, ansonsten auf (var, left, right)
         if self.isLeaf():
             return hash(self.value)
         return hash((self.var, self.left, self.right))
+
 
 def evaluate_expression(expr, assignment):
     return eval(expr, {}, assignment)
@@ -40,24 +41,24 @@ class BDD:
     def __init__(self, expression, variables):
         self.variables = variables  # List of variables
         self.expression = expression
-        self.evaluation = {} #dict of all evaluations
-        self.leafs= {False: BDDNode(value=False), True:BDDNode(value=True)}
+        self.evaluation = {}  #dict of all evaluations
+        self.leafs = {False: BDDNode(value=False), True: BDDNode(value=True)}
         self.root = self.build(0)  # Build the BDD starting from the first variable index
-        
 
-    def build(self, var_index, current_assignment ={}):
+    def build(self, var_index, current_assignment={}):
         # end of recursion if node is a leaf
         if var_index == len(self.variables):
             assignment = {var: val for var, val in current_assignment.items()}  # copies current_assignment
             value = evaluate_expression(self.expression, assignment)
             self.evaluation[tuple(assignment.items())] = value
-            leaf = BDDNode(value=value, assignment=assignment)
+            leaf = BDDNode(value=value)
+            leaf.assignment.append(assignment)
             return leaf
-        
+
         #initiate node
         var = self.variables[var_index]
         currentNode = BDDNode(var=var)
-        currentNode.assignment.append(assignment={var: val for var, val in current_assignment.items()})
+        currentNode.assignment.append({var: val for var, val in current_assignment.items()})
         # Create node for false subtree and true subtree
         current_assignment_left = current_assignment.copy()
         current_assignment_left[var] = False
@@ -78,9 +79,9 @@ class BDD:
     #         return self.evaluate(node.left, variables)
     #     else:
     #         return self.evaluate(node.right, variables)
-        
+
     def reduce(self):
-        self.remove_duplicate_subtree(self.root, mem = {})
+        self.remove_duplicate_subtree(self.root, mem={})
         self.merge_leafs(self.root)
         self.remove_equivalent_child_nodes(self.root)
         print("Reduction done.")
@@ -106,7 +107,7 @@ class BDD:
         right = self.merge_leafs(node.right)
         if right is not None:
             node.right = self.leafs.get(right)
-        return None 
+        return None
 
     def remove_equivalent_child_nodes(self, node):
         if node.left is not None:
@@ -121,10 +122,11 @@ class BDD:
             return node.left
         return None
 
-    def generateDot(self, filename="output", node=None):       
-        node = self.root            
+    def generateDot(self, filename="output", node=None):
+        node = self.root
+        #out = open(f"C:\\Users\\annan\\PycharmProjects\\SaferThanPerception\\BDD\\out\\{filename}.dot", "w")
         out = open(f"BDD\\out\\{filename}.dot", "w")
-        out.write (f"digraph{{\nlabel=\"{self.expression}\\n\\n\"\n{id(node)}[label={node.var}]")
+        out.write(f"digraph{{\nlabel=\"{self.expression}\\n\\n\"\n{id(node)}[label={node.var}]")
         self.generate_dot_recursive(node, out)
         out.write("}")
         print("Dot File generated")
@@ -162,15 +164,16 @@ class BDD:
         if node.right is not None:
             self.reset_draw(node.right)
         node.drawn = False
-    
+
+
 def breadth_first_bottom_up(self):
-    out = []  
-    queue = deque([self.root]) 
-    visited = set()  
+    out = []
+    queue = deque([self.root])
+    visited = set()
 
     while queue:
         node = queue.popleft()
-        if node in visited:  
+        if node in visited:
             continue
         visited.add(node)
         out.append(node)
@@ -179,8 +182,9 @@ def breadth_first_bottom_up(self):
             queue.append(node.left)
         if node.right:
             queue.append(node.right)
-    
+
     return out.reverse()
+
 
 #Example:
 e = "(A and B) or C"

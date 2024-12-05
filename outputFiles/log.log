@@ -1,67 +1,7 @@
 Use test cases?(y/n)
-
-
-Case: k=1
-  x      fp       tp
----  ------  -------
-  0  0.0295  62.9627
-The Solution is:
- x=0  tp=62.963  fp=0.029
-
-
-Case: k=2
-  x      fp       tp
----  ------  -------
-  0  0.0004  56.8455
-  1  0.0295  56.9925
-  2  0.0586  57.1395
-  3  0.0877  57.2866
-  4  0.1168  57.4336
-  5  0.1459  57.5806
-  6  0.1750  57.7277
-The Solution is:
- x=6  tp=57.728  fp=0.175
-
-
-Case: k=3
-  x      fp       tp
----  ------  -------
-  0  0.0000  41.7000
-  1  0.0295  41.9948
-  2  0.0590  42.2895
-  3  0.0884  42.5843
-  4  0.1179  42.8791
-  5  0.1474  43.1739
-  6  0.1769  43.4687
-  7  0.2063  43.7635
-  8  0.2358  44.0583
-  9  0.2653  44.3531
- 10  0.2948  44.6479
-The Solution is:
- x=10  tp=44.648  fp=0.295
-
-
-Case: k=4
-  x      fp       tp
----  ------  -------
-  0  0.0000  21.7025
-  1  0.0295  21.9973
-  2  0.0590  22.2920
-  3  0.0884  22.5868
-  4  0.1179  22.8816
-  5  0.1474  23.1764
-  6  0.1769  23.4712
-  7  0.2063  23.7660
-  8  0.2358  24.0608
-  9  0.2653  24.3556
- 10  0.2948  24.6504
-The Solution is:
- x=10  tp=24.65  fp=0.295
-
-
-  minSize    x       fp       tp
----------  ---  -------  -------
-        1    0  0.02948  62.9626
-        2    6  0.17504  57.7277
-        3   10  0.29476  44.6479
-        4   10  0.29478  24.6504
+Traceback (most recent call last):
+  File "C:\Users\annan\PycharmProjects\SaferThanPerception\main.py", line 17, in <module>
+    if input() == "y":
+  File "C:\Users\annan\AppData\Local\Programs\Python\Python310\lib\codecs.py", line 319, in decode
+    def decode(self, input, final=False):
+KeyboardInterrupt
