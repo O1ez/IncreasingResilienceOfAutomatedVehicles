@@ -1,33 +1,217 @@
 digraph{
 label="((not A or B) and (not B or A)) and ((not C or D) and (not D or C))\n\n"
-1737253091936[label=A]1737253091888[label="B [{}, {'A': False}, {'A': False, 'B': False}, {'A': False, 'B': False, 'C': False}, {'A': False, 'B': False, 'C': False, 'D': False}, {'A': False, 'B': False, 'C': False, 'D': True}, {'A': False, 'B': False, 'C': True}, {'A': False, 'B': False, 'C': True, 'D': False}, {'A': False, 'B': False, 'C': True, 'D': True}, {'A': False, 'B': True}, {'A': False, 'B': True, 'C': False}, {'A': False, 'B': True, 'C': False, 'D': False}, {'A': False, 'B': True, 'C': False, 'D': True}, {'A': False, 'B': True, 'C': True}, {'A': False, 'B': True, 'C': True, 'D': False}, {'A': False, 'B': True, 'C': True, 'D': True}, {'A': True}, {'A': True, 'B': False}, {'A': True, 'B': False, 'C': False}, {'A': True, 'B': False, 'C': False, 'D': False}, {'A': True, 'B': False, 'C': False, 'D': True}, {'A': True, 'B': False, 'C': True}, {'A': True, 'B': False, 'C': True, 'D': False}, {'A': True, 'B': False, 'C': True, 'D': True}, {'A': True, 'B': True}, {'A': True, 'B': True, 'C': False}, {'A': True, 'B': True, 'C': False, 'D': False}, {'A': True, 'B': True, 'C': False, 'D': True}, {'A': True, 'B': True, 'C': True}, {'A': True, 'B': True, 'C': True, 'D': False}, {'A': True, 'B': True, 'C': True, 'D': True}]"]
-1737253091936 -> 1737253091888[style=dashed]
-1737253091840[label="C [{}, {'A': False}, {'A': False, 'B': False}, {'A': False, 'B': False, 'C': False}, {'A': False, 'B': False, 'C': False, 'D': False}, {'A': False, 'B': False, 'C': False, 'D': True}, {'A': False, 'B': False, 'C': True}, {'A': False, 'B': False, 'C': True, 'D': False}, {'A': False, 'B': False, 'C': True, 'D': True}, {'A': False, 'B': True}, {'A': False, 'B': True, 'C': False}, {'A': False, 'B': True, 'C': False, 'D': False}, {'A': False, 'B': True, 'C': False, 'D': True}, {'A': False, 'B': True, 'C': True}, {'A': False, 'B': True, 'C': True, 'D': False}, {'A': False, 'B': True, 'C': True, 'D': True}, {'A': True}, {'A': True, 'B': False}, {'A': True, 'B': False, 'C': False}, {'A': True, 'B': False, 'C': False, 'D': False}, {'A': True, 'B': False, 'C': False, 'D': True}, {'A': True, 'B': False, 'C': True}, {'A': True, 'B': False, 'C': True, 'D': False}, {'A': True, 'B': False, 'C': True, 'D': True}, {'A': True, 'B': True}, {'A': True, 'B': True, 'C': False}, {'A': True, 'B': True, 'C': False, 'D': False}, {'A': True, 'B': True, 'C': False, 'D': True}, {'A': True, 'B': True, 'C': True}, {'A': True, 'B': True, 'C': True, 'D': False}, {'A': True, 'B': True, 'C': True, 'D': True}]"]
-1737253091888 -> 1737253091840[style=dashed]
-1737253091792[label="D [{}, {'A': False}, {'A': False, 'B': False}, {'A': False, 'B': False, 'C': False}, {'A': False, 'B': False, 'C': False, 'D': False}, {'A': False, 'B': False, 'C': False, 'D': True}, {'A': False, 'B': False, 'C': True}, {'A': False, 'B': False, 'C': True, 'D': False}, {'A': False, 'B': False, 'C': True, 'D': True}, {'A': False, 'B': True}, {'A': False, 'B': True, 'C': False}, {'A': False, 'B': True, 'C': False, 'D': False}, {'A': False, 'B': True, 'C': False, 'D': True}, {'A': False, 'B': True, 'C': True}, {'A': False, 'B': True, 'C': True, 'D': False}, {'A': False, 'B': True, 'C': True, 'D': True}, {'A': True}, {'A': True, 'B': False}, {'A': True, 'B': False, 'C': False}, {'A': True, 'B': False, 'C': False, 'D': False}, {'A': True, 'B': False, 'C': False, 'D': True}, {'A': True, 'B': False, 'C': True}, {'A': True, 'B': False, 'C': True, 'D': False}, {'A': True, 'B': False, 'C': True, 'D': True}, {'A': True, 'B': True}, {'A': True, 'B': True, 'C': False}, {'A': True, 'B': True, 'C': False, 'D': False}, {'A': True, 'B': True, 'C': False, 'D': True}, {'A': True, 'B': True, 'C': True}, {'A': True, 'B': True, 'C': True, 'D': False}, {'A': True, 'B': True, 'C': True, 'D': True}]"]
-1737253091840 -> 1737253091792[style=dashed]
-1737253091984[label="True
-[{}, {'A': False}, {'A': False, 'B': False}, {'A': False, 'B': False, 'C': False}, {'A': False, 'B': False, 'C': False, 'D': False}, {'A': False, 'B': False, 'C': False, 'D': True}, {'A': False, 'B': False, 'C': True}, {'A': False, 'B': False, 'C': True, 'D': False}, {'A': False, 'B': False, 'C': True, 'D': True}, {'A': False, 'B': True}, {'A': False, 'B': True, 'C': False}, {'A': False, 'B': True, 'C': False, 'D': False}, {'A': False, 'B': True, 'C': False, 'D': True}, {'A': False, 'B': True, 'C': True}, {'A': False, 'B': True, 'C': True, 'D': False}, {'A': False, 'B': True, 'C': True, 'D': True}, {'A': True}, {'A': True, 'B': False}, {'A': True, 'B': False, 'C': False}, {'A': True, 'B': False, 'C': False, 'D': False}, {'A': True, 'B': False, 'C': False, 'D': True}, {'A': True, 'B': False, 'C': True}, {'A': True, 'B': False, 'C': True, 'D': False}, {'A': True, 'B': False, 'C': True, 'D': True}, {'A': True, 'B': True}, {'A': True, 'B': True, 'C': False}, {'A': True, 'B': True, 'C': False, 'D': False}, {'A': True, 'B': True, 'C': False, 'D': True}, {'A': True, 'B': True, 'C': True}, {'A': True, 'B': True, 'C': True, 'D': False}, {'A': True, 'B': True, 'C': True, 'D': True}]"]
-1737253091792 -> 1737253091984[style=dashed]
-1737253092032[label="False
-[{}, {'A': False}, {'A': False, 'B': False}, {'A': False, 'B': False, 'C': False}, {'A': False, 'B': False, 'C': False, 'D': False}, {'A': False, 'B': False, 'C': False, 'D': True}, {'A': False, 'B': False, 'C': True}, {'A': False, 'B': False, 'C': True, 'D': False}, {'A': False, 'B': False, 'C': True, 'D': True}, {'A': False, 'B': True}, {'A': False, 'B': True, 'C': False}, {'A': False, 'B': True, 'C': False, 'D': False}, {'A': False, 'B': True, 'C': False, 'D': True}, {'A': False, 'B': True, 'C': True}, {'A': False, 'B': True, 'C': True, 'D': False}, {'A': False, 'B': True, 'C': True, 'D': True}, {'A': True}, {'A': True, 'B': False}, {'A': True, 'B': False, 'C': False}, {'A': True, 'B': False, 'C': False, 'D': False}, {'A': True, 'B': False, 'C': False, 'D': True}, {'A': True, 'B': False, 'C': True}, {'A': True, 'B': False, 'C': True, 'D': False}, {'A': True, 'B': False, 'C': True, 'D': True}, {'A': True, 'B': True}, {'A': True, 'B': True, 'C': False}, {'A': True, 'B': True, 'C': False, 'D': False}, {'A': True, 'B': True, 'C': False, 'D': True}, {'A': True, 'B': True, 'C': True}, {'A': True, 'B': True, 'C': True, 'D': False}, {'A': True, 'B': True, 'C': True, 'D': True}]"]
-1737253091792 -> 1737253092032
-1737253089536[label="D [{}, {'A': False}, {'A': False, 'B': False}, {'A': False, 'B': False, 'C': False}, {'A': False, 'B': False, 'C': False, 'D': False}, {'A': False, 'B': False, 'C': False, 'D': True}, {'A': False, 'B': False, 'C': True}, {'A': False, 'B': False, 'C': True, 'D': False}, {'A': False, 'B': False, 'C': True, 'D': True}, {'A': False, 'B': True}, {'A': False, 'B': True, 'C': False}, {'A': False, 'B': True, 'C': False, 'D': False}, {'A': False, 'B': True, 'C': False, 'D': True}, {'A': False, 'B': True, 'C': True}, {'A': False, 'B': True, 'C': True, 'D': False}, {'A': False, 'B': True, 'C': True, 'D': True}, {'A': True}, {'A': True, 'B': False}, {'A': True, 'B': False, 'C': False}, {'A': True, 'B': False, 'C': False, 'D': False}, {'A': True, 'B': False, 'C': False, 'D': True}, {'A': True, 'B': False, 'C': True}, {'A': True, 'B': False, 'C': True, 'D': False}, {'A': True, 'B': False, 'C': True, 'D': True}, {'A': True, 'B': True}, {'A': True, 'B': True, 'C': False}, {'A': True, 'B': True, 'C': False, 'D': False}, {'A': True, 'B': True, 'C': False, 'D': True}, {'A': True, 'B': True, 'C': True}, {'A': True, 'B': True, 'C': True, 'D': False}, {'A': True, 'B': True, 'C': True, 'D': True}]"]
-1737253091840 -> 1737253089536
-1737253092032[label="False
-[{}, {'A': False}, {'A': False, 'B': False}, {'A': False, 'B': False, 'C': False}, {'A': False, 'B': False, 'C': False, 'D': False}, {'A': False, 'B': False, 'C': False, 'D': True}, {'A': False, 'B': False, 'C': True}, {'A': False, 'B': False, 'C': True, 'D': False}, {'A': False, 'B': False, 'C': True, 'D': True}, {'A': False, 'B': True}, {'A': False, 'B': True, 'C': False}, {'A': False, 'B': True, 'C': False, 'D': False}, {'A': False, 'B': True, 'C': False, 'D': True}, {'A': False, 'B': True, 'C': True}, {'A': False, 'B': True, 'C': True, 'D': False}, {'A': False, 'B': True, 'C': True, 'D': True}, {'A': True}, {'A': True, 'B': False}, {'A': True, 'B': False, 'C': False}, {'A': True, 'B': False, 'C': False, 'D': False}, {'A': True, 'B': False, 'C': False, 'D': True}, {'A': True, 'B': False, 'C': True}, {'A': True, 'B': False, 'C': True, 'D': False}, {'A': True, 'B': False, 'C': True, 'D': True}, {'A': True, 'B': True}, {'A': True, 'B': True, 'C': False}, {'A': True, 'B': True, 'C': False, 'D': False}, {'A': True, 'B': True, 'C': False, 'D': True}, {'A': True, 'B': True, 'C': True}, {'A': True, 'B': True, 'C': True, 'D': False}, {'A': True, 'B': True, 'C': True, 'D': True}]"]
-1737253089536 -> 1737253092032[style=dashed]
-1737253091984[label="True
-[{}, {'A': False}, {'A': False, 'B': False}, {'A': False, 'B': False, 'C': False}, {'A': False, 'B': False, 'C': False, 'D': False}, {'A': False, 'B': False, 'C': False, 'D': True}, {'A': False, 'B': False, 'C': True}, {'A': False, 'B': False, 'C': True, 'D': False}, {'A': False, 'B': False, 'C': True, 'D': True}, {'A': False, 'B': True}, {'A': False, 'B': True, 'C': False}, {'A': False, 'B': True, 'C': False, 'D': False}, {'A': False, 'B': True, 'C': False, 'D': True}, {'A': False, 'B': True, 'C': True}, {'A': False, 'B': True, 'C': True, 'D': False}, {'A': False, 'B': True, 'C': True, 'D': True}, {'A': True}, {'A': True, 'B': False}, {'A': True, 'B': False, 'C': False}, {'A': True, 'B': False, 'C': False, 'D': False}, {'A': True, 'B': False, 'C': False, 'D': True}, {'A': True, 'B': False, 'C': True}, {'A': True, 'B': False, 'C': True, 'D': False}, {'A': True, 'B': False, 'C': True, 'D': True}, {'A': True, 'B': True}, {'A': True, 'B': True, 'C': False}, {'A': True, 'B': True, 'C': False, 'D': False}, {'A': True, 'B': True, 'C': False, 'D': True}, {'A': True, 'B': True, 'C': True}, {'A': True, 'B': True, 'C': True, 'D': False}, {'A': True, 'B': True, 'C': True, 'D': True}]"]
-1737253089536 -> 1737253091984
-1737253092032[label="False
-[{}, {'A': False}, {'A': False, 'B': False}, {'A': False, 'B': False, 'C': False}, {'A': False, 'B': False, 'C': False, 'D': False}, {'A': False, 'B': False, 'C': False, 'D': True}, {'A': False, 'B': False, 'C': True}, {'A': False, 'B': False, 'C': True, 'D': False}, {'A': False, 'B': False, 'C': True, 'D': True}, {'A': False, 'B': True}, {'A': False, 'B': True, 'C': False}, {'A': False, 'B': True, 'C': False, 'D': False}, {'A': False, 'B': True, 'C': False, 'D': True}, {'A': False, 'B': True, 'C': True}, {'A': False, 'B': True, 'C': True, 'D': False}, {'A': False, 'B': True, 'C': True, 'D': True}, {'A': True}, {'A': True, 'B': False}, {'A': True, 'B': False, 'C': False}, {'A': True, 'B': False, 'C': False, 'D': False}, {'A': True, 'B': False, 'C': False, 'D': True}, {'A': True, 'B': False, 'C': True}, {'A': True, 'B': False, 'C': True, 'D': False}, {'A': True, 'B': False, 'C': True, 'D': True}, {'A': True, 'B': True}, {'A': True, 'B': True, 'C': False}, {'A': True, 'B': True, 'C': False, 'D': False}, {'A': True, 'B': True, 'C': False, 'D': True}, {'A': True, 'B': True, 'C': True}, {'A': True, 'B': True, 'C': True, 'D': False}, {'A': True, 'B': True, 'C': True, 'D': True}]"]
-1737253091888 -> 1737253092032
-1737253089056[label="B [{}, {'A': False}, {'A': False, 'B': False}, {'A': False, 'B': False, 'C': False}, {'A': False, 'B': False, 'C': False, 'D': False}, {'A': False, 'B': False, 'C': False, 'D': True}, {'A': False, 'B': False, 'C': True}, {'A': False, 'B': False, 'C': True, 'D': False}, {'A': False, 'B': False, 'C': True, 'D': True}, {'A': False, 'B': True}, {'A': False, 'B': True, 'C': False}, {'A': False, 'B': True, 'C': False, 'D': False}, {'A': False, 'B': True, 'C': False, 'D': True}, {'A': False, 'B': True, 'C': True}, {'A': False, 'B': True, 'C': True, 'D': False}, {'A': False, 'B': True, 'C': True, 'D': True}, {'A': True}, {'A': True, 'B': False}, {'A': True, 'B': False, 'C': False}, {'A': True, 'B': False, 'C': False, 'D': False}, {'A': True, 'B': False, 'C': False, 'D': True}, {'A': True, 'B': False, 'C': True}, {'A': True, 'B': False, 'C': True, 'D': False}, {'A': True, 'B': False, 'C': True, 'D': True}, {'A': True, 'B': True}, {'A': True, 'B': True, 'C': False}, {'A': True, 'B': True, 'C': False, 'D': False}, {'A': True, 'B': True, 'C': False, 'D': True}, {'A': True, 'B': True, 'C': True}, {'A': True, 'B': True, 'C': True, 'D': False}, {'A': True, 'B': True, 'C': True, 'D': True}]"]
-1737253091936 -> 1737253089056
-1737253092032[label="False
-[{}, {'A': False}, {'A': False, 'B': False}, {'A': False, 'B': False, 'C': False}, {'A': False, 'B': False, 'C': False, 'D': False}, {'A': False, 'B': False, 'C': False, 'D': True}, {'A': False, 'B': False, 'C': True}, {'A': False, 'B': False, 'C': True, 'D': False}, {'A': False, 'B': False, 'C': True, 'D': True}, {'A': False, 'B': True}, {'A': False, 'B': True, 'C': False}, {'A': False, 'B': True, 'C': False, 'D': False}, {'A': False, 'B': True, 'C': False, 'D': True}, {'A': False, 'B': True, 'C': True}, {'A': False, 'B': True, 'C': True, 'D': False}, {'A': False, 'B': True, 'C': True, 'D': True}, {'A': True}, {'A': True, 'B': False}, {'A': True, 'B': False, 'C': False}, {'A': True, 'B': False, 'C': False, 'D': False}, {'A': True, 'B': False, 'C': False, 'D': True}, {'A': True, 'B': False, 'C': True}, {'A': True, 'B': False, 'C': True, 'D': False}, {'A': True, 'B': False, 'C': True, 'D': True}, {'A': True, 'B': True}, {'A': True, 'B': True, 'C': False}, {'A': True, 'B': True, 'C': False, 'D': False}, {'A': True, 'B': True, 'C': False, 'D': True}, {'A': True, 'B': True, 'C': True}, {'A': True, 'B': True, 'C': True, 'D': False}, {'A': True, 'B': True, 'C': True, 'D': True}]"]
-1737253089056 -> 1737253092032[style=dashed]
-1737253091840[label="C [{}, {'A': False}, {'A': False, 'B': False}, {'A': False, 'B': False, 'C': False}, {'A': False, 'B': False, 'C': False, 'D': False}, {'A': False, 'B': False, 'C': False, 'D': True}, {'A': False, 'B': False, 'C': True}, {'A': False, 'B': False, 'C': True, 'D': False}, {'A': False, 'B': False, 'C': True, 'D': True}, {'A': False, 'B': True}, {'A': False, 'B': True, 'C': False}, {'A': False, 'B': True, 'C': False, 'D': False}, {'A': False, 'B': True, 'C': False, 'D': True}, {'A': False, 'B': True, 'C': True}, {'A': False, 'B': True, 'C': True, 'D': False}, {'A': False, 'B': True, 'C': True, 'D': True}, {'A': True}, {'A': True, 'B': False}, {'A': True, 'B': False, 'C': False}, {'A': True, 'B': False, 'C': False, 'D': False}, {'A': True, 'B': False, 'C': False, 'D': True}, {'A': True, 'B': False, 'C': True}, {'A': True, 'B': False, 'C': True, 'D': False}, {'A': True, 'B': False, 'C': True, 'D': True}, {'A': True, 'B': True}, {'A': True, 'B': True, 'C': False}, {'A': True, 'B': True, 'C': False, 'D': False}, {'A': True, 'B': True, 'C': False, 'D': True}, {'A': True, 'B': True, 'C': True}, {'A': True, 'B': True, 'C': True, 'D': False}, {'A': True, 'B': True, 'C': True, 'D': True}]"]
-1737253089056 -> 1737253091840
+2144849805584[label=A]2144849805648[label="B {'A': False}"]
+2144849805584 -> 2144849805648[style=dashed]
+2144849805712[label="C {'A': False, 'B': False}
+
+{'A': True, 'B': True}"]
+2144849805648 -> 2144849805712[style=dashed]
+2144849805776[label="D {'A': False, 'B': False, 'C': False}"]
+2144849805712 -> 2144849805776[style=dashed]
+2144849805456[label="True
+{'A': False, 'B': False, 'C': False, 'D': False}
+
+{'A': False, 'B': False, 'C': False, 'D': True}
+
+{'A': False, 'B': False, 'C': True, 'D': False}
+
+{'A': False, 'B': False, 'C': True, 'D': True}
+
+{'A': False, 'B': True, 'C': False, 'D': False}
+
+{'A': False, 'B': True, 'C': False, 'D': True}
+
+{'A': False, 'B': True, 'C': True, 'D': False}
+
+{'A': False, 'B': True, 'C': True, 'D': True}
+
+{'A': True, 'B': False, 'C': False, 'D': False}
+
+{'A': True, 'B': False, 'C': False, 'D': True}
+
+{'A': True, 'B': False, 'C': True, 'D': False}
+
+{'A': True, 'B': False, 'C': True, 'D': True}
+
+{'A': True, 'B': True, 'C': False, 'D': False}
+
+{'A': True, 'B': True, 'C': False, 'D': True}
+
+{'A': True, 'B': True, 'C': True, 'D': False}
+
+{'A': True, 'B': True, 'C': True, 'D': True}"]
+2144849805776 -> 2144849805456[style=dashed]
+2144849871504[label="False
+{'A': False, 'B': False, 'C': False, 'D': False}
+
+{'A': False, 'B': False, 'C': False, 'D': True}
+
+{'A': False, 'B': False, 'C': True, 'D': False}
+
+{'A': False, 'B': False, 'C': True, 'D': True}
+
+{'A': False, 'B': True, 'C': False, 'D': False}
+
+{'A': False, 'B': True, 'C': False, 'D': True}
+
+{'A': False, 'B': True, 'C': True, 'D': False}
+
+{'A': False, 'B': True, 'C': True, 'D': True}
+
+{'A': True, 'B': False, 'C': False, 'D': False}
+
+{'A': True, 'B': False, 'C': False, 'D': True}
+
+{'A': True, 'B': False, 'C': True, 'D': False}
+
+{'A': True, 'B': False, 'C': True, 'D': True}
+
+{'A': True, 'B': True, 'C': False, 'D': False}
+
+{'A': True, 'B': True, 'C': False, 'D': True}
+
+{'A': True, 'B': True, 'C': True, 'D': False}
+
+{'A': True, 'B': True, 'C': True, 'D': True}"]
+2144849805776 -> 2144849871504
+2144849807760[label="D {'A': False, 'B': False, 'C': True}"]
+2144849805712 -> 2144849807760
+2144849871504[label="False
+{'A': False, 'B': False, 'C': False, 'D': False}
+
+{'A': False, 'B': False, 'C': False, 'D': True}
+
+{'A': False, 'B': False, 'C': True, 'D': False}
+
+{'A': False, 'B': False, 'C': True, 'D': True}
+
+{'A': False, 'B': True, 'C': False, 'D': False}
+
+{'A': False, 'B': True, 'C': False, 'D': True}
+
+{'A': False, 'B': True, 'C': True, 'D': False}
+
+{'A': False, 'B': True, 'C': True, 'D': True}
+
+{'A': True, 'B': False, 'C': False, 'D': False}
+
+{'A': True, 'B': False, 'C': False, 'D': True}
+
+{'A': True, 'B': False, 'C': True, 'D': False}
+
+{'A': True, 'B': False, 'C': True, 'D': True}
+
+{'A': True, 'B': True, 'C': False, 'D': False}
+
+{'A': True, 'B': True, 'C': False, 'D': True}
+
+{'A': True, 'B': True, 'C': True, 'D': False}
+
+{'A': True, 'B': True, 'C': True, 'D': True}"]
+2144849807760 -> 2144849871504[style=dashed]
+2144849805456[label="True
+{'A': False, 'B': False, 'C': False, 'D': False}
+
+{'A': False, 'B': False, 'C': False, 'D': True}
+
+{'A': False, 'B': False, 'C': True, 'D': False}
+
+{'A': False, 'B': False, 'C': True, 'D': True}
+
+{'A': False, 'B': True, 'C': False, 'D': False}
+
+{'A': False, 'B': True, 'C': False, 'D': True}
+
+{'A': False, 'B': True, 'C': True, 'D': False}
+
+{'A': False, 'B': True, 'C': True, 'D': True}
+
+{'A': True, 'B': False, 'C': False, 'D': False}
+
+{'A': True, 'B': False, 'C': False, 'D': True}
+
+{'A': True, 'B': False, 'C': True, 'D': False}
+
+{'A': True, 'B': False, 'C': True, 'D': True}
+
+{'A': True, 'B': True, 'C': False, 'D': False}
+
+{'A': True, 'B': True, 'C': False, 'D': True}
+
+{'A': True, 'B': True, 'C': True, 'D': False}
+
+{'A': True, 'B': True, 'C': True, 'D': True}"]
+2144849807760 -> 2144849805456
+2144849871504[label="False
+{'A': False, 'B': False, 'C': False, 'D': False}
+
+{'A': False, 'B': False, 'C': False, 'D': True}
+
+{'A': False, 'B': False, 'C': True, 'D': False}
+
+{'A': False, 'B': False, 'C': True, 'D': True}
+
+{'A': False, 'B': True, 'C': False, 'D': False}
+
+{'A': False, 'B': True, 'C': False, 'D': True}
+
+{'A': False, 'B': True, 'C': True, 'D': False}
+
+{'A': False, 'B': True, 'C': True, 'D': True}
+
+{'A': True, 'B': False, 'C': False, 'D': False}
+
+{'A': True, 'B': False, 'C': False, 'D': True}
+
+{'A': True, 'B': False, 'C': True, 'D': False}
+
+{'A': True, 'B': False, 'C': True, 'D': True}
+
+{'A': True, 'B': True, 'C': False, 'D': False}
+
+{'A': True, 'B': True, 'C': False, 'D': True}
+
+{'A': True, 'B': True, 'C': True, 'D': False}
+
+{'A': True, 'B': True, 'C': True, 'D': True}"]
+2144849805648 -> 2144849871504
+2144849963152[label="B {'A': True}"]
+2144849805584 -> 2144849963152
+2144849871504[label="False
+{'A': False, 'B': False, 'C': False, 'D': False}
+
+{'A': False, 'B': False, 'C': False, 'D': True}
+
+{'A': False, 'B': False, 'C': True, 'D': False}
+
+{'A': False, 'B': False, 'C': True, 'D': True}
+
+{'A': False, 'B': True, 'C': False, 'D': False}
+
+{'A': False, 'B': True, 'C': False, 'D': True}
+
+{'A': False, 'B': True, 'C': True, 'D': False}
+
+{'A': False, 'B': True, 'C': True, 'D': True}
+
+{'A': True, 'B': False, 'C': False, 'D': False}
+
+{'A': True, 'B': False, 'C': False, 'D': True}
+
+{'A': True, 'B': False, 'C': True, 'D': False}
+
+{'A': True, 'B': False, 'C': True, 'D': True}
+
+{'A': True, 'B': True, 'C': False, 'D': False}
+
+{'A': True, 'B': True, 'C': False, 'D': True}
+
+{'A': True, 'B': True, 'C': True, 'D': False}
+
+{'A': True, 'B': True, 'C': True, 'D': True}"]
+2144849963152 -> 2144849871504[style=dashed]
+2144849805712[label="C {'A': False, 'B': False}
+
+{'A': True, 'B': True}"]
+2144849963152 -> 2144849805712
 }

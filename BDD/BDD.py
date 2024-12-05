@@ -48,17 +48,17 @@ class BDD:
     def build(self, var_index, current_assignment={}):
         # end of recursion if node is a leaf
         if var_index == len(self.variables):
-            assignment = {var: val for var, val in current_assignment.items()}  # copies current_assignment
-            value = evaluate_expression(self.expression, assignment)
-            self.evaluation[tuple(assignment.items())] = value
+            current_assignment = {var: val for var, val in current_assignment.items()}  # copies current_assignment
+            value = evaluate_expression(self.expression, current_assignment)
+            self.evaluation[tuple(current_assignment.items())] = value
             leaf = BDDNode(value=value)
-            leaf.assignment.append(assignment)
+            leaf.assignment = [current_assignment]
             return leaf
 
         #initiate node
         var = self.variables[var_index]
         currentNode = BDDNode(var=var)
-        currentNode.assignment.append({var: val for var, val in current_assignment.items()})
+        currentNode.assignment= [({var: val for var, val in current_assignment.items()})]
         # Create node for false subtree and true subtree
         current_assignment_left = current_assignment.copy()
         current_assignment_left[var] = False
@@ -81,33 +81,41 @@ class BDD:
     #         return self.evaluate(node.right, variables)
 
     def reduce(self):
-        self.remove_duplicate_subtree(self.root, mem={})
         self.merge_leafs(self.root)
+        self.remove_duplicate_subtree(self.root, mem={})
         self.remove_equivalent_child_nodes(self.root)
         print("Reduction done.")
 
     def remove_duplicate_subtree(self, node, mem):
         if node.isLeaf():
             return node
+        
         if node in mem:
+            mem[node].assignment.extend(node.assignment)
             return mem[node]
+        
         node.left = self.remove_duplicate_subtree(node.left, mem)
         node.right = self.remove_duplicate_subtree(node.right, mem)
-        if node in mem:
-            return mem[node]
         mem[node] = node
         return node
 
     def merge_leafs(self, node):
         if node.isLeaf():
-            return node.value
-        left = self.merge_leafs(node.left)
-        if left is not None:
-            node.left = self.leafs.get(left)
-        right = self.merge_leafs(node.right)
-        if right is not None:
-            node.right = self.leafs.get(right)
-        return None
+            return node
+        
+        child_node_left = self.merge_leafs(node.left)
+        if child_node_left is not None:
+            leaf = self.leafs.get(child_node_left.value)
+            leaf.assignment.extend(child_node_left.assignment)
+            node.left = leaf
+
+        child_node_right = self.merge_leafs(node.right)
+        if child_node_right is not None:
+            leaf = self.leafs.get(child_node_right.value)
+            leaf.assignment.extend(child_node_right.assignment)
+            node.right = leaf
+
+        return None, None
 
     def remove_equivalent_child_nodes(self, node):
         if node.left is not None:
@@ -138,21 +146,25 @@ class BDD:
             if node.left is not None:
                 child_node = node.left
                 if node.left.var is not None:
-                    out.write(f"{id(child_node)}[label=\"{child_node.var} {str(child_node.assignment)}\"]\n")
+                    assignments= "\n\n".join(str(d) for d in child_node.assignment)
+                    out.write(f"{id(child_node)}[label=\"{child_node.var} {assignments}\"]\n")
                     out.write(f"{id(node)} -> {id(child_node)}[style=dashed]\n")
                     self.generate_dot_recursive(child_node, out)
                 elif node.left.value is not None:
-                    out.write(f"{id(child_node)}[label=\"{child_node.value}\n{str(child_node.assignment)}\"]\n")
+                    assignments= "\n\n".join(str(d) for d in child_node.assignment)
+                    out.write(f"{id(child_node)}[label=\"{child_node.value}\n{assignments}\"]\n")
                     out.write(f"{id(node)} -> {id(child_node)}[style=dashed]\n")
             #draw right childnode
             if node.right is not None:
                 child_node = node.right
                 if node.right.var is not None:
-                    out.write(f"{id(child_node)}[label=\"{child_node.var} {str(child_node.assignment)}\"]\n")
+                    assignments= "\n\n".join(str(d) for d in child_node.assignment)
+                    out.write(f"{id(child_node)}[label=\"{child_node.var} {assignments}\"]\n")
                     out.write(f"{id(node)} -> {id(child_node)}\n")
                     self.generate_dot_recursive(node.right, out)
                 elif node.right.value is not None:
-                    out.write(f"{id(child_node)}[label=\"{child_node.value}\n{str(child_node.assignment)}\"]\n")
+                    assignments= "\n\n".join(str(d) for d in child_node.assignment)
+                    out.write(f"{id(child_node)}[label=\"{child_node.value}\n{assignments}\"]\n")
                     out.write(f"{id(node)} -> {id(child_node)}\n")
             node.drawn = True
 
