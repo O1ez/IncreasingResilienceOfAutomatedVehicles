@@ -1,13 +1,14 @@
 from itertools import product
-
+from collections import deque
 
 class BDDNode:
-    def __init__(self, var=None, left=None, right=None, value=None):
+    def __init__(self, var=None, left=None, right=None, parent = None, value=None, assignment = None):
         self.var = var  # The variable for decision (None for terminal nodes)
         self.left = left
         self.right = right
+        self.parent = parent
         self.value = value  # Terminal value (True or False for leaf nodes)
-        self.assignment = {}
+        self.assignment = assignment
         self.drawn = False
 
     def isLeaf(self):
@@ -39,33 +40,33 @@ class BDD:
     def __init__(self, expression, variables):
         self.variables = variables  # List of variables
         self.expression = expression
-        self.current_assignment = {}
         self.evaluation = {} #dict of all evaluations
         self.leafs= {False: BDDNode(value=False), True:BDDNode(value=True)}
         self.root = self.build(0)  # Build the BDD starting from the first variable index
         
 
-    def build(self, var_index):
+    def build(self, var_index, current_assignment = {}):
         # end of recursion if node is a leaf
         if var_index == len(self.variables):
-            assignment = {var: val for var, val in self.current_assignment.items()}  # copies current_assignment
+            assignment = {var: val for var, val in current_assignment.items()}  # copies current_assignment
             value = evaluate_expression(self.expression, assignment)
             self.evaluation[tuple(assignment.items())] = value
             leaf = BDDNode(value=value)
             leaf.assignment = assignment  # Assign the final assignment to the leaf
             return leaf
-
-        # Create node for false subtree and true subtree
+        
+        #initiate node
         var = self.variables[var_index]
-        self.current_assignment[var] = False
-        leftNode = self.build(var_index + 1)
+        currentNode = BDDNode(var=var, assignment={var: val for var, val in current_assignment.items()})
+        # Create node for false subtree and true subtree
+        current_assignment[var] = False
+        leftNode = self.build(var_index + 1, current_assignment)
+        currentNode.left = leftNode
 
-        self.current_assignment[var] = True
-        rightNode = self.build(var_index + 1)
-
-        node = BDDNode(var=var, left=leftNode, right=rightNode)
-        node.assignment = {var: val for var, val in self.current_assignment.items()}
-        return node
+        current_assignment[var] = True
+        rightNode = self.build(var_index + 1, current_assignment)
+        currentNode.right = rightNode
+        return currentNode
 
     # # traverses down the diagram to evaluate it
     # def evaluate(self, node, variables):
@@ -115,8 +116,7 @@ class BDD:
             if eq_child_right is not None:
                 node.right = eq_child_right
         if node.left is not None and node.right is not None and id(node.left) == id(node.right):
-            if node.var in node.right.assignment:
-                del node.right.assignment[node.var]
+            return node.left
         return None
 
     def generateDot(self, filename="output", node=None):       
@@ -130,19 +130,21 @@ class BDD:
 
     def generate_dot_recursive(self, node, out):
         if not node.drawn:
+            # draw left childnode
             if node.left is not None:
                 child_node = node.left
                 if node.left.var is not None:
-                    out.write(f"{id(child_node)}[label={child_node.var}]\n")
+                    out.write(f"{id(child_node)}[label=\"{child_node.var} {str(child_node.assignment)}\"]\n")
                     out.write(f"{id(node)} -> {id(child_node)}[style=dashed]\n")
                     self.generate_dot_recursive(child_node, out)
                 elif node.left.value is not None:
                     out.write(f"{id(child_node)}[label={child_node.value}]\n")
                     out.write(f"{id(node)} -> {id(child_node)}[style=dashed]\n")
+            #draw right childnode
             if node.right is not None:
                 child_node = node.right
                 if node.right.var is not None:
-                    out.write(f"{id(child_node)}[label={child_node.var}]\n")
+                    out.write(f"{id(child_node)}[label=\"{child_node.var} {str(child_node.assignment)}\"]\n")
                     out.write(f"{id(node)} -> {id(child_node)}\n")
                     self.generate_dot_recursive(node.right, out)
                 elif node.right.value is not None:
@@ -158,8 +160,25 @@ class BDD:
         if node.right is not None:
             self.reset_draw(node.right)
         node.drawn = False
-       
+    
+def breadth_first_bottom_up(self):
+    out = []  
+    queue = deque([self.root]) 
+    visited = set()  
 
+    while queue:
+        node = queue.popleft()
+        if node in visited:  
+            continue
+        visited.add(node)
+        out.append(node)
+
+        if node.left:
+            queue.append(node.left)
+        if node.right:
+            queue.append(node.right)
+    
+    return out.reverse()
 
 #Example:
 e = "(A and B) or C"
