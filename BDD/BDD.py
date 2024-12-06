@@ -1,11 +1,11 @@
 from collections import deque
-
+from typing import Optional
 
 class BDDNode:
-    def __init__(self, var=None, left=None, right=None, parent=None, value=None, assignment=None):
+    def __init__(self, var=None, negative_child=None, positive_child=None, parent=None, value=None, assignment: Optional[list[dict]] = None):
         self.var = var  # The variable for decision (None for terminal nodes)
-        self.left = left
-        self.right = right
+        self.negative_child = negative_child
+        self.positive_child = positive_child
         self.parent = parent
         self.value = value  # Terminal value (True or False for leaf nodes)
         if assignment is None:
@@ -25,15 +25,15 @@ class BDDNode:
             return self.value == other.value
         return (
                 self.var == other.var and
-                self.left == other.left and
-                self.right == other.right
+                self.negative_child == other.negative_child and
+                self.positive_child == other.positive_child
         )
 
     def __hash__(self):
         # Hash für Leaf-Nodes basierend auf ihrem Wert, ansonsten auf (var, left, right)
         if self.isLeaf():
             return hash(self.value)
-        return hash((self.var, self.left, self.right))
+        return hash((self.var, self.negative_child, self.positive_child))
 
 
 def evaluate_expression(expr, assignment):
@@ -63,15 +63,15 @@ class BDD:
         currentNode = BDDNode(var=var)
         currentNode.assignment= [({var: val for var, val in current_assignment.items()})]
         # Create node for false subtree and true subtree
-        current_assignment_left = current_assignment.copy()
-        current_assignment_left[var] = False
-        leftNode = self.build(var_index + 1, current_assignment_left)
-        currentNode.left = leftNode
+        current_assignment_negative = current_assignment.copy()
+        current_assignment_negative[var] = False
+        leftNode = self.build(var_index + 1, current_assignment_negative)
+        currentNode.negative_child = leftNode
 
-        current_assignment_right = current_assignment.copy()
-        current_assignment_right[var] = True
-        rightNode = self.build(var_index + 1, current_assignment_right)
-        currentNode.right = rightNode
+        current_assignment_positive = current_assignment.copy()
+        current_assignment_positive[var] = True
+        positive_child = self.build(var_index + 1, current_assignment_positive)
+        currentNode.positive_child = positive_child
         return currentNode
 
     # # traverses down the diagram to evaluate it
@@ -81,7 +81,7 @@ class BDD:
     #     if variables[node.var] is False:
     #         return self.evaluate(node.left, variables)
     #     else:
-    #         return self.evaluate(node.right, variables)
+    #         return self.evaluate(node.positive_child, variables)
 
     def reduce(self):
         self.merge_leafs(self.root)
@@ -97,76 +97,80 @@ class BDD:
             mem[node].assignment.extend(node.assignment)
             return mem[node]
         
-        node.left = self.remove_duplicate_subtree(node.left, mem)
-        node.right = self.remove_duplicate_subtree(node.right, mem)
+        node.negative_child = self.remove_duplicate_subtree(node.negative_child, mem)
+        node.positive_child = self.remove_duplicate_subtree(node.positive_child, mem)
         mem[node] = node
         return node
 
-    def merge_leafs(self, node):
+    def merge_leafs(self, node: BDDNode) -> Optional[BDDNode]:
         if node.isLeaf():
             return node
         
-        child_node_left = self.merge_leafs(node.left)
-        if child_node_left is not None:
-            leaf = self.leafs[child_node_left.value]
-            leaf.assignment.extend(child_node_left.assignment.copy())
-            node.left = leaf
+        child_node_negative_child = self.merge_leafs(node.negative_child)
+        if child_node_negative_child is not None:
+            leaf = self.leafs[child_node_negative_child.value]
+            leaf.assignment.extend(child_node_negative_child.assignment.copy())
+            node.negative_child = leaf
 
-        child_node_right = self.merge_leafs(node.right)
-        if child_node_right is not None:
-            leaf = self.leafs[child_node_right.value]
-            leaf.assignment.extend(child_node_right.assignment.copy())
-            node.right = leaf
+        child_node_positive_child = self.merge_leafs(node.positive_child)
+        if child_node_positive_child is not None:
+            leaf = self.leafs[child_node_positive_child.value]
+            leaf.assignment.extend(child_node_positive_child.assignment.copy())
+            node.positive_child = leaf
 
         return None
 
-    def remove_equivalent_child_nodes(self, node):
-        if node.left is not None:
-            eq_child_left = self.remove_equivalent_child_nodes(node.left)
-            if eq_child_left is not None:
-                node.left = eq_child_left
-        if node.right is not None:
-            eq_child_right = self.remove_equivalent_child_nodes(node.right)
-            if eq_child_right is not None:
-                node.right = eq_child_right
-        if node.left is not None and node.right is not None and id(node.left) == id(node.right):
-            return node.left
+    #TODO: fix for root
+    def remove_equivalent_child_nodes(self, node: BDDNode) -> Optional[BDDNode]:
+        if node.negative_child is not None:
+            eq_child_negative_child = self.remove_equivalent_child_nodes(node.negative_child)
+            if eq_child_negative_child is not None:
+                node.negative_child = eq_child_negative_child
+
+        if node.positive_child is not None:
+            eq_child_positive_child = self.remove_equivalent_child_nodes(node.positive_child)
+            if eq_child_positive_child is not None:
+                node.positive_child = eq_child_positive_child
+
+        if node.negative_child is not None and node.positive_child is not None and id(node.negative_child) == id(node.positive_child):
+            return node.negative_child
         return None
+    
 
     def generateDot(self, filename="output", node=None):
         node = self.root
         #out = open(f"C:\\Users\\annan\\PycharmProjects\\SaferThanPerception\\BDD\\out\\{filename}.dot", "w")
         out = open(f"BDD\\out\\{filename}.dot", "w")
         out.write(f"digraph{{\nlabel=\"{self.expression}\\n\\n\"\n{id(node)}[label={node.var}]")
-        self.generate_dot_recursive(node, out)
+        self.__generate_dot_recursive(node, out)
         out.write("}")
         print("Dot File generated")
         self.reset_draw(self.root)
 
-    def generate_dot_recursive(self, node, out):
+    def __generate_dot_recursive(self, node, out):
         if not node.drawn:
-            # draw left childnode
-            if node.left is not None:
-                child_node = node.left
-                if node.left.var is not None:
-                    assignments= "\n\n".join(str(d) for d in child_node.assignment)
+            # draw negative_child childnode
+            if node.negative_child is not None:
+                child_node = node.negative_child
+                if node.negative_child.var is not None:
+                    assignments= "\n".join(str(d) for d in child_node.assignment)
                     out.write(f"{id(child_node)}[label=\"{child_node.var} {assignments}\"]\n")
                     out.write(f"{id(node)} -> {id(child_node)}[style=dashed]\n")
-                    self.generate_dot_recursive(child_node, out)
-                elif node.left.value is not None:
-                    assignments= "\n\n".join(str(d) for d in child_node.assignment)
+                    self.__generate_dot_recursive(child_node, out)
+                elif node.negative_child.value is not None:
+                    assignments= "\n".join(str(d) for d in child_node.assignment)
                     out.write(f"{id(child_node)}[label=\"{child_node.value}\n{assignments}\"]\n")
                     out.write(f"{id(node)} -> {id(child_node)}[style=dashed]\n")
             #draw right childnode
-            if node.right is not None:
-                child_node = node.right
-                if node.right.var is not None:
-                    assignments= "\n\n".join(str(d) for d in child_node.assignment)
+            if node.positive_child is not None:
+                child_node = node.positive_child
+                if node.positive_child.var is not None:
+                    assignments= "\n".join(str(d) for d in child_node.assignment)
                     out.write(f"{id(child_node)}[label=\"{child_node.var} {assignments}\"]\n")
                     out.write(f"{id(node)} -> {id(child_node)}\n")
-                    self.generate_dot_recursive(node.right, out)
-                elif node.right.value is not None:
-                    assignments= "\n\n".join(str(d) for d in child_node.assignment)
+                    self.__generate_dot_recursive(node.positive_child, out)
+                elif node.positive_child.value is not None:
+                    assignments= "\n".join(str(d) for d in child_node.assignment)
                     out.write(f"{id(child_node)}[label=\"{child_node.value}\n{assignments}\"]\n")
                     out.write(f"{id(node)} -> {id(child_node)}\n")
             node.drawn = True
@@ -174,31 +178,32 @@ class BDD:
     def reset_draw(self, node):
         if node.isLeaf():
             node.drawn = False
-        if node.left is not None:
-            self.reset_draw(node.left)
-        if node.right is not None:
-            self.reset_draw(node.right)
+        if node.negative_child is not None:
+            self.reset_draw(node.negative_child)
+        if node.positive_child is not None:
+            self.reset_draw(node.positive_child)
         node.drawn = False
 
+    def breadth_first_bottom_up(self):
+        out = []
+        queue = deque([self.root])
+        visited = set()
 
-def breadth_first_bottom_up(self):
-    out = []
-    queue = deque([self.root])
-    visited = set()
+        while queue:
+            node = queue.popleft()
+            if node in visited:
+                continue
+            visited.add(node)
+            out.append(node)
 
-    while queue:
-        node = queue.popleft()
-        if node in visited:
-            continue
-        visited.add(node)
-        out.append(node)
+            if node.negative_child:
+                queue.append(node.negative_child)
+            if node.positive_child:
+                queue.append(node.positive_child)
+        return out.reverse()
+        
 
-        if node.left:
-            queue.append(node.left)
-        if node.right:
-            queue.append(node.right)
-
-    return out.reverse()
+            
 
 
 #Example:

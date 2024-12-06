@@ -1,137 +1,85 @@
 digraph{
 label="((not A or B) and (not B or A)) and ((not C or D) and (not D or C))\n\n"
-2235520286544[label=A]2235520286608[label="B {'A': False}"]
-2235520286544 -> 2235520286608[style=dashed]
-2235520286672[label="C {'A': False, 'B': False}
-
+2508201826192[label=A]2508205254544[label="B {'A': False}"]
+2508201826192 -> 2508205254544[style=dashed]
+2508205254672[label="C {'A': False, 'B': False}
 {'A': True, 'B': True}"]
-2235520286608 -> 2235520286672[style=dashed]
-2235520368720[label="D {'A': False, 'B': False, 'C': False}"]
-2235520286672 -> 2235520368720[style=dashed]
-2235520286416[label="True
+2508205254544 -> 2508205254672[style=dashed]
+2508205254800[label="D {'A': False, 'B': False, 'C': False}"]
+2508205254672 -> 2508205254800[style=dashed]
+2508204741456[label="True
 {'A': False, 'B': False, 'C': False, 'D': False}
-
 {'A': False, 'B': False, 'C': True, 'D': True}
-
 {'A': True, 'B': True, 'C': False, 'D': False}
-
 {'A': True, 'B': True, 'C': True, 'D': True}"]
-2235520368720 -> 2235520286416[style=dashed]
-2235520274768[label="False
+2508205254800 -> 2508204741456[style=dashed]
+2508205254480[label="False
 {'A': False, 'B': False, 'C': False, 'D': True}
-
 {'A': False, 'B': False, 'C': True, 'D': False}
-
 {'A': False, 'B': True, 'C': False, 'D': False}
-
 {'A': False, 'B': True, 'C': False, 'D': True}
-
 {'A': False, 'B': True, 'C': True, 'D': False}
-
 {'A': False, 'B': True, 'C': True, 'D': True}
-
 {'A': True, 'B': False, 'C': False, 'D': False}
-
 {'A': True, 'B': False, 'C': False, 'D': True}
-
 {'A': True, 'B': False, 'C': True, 'D': False}
-
 {'A': True, 'B': False, 'C': True, 'D': True}
-
 {'A': True, 'B': True, 'C': False, 'D': True}
-
 {'A': True, 'B': True, 'C': True, 'D': False}"]
-2235520368720 -> 2235520274768
-2235520370704[label="D {'A': False, 'B': False, 'C': True}"]
-2235520286672 -> 2235520370704
-2235520274768[label="False
+2508205254800 -> 2508205254480
+2508205254864[label="D {'A': False, 'B': False, 'C': True}"]
+2508205254672 -> 2508205254864
+2508205254480[label="False
 {'A': False, 'B': False, 'C': False, 'D': True}
-
 {'A': False, 'B': False, 'C': True, 'D': False}
-
 {'A': False, 'B': True, 'C': False, 'D': False}
-
 {'A': False, 'B': True, 'C': False, 'D': True}
-
 {'A': False, 'B': True, 'C': True, 'D': False}
-
 {'A': False, 'B': True, 'C': True, 'D': True}
-
 {'A': True, 'B': False, 'C': False, 'D': False}
-
 {'A': True, 'B': False, 'C': False, 'D': True}
-
 {'A': True, 'B': False, 'C': True, 'D': False}
-
 {'A': True, 'B': False, 'C': True, 'D': True}
-
 {'A': True, 'B': True, 'C': False, 'D': True}
-
 {'A': True, 'B': True, 'C': True, 'D': False}"]
-2235520370704 -> 2235520274768[style=dashed]
-2235520286416[label="True
+2508205254864 -> 2508205254480[style=dashed]
+2508204741456[label="True
 {'A': False, 'B': False, 'C': False, 'D': False}
-
 {'A': False, 'B': False, 'C': True, 'D': True}
-
 {'A': True, 'B': True, 'C': False, 'D': False}
-
 {'A': True, 'B': True, 'C': True, 'D': True}"]
-2235520370704 -> 2235520286416
-2235520274768[label="False
+2508205254864 -> 2508204741456
+2508205254480[label="False
 {'A': False, 'B': False, 'C': False, 'D': True}
-
 {'A': False, 'B': False, 'C': True, 'D': False}
-
 {'A': False, 'B': True, 'C': False, 'D': False}
-
 {'A': False, 'B': True, 'C': False, 'D': True}
-
 {'A': False, 'B': True, 'C': True, 'D': False}
-
 {'A': False, 'B': True, 'C': True, 'D': True}
-
 {'A': True, 'B': False, 'C': False, 'D': False}
-
 {'A': True, 'B': False, 'C': False, 'D': True}
-
 {'A': True, 'B': False, 'C': True, 'D': False}
-
 {'A': True, 'B': False, 'C': True, 'D': True}
-
 {'A': True, 'B': True, 'C': False, 'D': True}
-
 {'A': True, 'B': True, 'C': True, 'D': False}"]
-2235520286608 -> 2235520274768
-2235520526352[label="B {'A': True}"]
-2235520286544 -> 2235520526352
-2235520274768[label="False
+2508205254544 -> 2508205254480
+2508205255760[label="B {'A': True}"]
+2508201826192 -> 2508205255760
+2508205254480[label="False
 {'A': False, 'B': False, 'C': False, 'D': True}
-
 {'A': False, 'B': False, 'C': True, 'D': False}
-
 {'A': False, 'B': True, 'C': False, 'D': False}
-
 {'A': False, 'B': True, 'C': False, 'D': True}
-
 {'A': False, 'B': True, 'C': True, 'D': False}
-
 {'A': False, 'B': True, 'C': True, 'D': True}
-
 {'A': True, 'B': False, 'C': False, 'D': False}
-
 {'A': True, 'B': False, 'C': False, 'D': True}
-
 {'A': True, 'B': False, 'C': True, 'D': False}
-
 {'A': True, 'B': False, 'C': True, 'D': True}
-
 {'A': True, 'B': True, 'C': False, 'D': True}
-
 {'A': True, 'B': True, 'C': True, 'D': False}"]
-2235520526352 -> 2235520274768[style=dashed]
-2235520286672[label="C {'A': False, 'B': False}
-
+2508205255760 -> 2508205254480[style=dashed]
+2508205254672[label="C {'A': False, 'B': False}
 {'A': True, 'B': True}"]
-2235520526352 -> 2235520286672
+2508205255760 -> 2508205254672
 }
