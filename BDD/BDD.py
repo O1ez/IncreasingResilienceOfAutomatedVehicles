@@ -17,6 +17,9 @@ class BDDNode:
     def isLeaf(self):
         # Check if the node is a terminal node (leaf with True/False)
         return self.value is not None
+    
+    def hasChildren(self):
+        return self.negative_child or self.positive_child
 
     def __eq__(self, other):
         if other is None or not isinstance(other, BDDNode):
@@ -74,6 +77,8 @@ class BDD:
         currentNode.positive_child = positive_child
         return currentNode
 
+    def isOnlyRoot(self):
+        return not self.root.hasChildren
     # # traverses down the diagram to evaluate it
     # def evaluate(self, node, variables):
     #     if node.isLeaf():
@@ -84,10 +89,14 @@ class BDD:
     #         return self.evaluate(node.positive_child, variables)
 
     def reduce(self):
+        if not self.root.hasChildren:
+            print("BDD only has root.")
+            return False
         self.merge_leafs(self.root)
         self.remove_duplicate_subtree(self.root, mem={})
         self.remove_equivalent_child_nodes(self.root)
         print("Reduction done.")
+        return True
 
     def remove_duplicate_subtree(self, node, mem):
         if node.isLeaf():
@@ -184,7 +193,7 @@ class BDD:
             self.reset_draw(node.positive_child)
         node.drawn = False
 
-    def breadth_first_bottom_up(self):
+    def breadth_first_bottom_up(self) -> list[BDDNode]:
         out = []
         queue = deque([self.root])
         visited = set()

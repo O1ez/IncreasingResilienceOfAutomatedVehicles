@@ -2,25 +2,15 @@ from sklearn.metrics import confusion_matrix
 from BDD.BDD import BDD, BDDNode
 from typing import Optional
 class Model:    
-    def __init__(self, acceptable_threshhold : float, observations= None, uo: Optional[BDD]=None, f : Optional[BDD] = None, ground_truth=None, vars=None):
-        self.observations = observations
-        self.ground_truth = ground_truth
+    def __init__(self, acceptable_threshhold : float,  unobservable_BDD: BDD, f_BDD: BDD, variables):
         self.acceptable_threshold = acceptable_threshhold
-        self.uo = uo
-        self.f = f
+        self.uo = unobservable_BDD
+        self.f = f_BDD
         self.vars = vars
-        self.bbd_observations = BDD(observations, vars)
-        self.bdd_ground_truth = BDD(ground_truth, vars)
 
+    #TODO: this
     def calc_tp_fp(self):
-        eval_ground_truth = self.change_log_val_to_num_val(self.bdd_ground_truth.evaluation.values())
-        eval_observations = self.change_log_val_to_num_val(self.bbd_observations.evaluation.values())
-        abs_tn, abs_fp, abs_fn, abs_tp = confusion_matrix(eval_ground_truth, eval_observations).ravel()
-        #tp= tp Cases / (all positive cases) fp= fp cases / (all neg cases)
-        return abs_tp/(abs_tp+abs_fn), abs_fp/(abs_tn+abs_fp) 
-    
-    def change_log_val_to_num_val(self, values):
-        return [1 if v else 0 for v in values]
+        return None
     
     def check_acceptable(self, fp: float):
         return fp < self.acceptable_threshold
@@ -55,7 +45,7 @@ class Model:
         tp, fp = self.calc_tp_fp()
         #2
         child_uo = self.find_node_in_uo()
-        while ()
+        while (not self.uo.isOnlyRoot()):
             #a
             children_f = self.find_node_in_f(child_uo)
             #b
