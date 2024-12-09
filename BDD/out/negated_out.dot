@@ -7,13 +7,13 @@ label="((not A or B) and (not B or A)) and ((not C or D) and (not D or C))\n\n"
 2006247420816 -> 2006247421072[style=dashed]
 2006247421328[label="D {'A': False, 'B': False, 'C': False}"]
 2006247421072 -> 2006247421328[style=dashed]
-2006247420496[label="True
+2006247420496[label="False
 {'A': False, 'B': False, 'C': False, 'D': False}
 {'A': False, 'B': False, 'C': True, 'D': True}
 {'A': True, 'B': True, 'C': False, 'D': False}
 {'A': True, 'B': True, 'C': True, 'D': True}"]
 2006247421328 -> 2006247420496[style=dashed]
-2006247420432[label="False
+2006247420432[label="True
 {'A': False, 'B': False, 'C': False, 'D': True}
 {'A': False, 'B': False, 'C': True, 'D': False}
 {'A': False, 'B': True, 'C': False, 'D': False}
@@ -29,7 +29,7 @@ label="((not A or B) and (not B or A)) and ((not C or D) and (not D or C))\n\n"
 2006247421328 -> 2006247420432
 2006247422800[label="D {'A': False, 'B': False, 'C': True}"]
 2006247421072 -> 2006247422800
-2006247420432[label="False
+2006247420432[label="True
 {'A': False, 'B': False, 'C': False, 'D': True}
 {'A': False, 'B': False, 'C': True, 'D': False}
 {'A': False, 'B': True, 'C': False, 'D': False}
@@ -43,13 +43,13 @@ label="((not A or B) and (not B or A)) and ((not C or D) and (not D or C))\n\n"
 {'A': True, 'B': True, 'C': False, 'D': True}
 {'A': True, 'B': True, 'C': True, 'D': False}"]
 2006247422800 -> 2006247420432[style=dashed]
-2006247420496[label="True
+2006247420496[label="False
 {'A': False, 'B': False, 'C': False, 'D': False}
 {'A': False, 'B': False, 'C': True, 'D': True}
 {'A': True, 'B': True, 'C': False, 'D': False}
 {'A': True, 'B': True, 'C': True, 'D': True}"]
 2006247422800 -> 2006247420496
-2006247420432[label="False
+2006247420432[label="True
 {'A': False, 'B': False, 'C': False, 'D': True}
 {'A': False, 'B': False, 'C': True, 'D': False}
 {'A': False, 'B': True, 'C': False, 'D': False}
@@ -65,7 +65,7 @@ label="((not A or B) and (not B or A)) and ((not C or D) and (not D or C))\n\n"
 2006247420816 -> 2006247420432
 2006247458768[label="B {'A': True}"]
 2006247420624 -> 2006247458768
-2006247420432[label="False
+2006247420432[label="True
 {'A': False, 'B': False, 'C': False, 'D': True}
 {'A': False, 'B': False, 'C': True, 'D': False}
 {'A': False, 'B': True, 'C': False, 'D': False}

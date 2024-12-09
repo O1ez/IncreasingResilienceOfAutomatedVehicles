@@ -1,5 +1,6 @@
 from collections import deque
 from typing import Optional
+from typing import Self
 
 class BDDNode:
     def __init__(self, var=None, negative_child=None, positive_child=None, parent=None, value=None, assignment: Optional[list[dict]] = None):
@@ -79,6 +80,8 @@ class BDD:
 
     def isOnlyRoot(self):
         return not self.root.hasChildren
+    
+    #TODO: needed?
     # # traverses down the diagram to evaluate it
     # def evaluate(self, node, variables):
     #     if node.isLeaf():
@@ -129,7 +132,6 @@ class BDD:
 
         return None
 
-    #TODO: fix for root
     def remove_equivalent_child_nodes(self, node: BDDNode) -> Optional[BDDNode]:
         if node.negative_child is not None:
             eq_child_negative_child = self.remove_equivalent_child_nodes(node.negative_child)
@@ -145,8 +147,44 @@ class BDD:
             return node.negative_child
         return None
     
+    def negate(self) -> bool:
+        if not self.root.hasChildren():
+            return False
+        #negate solutions
+        self.leafs[False].value = True
+        self.leafs[True].value = False
+        #switch leafs in dictionary
+        new_leafs = {False: self.leafs[True], True: self.leafs[False]}
+        self.leafs = new_leafs
+        return True
+    
+    @staticmethod
+    def __apply(BDD1: Self, BDD2: Self) -> Self:
+        if BDD1.root.isLeaf() and BDD2.root.isLeaf():
+            return BDD1.root.value and BDD2.root.value
+        elif BDD1.root.value() 
+        return None 
 
-    def generateDot(self, filename="output", node=None):
+    def breadth_first_bottom_up_search(self) -> list[BDDNode]:
+        out = []
+        queue = deque([self.root])
+        visited = set()
+
+        while queue:
+            node = queue.popleft()
+            if node in visited:
+                continue
+            visited.add(node)
+            out.append(node)
+
+            if node.negative_child:
+                queue.append(node.negative_child)
+            if node.positive_child:
+                queue.append(node.positive_child)
+        return out.reverse()
+
+    # Visualation
+    def generateDot(self, filename="output"):
         node = self.root
         #out = open(f"C:\\Users\\annan\\PycharmProjects\\SaferThanPerception\\BDD\\out\\{filename}.dot", "w")
         out = open(f"BDD\\out\\{filename}.dot", "w")
@@ -193,25 +231,6 @@ class BDD:
             self.reset_draw(node.positive_child)
         node.drawn = False
 
-    def breadth_first_bottom_up(self) -> list[BDDNode]:
-        out = []
-        queue = deque([self.root])
-        visited = set()
-
-        while queue:
-            node = queue.popleft()
-            if node in visited:
-                continue
-            visited.add(node)
-            out.append(node)
-
-            if node.negative_child:
-                queue.append(node.negative_child)
-            if node.positive_child:
-                queue.append(node.positive_child)
-        return out.reverse()
-        
-
             
 
 
@@ -222,8 +241,10 @@ v = ['A', 'B', 'C', 'D']
 bdd = BDD(e, v)
 
 print("Binary Decision Diagram (BDD):")
-bdd.generateDot(node=bdd.root, filename="out")
+bdd.generateDot( filename="out")
 bdd.reduce()
-bdd.generateDot(node=bdd.root, filename="reduced_out")
+bdd.generateDot(filename="reduced_out")
+bdd.negate()
+bdd.generateDot(filename="negated_out")
 for k, v in bdd.evaluation.items():
     print(f"{k}: {v}")
