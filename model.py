@@ -8,7 +8,7 @@ class Model:
         self.f = f_BDD
         self.vars = vars
 
-    #TODO: this
+    #TODO: implement this
     def calc_tp_fp(self):
         return None
     
@@ -39,7 +39,7 @@ class Model:
             found_nodes.append(current_node)
         return found_nodes
     
-    
+    #TODO: rename this
     def algorithm(self):
         #1
         tp, fp = self.calc_tp_fp()
@@ -60,6 +60,8 @@ class Model:
         tp_new, fp_new = self.calc_tp_fp()
         #4
         is_acceptable = self.check_acceptable()
+
+        #TODO: implement last part of doc
 
 
 

@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 from collections import deque
-from typing import Optional
-from typing import Self
+from typing import Optional, Any, Type
+
 
 class BDDNode:
-    def __init__(self, var=None, negative_child=None, positive_child=None, parent=None, value=None, assignment: Optional[list[dict]] = None):
+    def __init__(self, var=None, negative_child=None, positive_child=None, parent=None, value=None,
+                 assignment: Optional[list[dict]] = None):
         self.var = var  # The variable for decision (None for terminal nodes)
         self.negative_child = negative_child
         self.positive_child = positive_child
@@ -18,7 +21,7 @@ class BDDNode:
     def isLeaf(self):
         # Check if the node is a terminal node (leaf with True/False)
         return self.value is not None
-    
+
     def hasChildren(self):
         return self.negative_child or self.positive_child
 
@@ -45,14 +48,18 @@ def evaluate_expression(expr, assignment):
 
 
 class BDD:
-    def __init__(self, expression, variables):
+    def __init__(self, expression, variables: list[str]):
         self.variables = variables  # List of variables
         self.expression = expression
         self.evaluation = {}  #dict of all evaluations
         self.leafs = {False: BDDNode(value=False), True: BDDNode(value=True)}
-        self.root = self.build(0)  # Build the BDD starting from the first variable index
+        self.root = None
 
-    def build(self, var_index, current_assignment={}):
+    def build_new(self):
+        empty_dict = {}
+        self.root = self.build(0, empty_dict)
+
+    def build(self, var_index, current_assignment: dict):
         # end of recursion if node is a leaf
         if var_index == len(self.variables):
             current_assignment = {var: val for var, val in current_assignment.items()}  # copies current_assignment
@@ -65,7 +72,7 @@ class BDD:
         #initiate node
         var = self.variables[var_index]
         currentNode = BDDNode(var=var)
-        currentNode.assignment= [({var: val for var, val in current_assignment.items()})]
+        currentNode.assignment = [({var: val for var, val in current_assignment.items()})]
         # Create node for false subtree and true subtree
         current_assignment_negative = current_assignment.copy()
         current_assignment_negative[var] = False
@@ -80,7 +87,7 @@ class BDD:
 
     def isOnlyRoot(self):
         return not self.root.hasChildren
-    
+
     #TODO: needed?
     # # traverses down the diagram to evaluate it
     # def evaluate(self, node, variables):
@@ -104,11 +111,11 @@ class BDD:
     def remove_duplicate_subtree(self, node, mem):
         if node.isLeaf():
             return node
-        
+
         if node in mem:
             mem[node].assignment.extend(node.assignment)
             return mem[node]
-        
+
         node.negative_child = self.remove_duplicate_subtree(node.negative_child, mem)
         node.positive_child = self.remove_duplicate_subtree(node.positive_child, mem)
         mem[node] = node
@@ -117,7 +124,7 @@ class BDD:
     def merge_leafs(self, node: BDDNode) -> Optional[BDDNode]:
         if node.isLeaf():
             return node
-        
+
         child_node_negative_child = self.merge_leafs(node.negative_child)
         if child_node_negative_child is not None:
             leaf = self.leafs[child_node_negative_child.value]
@@ -143,10 +150,11 @@ class BDD:
             if eq_child_positive_child is not None:
                 node.positive_child = eq_child_positive_child
 
-        if node.negative_child is not None and node.positive_child is not None and id(node.negative_child) == id(node.positive_child):
+        if node.negative_child is not None and node.positive_child is not None and id(node.negative_child) == id(
+                node.positive_child):
             return node.negative_child
         return None
-    
+
     def negate(self) -> bool:
         if not self.root.hasChildren():
             return False
@@ -157,13 +165,52 @@ class BDD:
         new_leafs = {False: self.leafs[True], True: self.leafs[False]}
         self.leafs = new_leafs
         return True
-    
+
+    #TODO: test this
     @staticmethod
-    def __apply(BDD1: Self, BDD2: Self) -> Self:
-        if BDD1.root.isLeaf() and BDD2.root.isLeaf():
-            return BDD1.root.value and BDD2.root.value
-        elif BDD1.root.value() 
-        return None 
+    def unite(BDD1: BDD, BDD2: BDD, variable_order: list) -> BDD:
+        for var in BDD1.variables:
+            if var not in variable_order:
+                raise Exception("Variable " + var + " from BDD1 not found in variables.")
+
+        for var in BDD2.variables:
+            if var not in variable_order:
+                raise Exception("Variable " + var + " from BDD2 not found in variables.")
+
+        united = BDD(expression=str(BDD1.expression) + "and" + str(BDD2.expression), variables=variable_order)
+        united.root = BDD.__apply(BDD1.root, BDD2.root, variable_order)
+
+        return united
+
+
+    @staticmethod
+    def __apply(BDD1: BDDNode, BDD2: BDDNode, variable_order: list[str]) -> Type[BDDNode]:
+        solution = BDDNode
+        if BDD1.var not in variable_order or (BDD2.var not in variable_order):
+            raise Exception("BDD variables not in variable_order")
+        if BDD1.isLeaf() and BDD2.isLeaf():
+            solution = BDD1.value and BDD2.value
+            return solution
+        elif BDD1.var() == BDD2.var():
+            solution = BDDNode
+            solution.negative_child = BDD.__apply(BDD1.negative_child, BDD2.negative_child)
+            solution.positive_child = BDD.__apply(BDD1.positive_child, BDD2.positive_child)
+            return solution
+        else:
+            gen = (var for var in variable_order if var == BDD1.var() or var == BDD2.var())
+            higher_variable = next(gen)
+
+            if BDD1.var == higher_variable:
+                higher_BDD = BDD1
+                lower_BDD = BDD2
+            else:
+                higher_BDD = BDD2
+                lower_BDD = BDD1
+
+            solution = BDDNode
+            solution.negative_child = BDD.__apply(higher_BDD.negative_child, lower_BDD, variable_order)
+            solution.positive_child = BDD.__apply(higher_BDD.positive_child, lower_BDD, variable_order)
+            return solution
 
     def breadth_first_bottom_up_search(self) -> list[BDDNode]:
         out = []
@@ -200,24 +247,24 @@ class BDD:
             if node.negative_child is not None:
                 child_node = node.negative_child
                 if node.negative_child.var is not None:
-                    assignments= "\n".join(str(d) for d in child_node.assignment)
+                    assignments = "\n".join(str(d) for d in child_node.assignment)
                     out.write(f"{id(child_node)}[label=\"{child_node.var} {assignments}\"]\n")
                     out.write(f"{id(node)} -> {id(child_node)}[style=dashed]\n")
                     self.__generate_dot_recursive(child_node, out)
                 elif node.negative_child.value is not None:
-                    assignments= "\n".join(str(d) for d in child_node.assignment)
+                    assignments = "\n".join(str(d) for d in child_node.assignment)
                     out.write(f"{id(child_node)}[label=\"{child_node.value}\n{assignments}\"]\n")
                     out.write(f"{id(node)} -> {id(child_node)}[style=dashed]\n")
             #draw right childnode
             if node.positive_child is not None:
                 child_node = node.positive_child
                 if node.positive_child.var is not None:
-                    assignments= "\n".join(str(d) for d in child_node.assignment)
+                    assignments = "\n".join(str(d) for d in child_node.assignment)
                     out.write(f"{id(child_node)}[label=\"{child_node.var} {assignments}\"]\n")
                     out.write(f"{id(node)} -> {id(child_node)}\n")
                     self.__generate_dot_recursive(node.positive_child, out)
                 elif node.positive_child.value is not None:
-                    assignments= "\n".join(str(d) for d in child_node.assignment)
+                    assignments = "\n".join(str(d) for d in child_node.assignment)
                     out.write(f"{id(child_node)}[label=\"{child_node.value}\n{assignments}\"]\n")
                     out.write(f"{id(node)} -> {id(child_node)}\n")
             node.drawn = True
@@ -231,8 +278,6 @@ class BDD:
             self.reset_draw(node.positive_child)
         node.drawn = False
 
-            
-
 
 #Example:
 e = "(A and B) or C"
@@ -241,7 +286,7 @@ v = ['A', 'B', 'C', 'D']
 bdd = BDD(e, v)
 
 print("Binary Decision Diagram (BDD):")
-bdd.generateDot( filename="out")
+bdd.generateDot(filename="out")
 bdd.reduce()
 bdd.generateDot(filename="reduced_out")
 bdd.negate()
