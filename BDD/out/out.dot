@@ -1,79 +1,79 @@
 digraph{
 label="((not A or B) and (not B or A)) and ((not C or D) and (not D or C))\n\n"
-2006247420624[label=A]2006247420816[label="B {'A': False}"]
-2006247420624 -> 2006247420816[style=dashed]
-2006247421072[label="C {'A': False, 'B': False}"]
-2006247420816 -> 2006247421072[style=dashed]
-2006247421328[label="D {'A': False, 'B': False, 'C': False}"]
-2006247421072 -> 2006247421328[style=dashed]
-2006247422480[label="True
+2775618401488[label=A]2775618814944[label="B {'A': False}"]
+2775618401488 -> 2775618814944[style=dashed]
+2775618816768[label="C {'A': False, 'B': False}"]
+2775618814944 -> 2775618816768[style=dashed]
+2775618448720[label="D {'A': False, 'B': False, 'C': False}"]
+2775618816768 -> 2775618448720[style=dashed]
+2775618354944[label="True
 {'A': False, 'B': False, 'C': False, 'D': False}"]
-2006247421328 -> 2006247422480[style=dashed]
-2006247422736[label="False
+2775618448720 -> 2775618354944[style=dashed]
+2775618995888[label="False
 {'A': False, 'B': False, 'C': False, 'D': True}"]
-2006247421328 -> 2006247422736
-2006247422800[label="D {'A': False, 'B': False, 'C': True}"]
-2006247421072 -> 2006247422800
-2006247423120[label="False
+2775618448720 -> 2775618995888
+2775618811216[label="D {'A': False, 'B': False, 'C': True}"]
+2775618816768 -> 2775618811216
+2775618811472[label="False
 {'A': False, 'B': False, 'C': True, 'D': False}"]
-2006247422800 -> 2006247423120[style=dashed]
-2006247423376[label="True
+2775618811216 -> 2775618811472[style=dashed]
+2775618279120[label="True
 {'A': False, 'B': False, 'C': True, 'D': True}"]
-2006247422800 -> 2006247423376
-2006247423504[label="C {'A': False, 'B': True}"]
-2006247420816 -> 2006247423504
-2006247423568[label="D {'A': False, 'B': True, 'C': False}"]
-2006247423504 -> 2006247423568[style=dashed]
-2006247457040[label="False
+2775618811216 -> 2775618279120
+2775618282960[label="C {'A': False, 'B': True}"]
+2775618814944 -> 2775618282960
+2775622173200[label="D {'A': False, 'B': True, 'C': False}"]
+2775618282960 -> 2775622173200[style=dashed]
+2775622175440[label="False
 {'A': False, 'B': True, 'C': False, 'D': False}"]
-2006247423568 -> 2006247457040[style=dashed]
-2006247457552[label="False
+2775622173200 -> 2775622175440[style=dashed]
+2775622284160[label="False
 {'A': False, 'B': True, 'C': False, 'D': True}"]
-2006247423568 -> 2006247457552
-2006247457616[label="D {'A': False, 'B': True, 'C': True}"]
-2006247423504 -> 2006247457616
-2006247458192[label="False
+2775622173200 -> 2775622284160
+2775615829776[label="D {'A': False, 'B': True, 'C': True}"]
+2775618282960 -> 2775615829776
+2775615830160[label="False
 {'A': False, 'B': True, 'C': True, 'D': False}"]
-2006247457616 -> 2006247458192[style=dashed]
-2006247458640[label="False
+2775615829776 -> 2775615830160[style=dashed]
+2775622225600[label="False
 {'A': False, 'B': True, 'C': True, 'D': True}"]
-2006247457616 -> 2006247458640
-2006247458768[label="B {'A': True}"]
-2006247420624 -> 2006247458768
-2006247458832[label="C {'A': True, 'B': False}"]
-2006247458768 -> 2006247458832[style=dashed]
-2006247458896[label="D {'A': True, 'B': False, 'C': False}"]
-2006247458832 -> 2006247458896[style=dashed]
-2006247459792[label="False
+2775615829776 -> 2775622225600
+2775622225776[label="B {'A': True}"]
+2775618401488 -> 2775622225776
+2775622534000[label="C {'A': True, 'B': False}"]
+2775622225776 -> 2775622534000[style=dashed]
+2775622534160[label="D {'A': True, 'B': False, 'C': False}"]
+2775622534000 -> 2775622534160[style=dashed]
+2775615908624[label="False
 {'A': True, 'B': False, 'C': False, 'D': False}"]
-2006247458896 -> 2006247459792[style=dashed]
-2006247460112[label="False
+2775622534160 -> 2775615908624[style=dashed]
+2775622459344[label="False
 {'A': True, 'B': False, 'C': False, 'D': True}"]
-2006247458896 -> 2006247460112
-2006247460432[label="D {'A': True, 'B': False, 'C': True}"]
-2006247458832 -> 2006247460432
-2006247460944[label="False
+2775622534160 -> 2775622459344
+2775622459472[label="D {'A': True, 'B': False, 'C': True}"]
+2775622534000 -> 2775622459472
+2775622459856[label="False
 {'A': True, 'B': False, 'C': True, 'D': False}"]
-2006247460432 -> 2006247460944[style=dashed]
-2006247461200[label="False
+2775622459472 -> 2775622459856[style=dashed]
+2775622459984[label="False
 {'A': True, 'B': False, 'C': True, 'D': True}"]
-2006247460432 -> 2006247461200
-2006247461328[label="C {'A': True, 'B': True}"]
-2006247458768 -> 2006247461328
-2006247461392[label="D {'A': True, 'B': True, 'C': False}"]
-2006247461328 -> 2006247461392[style=dashed]
-2006247462032[label="True
+2775622459472 -> 2775622459984
+2775622460368[label="C {'A': True, 'B': True}"]
+2775622225776 -> 2775622460368
+2775622460624[label="D {'A': True, 'B': True, 'C': False}"]
+2775622460368 -> 2775622460624[style=dashed]
+2775622461008[label="True
 {'A': True, 'B': True, 'C': False, 'D': False}"]
-2006247461392 -> 2006247462032[style=dashed]
-2006247462544[label="False
+2775622460624 -> 2775622461008[style=dashed]
+2775622461264[label="False
 {'A': True, 'B': True, 'C': False, 'D': True}"]
-2006247461392 -> 2006247462544
-2006247462608[label="D {'A': True, 'B': True, 'C': True}"]
-2006247461328 -> 2006247462608
-2006247463184[label="False
+2775622460624 -> 2775622461264
+2775622461392[label="D {'A': True, 'B': True, 'C': True}"]
+2775622460368 -> 2775622461392
+2775622461776[label="False
 {'A': True, 'B': True, 'C': True, 'D': False}"]
-2006247462608 -> 2006247463184[style=dashed]
-2006247463632[label="True
+2775622461392 -> 2775622461776[style=dashed]
+2775622461904[label="True
 {'A': True, 'B': True, 'C': True, 'D': True}"]
-2006247462608 -> 2006247463632
+2775622461392 -> 2775622461904
 }

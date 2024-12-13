@@ -5,8 +5,7 @@ from typing import Optional, Any, Type
 
 
 class BDDNode:
-    def __init__(self, var=None, negative_child=None, positive_child=None, parent=None, value=None,
-                 assignment: Optional[list[dict]] = None):
+    def __init__(self, var=None, negative_child=None, positive_child=None, parent=None, value=None, assignment: Optional[list[dict]] = None):
         self.var = var  # The variable for decision (None for terminal nodes)
         self.negative_child = negative_child
         self.positive_child = positive_child
@@ -54,6 +53,7 @@ class BDD:
         self.evaluation = {}  #dict of all evaluations
         self.leafs = {False: BDDNode(value=False), True: BDDNode(value=True)}
         self.root = None
+        self.build_new()
 
     def build_new(self):
         empty_dict = {}
