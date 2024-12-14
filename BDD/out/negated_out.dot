@@ -1,19 +1,19 @@
 digraph{
 label="((not A or B) and (not B or A)) and ((not C or D) and (not D or C))\n\n"
-2775618401488[label=A]2775618814944[label="B {'A': False}"]
-2775618401488 -> 2775618814944[style=dashed]
-2775618816768[label="C {'A': False, 'B': False}
+2679122998480[label=A]2679123411936[label="B {'A': False}"]
+2679122998480 -> 2679123411936[style=dashed]
+2679123413760[label="C {'A': False, 'B': False}
 {'A': True, 'B': True}"]
-2775618814944 -> 2775618816768[style=dashed]
-2775618448720[label="D {'A': False, 'B': False, 'C': False}"]
-2775618816768 -> 2775618448720[style=dashed]
-2775618397648[label="False
+2679123411936 -> 2679123413760[style=dashed]
+2679123045712[label="D {'A': False, 'B': False, 'C': False}"]
+2679123413760 -> 2679123045712[style=dashed]
+2679122994640[label="False
 {'A': False, 'B': False, 'C': False, 'D': False}
 {'A': False, 'B': False, 'C': True, 'D': True}
 {'A': True, 'B': True, 'C': False, 'D': False}
 {'A': True, 'B': True, 'C': True, 'D': True}"]
-2775618448720 -> 2775618397648[style=dashed]
-2775618787312[label="True
+2679123045712 -> 2679122994640[style=dashed]
+2679123383968[label="True
 {'A': False, 'B': False, 'C': False, 'D': True}
 {'A': False, 'B': False, 'C': True, 'D': False}
 {'A': False, 'B': True, 'C': False, 'D': False}
@@ -26,10 +26,10 @@ label="((not A or B) and (not B or A)) and ((not C or D) and (not D or C))\n\n"
 {'A': True, 'B': False, 'C': True, 'D': True}
 {'A': True, 'B': True, 'C': False, 'D': True}
 {'A': True, 'B': True, 'C': True, 'D': False}"]
-2775618448720 -> 2775618787312
-2775618811216[label="D {'A': False, 'B': False, 'C': True}"]
-2775618816768 -> 2775618811216
-2775618787312[label="True
+2679123045712 -> 2679123383968
+2679123408208[label="D {'A': False, 'B': False, 'C': True}"]
+2679123413760 -> 2679123408208
+2679123383968[label="True
 {'A': False, 'B': False, 'C': False, 'D': True}
 {'A': False, 'B': False, 'C': True, 'D': False}
 {'A': False, 'B': True, 'C': False, 'D': False}
@@ -42,14 +42,14 @@ label="((not A or B) and (not B or A)) and ((not C or D) and (not D or C))\n\n"
 {'A': True, 'B': False, 'C': True, 'D': True}
 {'A': True, 'B': True, 'C': False, 'D': True}
 {'A': True, 'B': True, 'C': True, 'D': False}"]
-2775618811216 -> 2775618787312[style=dashed]
-2775618397648[label="False
+2679123408208 -> 2679123383968[style=dashed]
+2679122994640[label="False
 {'A': False, 'B': False, 'C': False, 'D': False}
 {'A': False, 'B': False, 'C': True, 'D': True}
 {'A': True, 'B': True, 'C': False, 'D': False}
 {'A': True, 'B': True, 'C': True, 'D': True}"]
-2775618811216 -> 2775618397648
-2775618787312[label="True
+2679123408208 -> 2679122994640
+2679123383968[label="True
 {'A': False, 'B': False, 'C': False, 'D': True}
 {'A': False, 'B': False, 'C': True, 'D': False}
 {'A': False, 'B': True, 'C': False, 'D': False}
@@ -62,10 +62,10 @@ label="((not A or B) and (not B or A)) and ((not C or D) and (not D or C))\n\n"
 {'A': True, 'B': False, 'C': True, 'D': True}
 {'A': True, 'B': True, 'C': False, 'D': True}
 {'A': True, 'B': True, 'C': True, 'D': False}"]
-2775618814944 -> 2775618787312
-2775622225776[label="B {'A': True}"]
-2775618401488 -> 2775622225776
-2775618787312[label="True
+2679123411936 -> 2679123383968
+2679126855536[label="B {'A': True}"]
+2679122998480 -> 2679126855536
+2679123383968[label="True
 {'A': False, 'B': False, 'C': False, 'D': True}
 {'A': False, 'B': False, 'C': True, 'D': False}
 {'A': False, 'B': True, 'C': False, 'D': False}
@@ -78,8 +78,8 @@ label="((not A or B) and (not B or A)) and ((not C or D) and (not D or C))\n\n"
 {'A': True, 'B': False, 'C': True, 'D': True}
 {'A': True, 'B': True, 'C': False, 'D': True}
 {'A': True, 'B': True, 'C': True, 'D': False}"]
-2775622225776 -> 2775618787312[style=dashed]
-2775618816768[label="C {'A': False, 'B': False}
+2679126855536 -> 2679123383968[style=dashed]
+2679123413760[label="C {'A': False, 'B': False}
 {'A': True, 'B': True}"]
-2775622225776 -> 2775618816768
+2679126855536 -> 2679123413760
 }

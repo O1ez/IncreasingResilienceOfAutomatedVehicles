@@ -47,13 +47,14 @@ def evaluate_expression(expr, assignment):
 
 
 class BDD:
-    def __init__(self, expression, variables: list[str]):
+    def __init__(self, expression, variables: list[str], build_new = True):
         self.variables = variables  # List of variables
         self.expression = expression
         self.evaluation = {}  #dict of all evaluations
         self.leafs = {False: BDDNode(value=False), True: BDDNode(value=True)}
         self.root = None
-        self.build_new()
+        if build_new:
+            self.build_new()
 
     def build_new(self):
         empty_dict = {}
@@ -166,7 +167,7 @@ class BDD:
         self.leafs = new_leafs
         return True
 
-    #TODO: test this
+    
     @staticmethod
     def unite(BDD1: BDD, BDD2: BDD, variable_order: list) -> BDD:
         for var in BDD1.variables:
@@ -177,41 +178,42 @@ class BDD:
             if var not in variable_order:
                 raise Exception("Variable " + var + " from BDD2 not found in variables.")
 
-        united = BDD(expression=str(BDD1.expression) + "and" + str(BDD2.expression), variables=variable_order)
+        united = BDD(expression="("+ BDD1.expression + ")and(" + BDD2.expression +")", variables=variable_order, build_new= False)
         united.root = BDD.__apply(BDD1.root, BDD2.root, variable_order)
-
         return united
 
 
     @staticmethod
-    def __apply(BDD1: BDDNode, BDD2: BDDNode, variable_order: list[str]) -> Type[BDDNode]:
+    def __apply(Node1: BDDNode, Node2: BDDNode, variable_order: list[str]) -> Type[BDDNode]:
         solution = BDDNode
-        if BDD1.var not in variable_order or (BDD2.var not in variable_order):
-            raise Exception("BDD variables not in variable_order")
-        if BDD1.isLeaf() and BDD2.isLeaf():
-            solution = BDD1.value and BDD2.value
+        if Node1.isLeaf() and Node2.isLeaf():
+            solution =BDDNode(value = Node1.value and Node2.value)
             return solution
-        elif BDD1.var() == BDD2.var():
-            solution = BDDNode
-            solution.negative_child = BDD.__apply(BDD1.negative_child, BDD2.negative_child)
-            solution.positive_child = BDD.__apply(BDD1.positive_child, BDD2.positive_child)
+        elif (Node1.var not in variable_order) or (Node2.var not in variable_order):
+            print(Node1.var + Node2.var + variable_order)
+            raise Exception("BDD variables not in variable_order")
+        elif Node1.var== Node2.var:
+            solution = BDDNode(var = Node1.var)
+            solution.negative_child = BDD.__apply(Node1.negative_child, Node2.negative_child,  variable_order)
+            solution.positive_child = BDD.__apply(Node1.positive_child, Node2.positive_child, variable_order)
             return solution
         else:
-            gen = (var for var in variable_order if var == BDD1.var() or var == BDD2.var())
+            gen = (var for var in variable_order if var == Node1.var() or var == Node2.var())
             higher_variable = next(gen)
 
-            if BDD1.var == higher_variable:
-                higher_BDD = BDD1
-                lower_BDD = BDD2
+            if Node1.var == higher_variable:
+                higher_BDD = Node1
+                lower_BDD = Node2
             else:
-                higher_BDD = BDD2
-                lower_BDD = BDD1
+                higher_BDD = Node2
+                lower_BDD = Node1
 
             solution = BDDNode
             solution.negative_child = BDD.__apply(higher_BDD.negative_child, lower_BDD, variable_order)
             solution.positive_child = BDD.__apply(higher_BDD.positive_child, lower_BDD, variable_order)
             return solution
 
+    # returns list of all nodes in breadth first bottom up order
     def breadth_first_bottom_up_search(self) -> list[BDDNode]:
         out = []
         queue = deque([self.root])
@@ -293,3 +295,13 @@ bdd.negate()
 bdd.generateDot(filename="negated_out")
 for k, v in bdd.evaluation.items():
     print(f"{k}: {v}")
+    
+e1 = "A or B"
+e2 = "B or C"
+v = ['A', 'B', 'C']
+bdd1 = BDD(e1, v)
+bdd2 = BDD(e2, v)
+
+bdd1_and_bdd2 = BDD.unite(bdd1, bdd2, ["A", "B", "C"])
+bdd1_and_bdd2.generateDot(filename = "united_out")
+
