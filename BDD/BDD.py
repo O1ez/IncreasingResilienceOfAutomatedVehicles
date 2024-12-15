@@ -23,7 +23,12 @@ class BDDNode:
 
     def hasChildren(self):
         return self.negative_child or self.positive_child
-
+    
+    def reduce(self, overarching_tree: BDD):
+        temp_bdd = BDD(overarching_tree.expression, overarching_tree.variables, False)
+        temp_bdd.root = self
+        temp_bdd.reduce()
+        
     def __eq__(self, other):
         if other is None or not isinstance(other, BDDNode):
             return False
@@ -187,24 +192,24 @@ class BDD:
 
         united = BDD(expression="("+ BDD1.expression + ")and(" + BDD2.expression +")", variables=variable_order, build_new= False)
         united.root = BDD.__apply(BDD1.root, BDD2.root, variable_order, united)
-        united.reduce()
+        #united.reduce()
         return united
 
 
     @staticmethod
-    def __apply(Node1: BDDNode, Node2: BDDNode, variable_order: list[str], unitedBDD: BDD) -> Type[BDDNode]:
+    def __apply(Node1: BDDNode, Node2: BDDNode, variable_order: list[str], united_bdd : BDD) -> Type[BDDNode]:
         solution = BDDNode
         if Node1.isLeaf() and Node2.isLeaf():
-            solution =BDDNode(value = Node1.value and Node2.value)
+            solution = BDDNode(value = Node1.value and Node2.value)
             return solution
         elif (Node1.var not in variable_order) or (Node2.var not in variable_order):
             print(Node1.var + Node2.var + variable_order)
             raise Exception("BDD variables not in variable_order")
-        elif Node1.var== Node2.var:
+        elif Node1.var == Node2.var:
             solution = BDDNode(var = Node1.var)
-            solution.negative_child = BDD.__apply(Node1.negative_child, Node2.negative_child,  variable_order, unitedBDD)
-            solution.positive_child = BDD.__apply(Node1.positive_child, Node2.positive_child, variable_order, unitedBDD)
-            #unitedBDD.reduce()
+            solution.negative_child = BDD.__apply(Node1.negative_child, Node2.negative_child,  variable_order, united_bdd)
+            solution.positive_child = BDD.__apply(Node1.positive_child, Node2.positive_child, variable_order, united_bdd)
+            solution.reduce(united_bdd)
             return solution
         else:
             gen = (var for var in variable_order if var == Node1.var() or var == Node2.var())
@@ -218,9 +223,9 @@ class BDD:
                 lower_BDD = Node1
 
             solution = BDDNode
-            solution.negative_child = BDD.__apply(higher_BDD.negative_child, lower_BDD, variable_order, unitedBDD)
-            solution.positive_child = BDD.__apply(higher_BDD.positive_child, lower_BDD, variable_order, unitedBDD)
-            unitedBDD.reduce()
+            solution.negative_child = BDD.__apply(higher_BDD.negative_child, lower_BDD, variable_order, united_bdd)
+            solution.positive_child = BDD.__apply(higher_BDD.positive_child, lower_BDD, variable_order, united_bdd)
+            solution.reduce(united_bdd)
             return solution
         
     def replace_variables(self) -> BDD:
@@ -347,12 +352,14 @@ e1 = "A or B"
 e2 = "B or C"
 v = ['A', 'B', 'C']
 bdd1 = BDD(e1, v)
+bdd1.generateDot("bdd1")
 bdd2 = BDD(e2, v)
+bdd1.generateDot("bdd2")
 
 bdd1_and_bdd2 = BDD.unite(bdd1, bdd2, ["A", "B", "C"])
 bdd1_and_bdd2.generateDot(filename = "united_out")
 
-bdd1.generateDot("bdd1")
+
 bdd1_copy = bdd1.replace_variables()
 bdd1_copy.generateDot("bdd1_copy")
 
