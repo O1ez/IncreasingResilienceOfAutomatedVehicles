@@ -17,6 +17,9 @@ class BDDNode:
     def isLeaf(self):
         # Check if the node is a terminal node (leaf with True/False)
         return self.value is not None
+    
+    def hasChildren(self):
+        return self.negative_child or self.positive_child
 
     def __eq__(self, other):
         if other is None or not isinstance(other, BDDNode):
