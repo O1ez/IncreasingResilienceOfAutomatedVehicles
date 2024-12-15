@@ -1,0 +1,39 @@
+digraph{
+label="A or B\n\n"
+2332004210064[label=A]2332000506096[label="B {'A': False}"]
+2332004210064 -> 2332000506096[style=dashed]
+2332000514304[label="C {'A': False, 'B': False}"]
+2332000506096 -> 2332000514304[style=dashed]
+2332000153200[label="False
+{'A': False, 'B': False, 'C': False}"]
+2332000514304 -> 2332000153200[style=dashed]
+2332003892176[label="False
+{'A': False, 'B': False, 'C': True}"]
+2332000514304 -> 2332003892176
+2332004630608[label="C {'A': False, 'B': True}"]
+2332000506096 -> 2332004630608
+2332004582736[label="True
+{'A': False, 'B': True, 'C': False}"]
+2332004630608 -> 2332004582736[style=dashed]
+2332004581712[label="True
+{'A': False, 'B': True, 'C': True}"]
+2332004630608 -> 2332004581712
+2332003936656[label="B {'A': True}"]
+2332004210064 -> 2332003936656
+2332003934496[label="C {'A': True, 'B': False}"]
+2332003936656 -> 2332003934496[style=dashed]
+2332003910160[label="True
+{'A': True, 'B': False, 'C': False}"]
+2332003934496 -> 2332003910160[style=dashed]
+2332004340624[label="True
+{'A': True, 'B': False, 'C': True}"]
+2332003934496 -> 2332004340624
+2332004356032[label="C {'A': True, 'B': True}"]
+2332003936656 -> 2332004356032
+2331997536080[label="True
+{'A': True, 'B': True, 'C': False}"]
+2332004356032 -> 2331997536080[style=dashed]
+2331997533776[label="True
+{'A': True, 'B': True, 'C': True}"]
+2332004356032 -> 2331997533776
+}

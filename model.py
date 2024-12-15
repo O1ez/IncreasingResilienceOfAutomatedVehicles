@@ -1,5 +1,6 @@
 from BDD.BDD import BDD, BDDNode
 from typing import Optional
+from copy import copy, deepcopy
 
 
 class Model:
@@ -14,7 +15,36 @@ class Model:
         self.vars = vars
 
     #TODO: implement this
-    def calc_tp_fp(self):
+    def calc_tp_fp(self, num_of_fp = ""):
+        self.f.generateDot("bdd_f"+num_of_fp)
+        bdd_f_replaced = self.f.replace_variables()
+        bdd_f_replaced.generateDot("bdd_f_replaced"+num_of_fp)
+        
+        bdd_not_f = deepcopy(self.f)
+        bdd_not_f.negate()
+        bdd_not_f.reduce()
+        bdd_not_f.generateDot("bdd_not_f"+num_of_fp)
+        
+        bdd_not_uo = deepcopy(self.uo)
+        bdd_not_uo.negate()
+        bdd_not_uo.generateDot("bdd_not_uo"+num_of_fp)
+        
+        
+        if bdd_not_f.variables != bdd_not_uo.variables:
+            raise Exception("irgednwas ist schief gelaufen")
+        
+        f_replaced_vars = bdd_f_replaced.variables
+        not_f_vars = bdd_not_f.variables
+        f_united_vars = []
+        for i in range(len(not_f_vars)):
+            f_united_vars.append(not_f_vars[i])
+            f_united_vars.append(f_replaced_vars[i])
+        
+        first_unite = BDD.unite(bdd_not_f, bdd_not_uo, not_f_vars)
+        bdd_fp = BDD.unite(bdd_f_replaced, first_unite, f_united_vars)
+        bdd_fp.generateDot("bdd_fp"+num_of_fp)
+        
+
         return 0.5, 0.5
 
     def check_acceptable(self, fp: float):
@@ -24,9 +54,10 @@ class Model:
         nodes = self.uo.breadth_first_bottom_up_search()
         while nodes:
             n = nodes.pop(0)
+            if n.isLeaf():
+                continue
             if n.negative_child.isLeaf() and n.positive_child.isLeaf():
                 if n.negative_child.value + n.positive_child.value == 1:
-                    self.uo.remove(n)
                     return n
 
     def find_node_in_f(self, node_in_uo: BDDNode) -> list[BDDNode]:
@@ -69,7 +100,7 @@ class Model:
         is_acceptable = self.check_acceptable(fp_new)
 
 
-if __name__ == "__main":
+if __name__ == "__main__":
     #Example:
     #vars = ["A1", "A2", "A3"]
     #observations = "(A2 or A3)"
@@ -81,8 +112,10 @@ if __name__ == "__main":
     #tp, fp = model.calc_tp_fp()
     #print(f"tp: {tp}, fp: {fp}")
 
+    print("Start test")
     v = ["x", "y", "z"]
     f = "(x and y) or (x and not y and not z) or (not x and y and not z) or (not x and not y and z)"
     uo = "(x and z) or (not x and y)"
 
     model = Model(0.1, uo, f, v)
+    model.algorithm()

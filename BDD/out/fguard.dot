@@ -1,0 +1,46 @@
+digraph{
+label="(x and y) or (x and not y and not z) or (not x and y and not z) or (not x and not y and z)\n\n"
+2931369236656[label=x]2931369236336[label="y {'x': False}"]
+2931369236656 -> 2931369236336[style=dashed]
+2931367337936[label="z {'x': False, 'y': False}"]
+2931369236336 -> 2931367337936[style=dashed]
+2931364225184[label="False
+{'x': False, 'y': False, 'z': False}
+{'x': False, 'y': True, 'z': True}
+{'x': True, 'y': False, 'z': True}"]
+2931367337936 -> 2931364225184[style=dashed]
+2931368451728[label="True
+{'x': False, 'y': False, 'z': True}
+{'x': False, 'y': True, 'z': False}
+{'x': True, 'y': False, 'z': False}
+{'x': True, 'y': True, 'z': False}
+{'x': True, 'y': True, 'z': True}"]
+2931367337936 -> 2931368451728
+2931369136720[label="z {'x': False, 'y': True}
+{'x': True, 'y': False}"]
+2931369236336 -> 2931369136720
+2931368451728[label="True
+{'x': False, 'y': False, 'z': True}
+{'x': False, 'y': True, 'z': False}
+{'x': True, 'y': False, 'z': False}
+{'x': True, 'y': True, 'z': False}
+{'x': True, 'y': True, 'z': True}"]
+2931369136720 -> 2931368451728[style=dashed]
+2931364225184[label="False
+{'x': False, 'y': False, 'z': False}
+{'x': False, 'y': True, 'z': True}
+{'x': True, 'y': False, 'z': True}"]
+2931369136720 -> 2931364225184
+2931369137360[label="y {'x': True}"]
+2931369236656 -> 2931369137360
+2931369136720[label="z {'x': False, 'y': True}
+{'x': True, 'y': False}"]
+2931369137360 -> 2931369136720[style=dashed]
+2931368451728[label="True
+{'x': False, 'y': False, 'z': True}
+{'x': False, 'y': True, 'z': False}
+{'x': True, 'y': False, 'z': False}
+{'x': True, 'y': True, 'z': False}
+{'x': True, 'y': True, 'z': True}"]
+2931369137360 -> 2931368451728
+}
