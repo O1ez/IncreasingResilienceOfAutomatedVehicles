@@ -6,7 +6,8 @@ import re
 
 
 class BDDNode:
-    def __init__(self, var=None, negative_child=None, positive_child=None, value=None, assignment: Optional[list[dict]] = None):
+    def __init__(self, var=None, negative_child=None, positive_child=None, value=None,
+                 assignment: Optional[list[dict]] = None):
         self.var = var  # The variable for decision (None for terminal nodes)
         self.negative_child = negative_child
         self.positive_child = positive_child
@@ -24,14 +25,11 @@ class BDDNode:
     def hasChildren(self):
         return self.negative_child or self.positive_child
 
-    def hasChildren(self):
-        return self.negative_child or self.positive_child
-    
     def reduce(self, overarching_tree: BDD):
         temp_bdd = BDD(overarching_tree.expression, overarching_tree.variables, False)
         temp_bdd.root = self
         temp_bdd.reduce()
-        
+
     def __eq__(self, other):
         if other is None or not isinstance(other, BDDNode):
             return False
@@ -59,7 +57,7 @@ def evaluate_expression(expr, assignment):
 
 
 class BDD:
-    def __init__(self, expression, variables: list[str], build_new = True):
+    def __init__(self, expression, variables: list[str], build_new=True):
         self.variables = variables  # List of variables
         self.expression = expression
         self.evaluation = {}  #dict of all evaluations
@@ -86,7 +84,7 @@ class BDD:
         var = self.variables[var_index]
         currentNode = BDDNode(var=var)
         currentNode.assignment = [({var: val for var, val in current_assignment.items()})]
-        
+
         # Create node for false subtree and true subtree
         current_assignment_negative = current_assignment.copy()
         current_assignment_negative[var] = False
@@ -178,11 +176,10 @@ class BDD:
         #switch leafs in dictionary
         new_leafs = {False: self.leafs[True], True: self.leafs[False]}
         self.leafs = new_leafs
-        
-        self.expression = "not ("+self.expression+")"
+
+        self.expression = "not (" + self.expression + ")"
         return True
 
-    
     @staticmethod
     def unite(BDD1: BDD, BDD2: BDD, variable_order: list) -> BDD:
         for var in BDD1.variables:
@@ -193,25 +190,27 @@ class BDD:
             if var not in variable_order:
                 raise Exception("Variable " + var + " from BDD2 not found in variables.")
 
-        united = BDD(expression="("+ BDD1.expression + ")and(" + BDD2.expression +")", variables=variable_order, build_new= False)
+        united = BDD(expression="(" + BDD1.expression + ")and(" + BDD2.expression + ")", variables=variable_order,
+                     build_new=False)
         united.root = BDD.__apply(BDD1.root, BDD2.root, variable_order, united)
         #united.reduce()
         return united
 
-
     @staticmethod
-    def __apply(Node1: BDDNode, Node2: BDDNode, variable_order: list[str], united_bdd : BDD) -> Type[BDDNode]:
+    def __apply(Node1: BDDNode, Node2: BDDNode, variable_order: list[str], united_bdd: BDD) -> BDDNode:
         solution = BDDNode
         if Node1.isLeaf() and Node2.isLeaf():
-            solution = BDDNode(value = Node1.value and Node2.value)
+            solution = BDDNode(value=Node1.value and Node2.value)
             return solution
         elif (Node1.var not in variable_order) or (Node2.var not in variable_order):
             print(Node1.var + Node2.var + variable_order)
             raise Exception("BDD variables not in variable_order")
         elif Node1.var == Node2.var:
-            solution = BDDNode(var = Node1.var)
-            solution.negative_child = BDD.__apply(Node1.negative_child, Node2.negative_child,  variable_order, united_bdd)
-            solution.positive_child = BDD.__apply(Node1.positive_child, Node2.positive_child, variable_order, united_bdd)
+            solution = BDDNode(var=Node1.var)
+            solution.negative_child = BDD.__apply(Node1.negative_child, Node2.negative_child, variable_order,
+                                                  united_bdd)
+            solution.positive_child = BDD.__apply(Node1.positive_child, Node2.positive_child, variable_order,
+                                                  united_bdd)
             solution.reduce(united_bdd)
             return solution
         else:
@@ -225,37 +224,36 @@ class BDD:
                 higher_BDD = Node2
                 lower_BDD = Node1
 
-            solution = BDDNode
+            solution = BDDNode(var=higher_BDD.var())
             solution.negative_child = BDD.__apply(higher_BDD.negative_child, lower_BDD, variable_order, united_bdd)
             solution.positive_child = BDD.__apply(higher_BDD.positive_child, lower_BDD, variable_order, united_bdd)
             solution.reduce(united_bdd)
             return solution
-        
+
     def replace_variables(self) -> BDD:
-        var_copy = [var+"_" for var in self.variables.copy()]
+        var_copy = [var + "_" for var in self.variables.copy()]
         expression_copy = self.expression
         for var in self.variables:
-            expression_copy = re.sub(var, var+"_", expression_copy)
+            expression_copy = re.sub(var, var + "_", expression_copy)
         bdd_copy = BDD(expression_copy, var_copy, build_new=False)
-        
+
         bdd_copy.root = self.copy_node(self.root)
         self.replace_variables_in_nodes(bdd_copy.root, self.root, [self.root])
-        
+
         return bdd_copy
-        
+
     def replace_variables_in_nodes(self, node_copy: BDDNode, original_node: BDDNode, visited_nodes: list[BDDNode]):
         if original_node.negative_child and original_node.negative_child not in visited_nodes:
             node_copy.negative_child = self.copy_node(original_node.negative_child)
             visited_nodes.append(original_node.negative_child)
             self.replace_variables_in_nodes(node_copy.negative_child, original_node.negative_child, visited_nodes)
-            
+
         if original_node.positive_child and original_node.positive_child not in visited_nodes:
-            node_copy.positive_child= self.copy_node(original_node.positive_child)
+            node_copy.positive_child = self.copy_node(original_node.positive_child)
             visited_nodes.append(original_node.positive_child)
             self.replace_variables_in_nodes(node_copy.positive_child, original_node.positive_child, visited_nodes)
         return None
 
-            
     def copy_node(self, node: BDDNode) -> BDDNode:
         var = None
         value = None
@@ -265,8 +263,8 @@ class BDD:
             var = node.var + "_"
         node_assignment_copy = node.assignment.copy()
         for i in range(len(node_assignment_copy)):
-            node_assignment_copy[i] = {k+"_": v for k, v in node_assignment_copy[i].items()}
-        return BDDNode(var = var, value=value, assignment=node_assignment_copy)
+            node_assignment_copy[i] = {k + "_": v for k, v in node_assignment_copy[i].items()}
+        return BDDNode(var=var, value=value, assignment=node_assignment_copy)
 
     # returns list of all nodes in breadth first bottom up order
     def breadth_first_bottom_up_search(self) -> list[BDDNode]:
@@ -285,7 +283,32 @@ class BDD:
                 queue.append(node.negative_child)
             if node.positive_child:
                 queue.append(node.positive_child)
-        return out.reverse()
+
+        out.reverse()
+        return out
+
+    def remove_node(self, node: BDDNode) -> bool:
+        return self.__remove_node(self.root, node)
+
+    def __remove_node(self, current_node: BDDNode, node: BDDNode) -> bool:
+        neg = current_node.negative_child
+        pos = current_node.positive_child
+        if neg and neg == node:
+            neg = node.negative_child
+            pos = node.positive_child
+            return True
+        elif pos and pos == node:
+            pos = node.positive_child
+            neg = node.negative_child
+            return True
+        else:
+            if self.__remove_node(neg, node):
+                return True
+            elif self.__remove_node(pos, node):
+                return True
+            else:
+                return False
+
 
     # Visualation
     def generateDot(self, filename="output"):
@@ -335,35 +358,43 @@ class BDD:
             self.reset_draw(node.positive_child)
         node.drawn = False
 
+if __name__ == "__main__":
+    #Example:
+    # e = "(A and B) or C"
+    # e = "((not A or B) and (not B or A)) and ((not C or D) and (not D or C))"
+    # v = ['A', 'B', 'C', 'D']
+    # bdd = BDD(e, v)
+    #
+    # print("Binary Decision Diagram (BDD):")
+    # bdd.generateDot(filename="out")
+    # bdd.reduce()
+    # bdd.generateDot(filename="reduced_out")
+    # bdd.negate()
+    # bdd.generateDot(filename="negated_out")
+    # for k, v in bdd.evaluation.items():
+    #     print(f"{k}: {v}")
+    #
+    # e1 = "A or B"
+    # e2 = "B or C"
+    # v = ['A', 'B', 'C']
+    # bdd1 = BDD(e1, v)
+    # bdd1.generateDot("bdd1")
+    # bdd2 = BDD(e2, v)
+    # bdd1.generateDot("bdd2")
+    #
+    # bdd1_and_bdd2 = BDD.unite(bdd1, bdd2, ["A", "B", "C"])
+    # bdd1_and_bdd2.generateDot(filename="united_out")
+    #
+    # bdd1_copy = bdd1.replace_variables()
+    # bdd1_copy.generateDot("bdd1_copy")
 
-#Example:
-e = "(A and B) or C"
-e = "((not A or B) and (not B or A)) and ((not C or D) and (not D or C))"
-v = ['A', 'B', 'C', 'D']
-bdd = BDD(e, v)
+    e = "A or B"
+    v = ['A', 'B', 'C']
+    bdd = BDD(e, v)
 
-print("Binary Decision Diagram (BDD):")
-bdd.generateDot(filename="out")
-bdd.reduce()
-bdd.generateDot(filename="reduced_out")
-bdd.negate()
-bdd.generateDot(filename="negated_out")
-for k, v in bdd.evaluation.items():
-    print(f"{k}: {v}")
-    
-e1 = "A or B"
-e2 = "B or C"
-v = ['A', 'B', 'C']
-bdd1 = BDD(e1, v)
-bdd1.generateDot("bdd1")
-bdd2 = BDD(e2, v)
-bdd1.generateDot("bdd2")
-
-bdd1_and_bdd2 = BDD.unite(bdd1, bdd2, ["A", "B", "C"])
-bdd1_and_bdd2.generateDot(filename = "united_out")
-
-
-bdd1_copy = bdd1.replace_variables()
-bdd1_copy.generateDot("bdd1_copy")
-
+    bdd.generateDot("before_remove")
+    nodes = bdd.breadth_first_bottom_up_search()
+    print(nodes)
+    bdd.remove_node(nodes[len(nodes)-4])
+    bdd.generateDot("after_remove")
 
