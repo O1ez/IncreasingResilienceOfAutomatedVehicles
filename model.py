@@ -2,10 +2,10 @@ from sklearn.metrics import confusion_matrix
 from BDD.BDD import BDD, BDDNode
 from typing import Optional
 class Model:    
-    def __init__(self, acceptable_threshhold : float,  unobservable_BDD: BDD, f_BDD: BDD, variables):
+    def __init__(self, acceptable_threshhold : float,  unobservable: str, f_guard: str, variables):
         self.acceptable_threshold = acceptable_threshhold
-        self.uo = unobservable_BDD
-        self.f = f_BDD
+        self.uo = BDD(unobservable, variables)
+        self.f = BDD(f_guard, variables)
         self.vars = vars
 
     #TODO: implement this
@@ -42,7 +42,7 @@ class Model:
     #TODO: rename this
     def algorithm(self):
         #1
-        tp, fp = self.calc_tp_fp()
+        tp_old, fp_old = self.calc_tp_fp()
         #2
         child_uo = self.find_node_in_uo()
         while (not self.uo.isOnlyRoot()):

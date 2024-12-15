@@ -2,14 +2,14 @@ from __future__ import annotations
 
 from collections import deque
 from typing import Optional, Any, Type
+import re
 
 
 class BDDNode:
-    def __init__(self, var=None, negative_child=None, positive_child=None, parent=None, value=None, assignment: Optional[list[dict]] = None):
+    def __init__(self, var=None, negative_child=None, positive_child=None, value=None, assignment: Optional[list[dict]] = None):
         self.var = var  # The variable for decision (None for terminal nodes)
         self.negative_child = negative_child
         self.positive_child = positive_child
-        self.parent = parent
         self.value = value  # Terminal value (True or False for leaf nodes)
         if assignment is None:
             self.assignment = []
@@ -28,7 +28,11 @@ class BDDNode:
         if other is None or not isinstance(other, BDDNode):
             return False
         if self.isLeaf() and other.isLeaf():
-            return self.value == other.value
+            assignments_match = True
+            for dic in self.assignment:
+                if dic not in other.assignment:
+                    assignments_match = False
+            return self.value == other.value and assignments_match
         return (
                 self.var == other.var and
                 self.negative_child == other.negative_child and
@@ -74,6 +78,7 @@ class BDD:
         var = self.variables[var_index]
         currentNode = BDDNode(var=var)
         currentNode.assignment = [({var: val for var, val in current_assignment.items()})]
+        
         # Create node for false subtree and true subtree
         current_assignment_negative = current_assignment.copy()
         current_assignment_negative[var] = False
@@ -165,6 +170,8 @@ class BDD:
         #switch leafs in dictionary
         new_leafs = {False: self.leafs[True], True: self.leafs[False]}
         self.leafs = new_leafs
+        
+        self.expression = "not ("+self.expression+")"
         return True
 
     
@@ -179,12 +186,13 @@ class BDD:
                 raise Exception("Variable " + var + " from BDD2 not found in variables.")
 
         united = BDD(expression="("+ BDD1.expression + ")and(" + BDD2.expression +")", variables=variable_order, build_new= False)
-        united.root = BDD.__apply(BDD1.root, BDD2.root, variable_order)
+        united.root = BDD.__apply(BDD1.root, BDD2.root, variable_order, united)
+        united.reduce()
         return united
 
 
     @staticmethod
-    def __apply(Node1: BDDNode, Node2: BDDNode, variable_order: list[str]) -> Type[BDDNode]:
+    def __apply(Node1: BDDNode, Node2: BDDNode, variable_order: list[str], unitedBDD: BDD) -> Type[BDDNode]:
         solution = BDDNode
         if Node1.isLeaf() and Node2.isLeaf():
             solution =BDDNode(value = Node1.value and Node2.value)
@@ -194,8 +202,9 @@ class BDD:
             raise Exception("BDD variables not in variable_order")
         elif Node1.var== Node2.var:
             solution = BDDNode(var = Node1.var)
-            solution.negative_child = BDD.__apply(Node1.negative_child, Node2.negative_child,  variable_order)
-            solution.positive_child = BDD.__apply(Node1.positive_child, Node2.positive_child, variable_order)
+            solution.negative_child = BDD.__apply(Node1.negative_child, Node2.negative_child,  variable_order, unitedBDD)
+            solution.positive_child = BDD.__apply(Node1.positive_child, Node2.positive_child, variable_order, unitedBDD)
+            #unitedBDD.reduce()
             return solution
         else:
             gen = (var for var in variable_order if var == Node1.var() or var == Node2.var())
@@ -209,9 +218,47 @@ class BDD:
                 lower_BDD = Node1
 
             solution = BDDNode
-            solution.negative_child = BDD.__apply(higher_BDD.negative_child, lower_BDD, variable_order)
-            solution.positive_child = BDD.__apply(higher_BDD.positive_child, lower_BDD, variable_order)
+            solution.negative_child = BDD.__apply(higher_BDD.negative_child, lower_BDD, variable_order, unitedBDD)
+            solution.positive_child = BDD.__apply(higher_BDD.positive_child, lower_BDD, variable_order, unitedBDD)
+            unitedBDD.reduce()
             return solution
+        
+    def replace_variables(self) -> BDD:
+        var_copy = [var+"_" for var in self.variables.copy()]
+        expression_copy = self.expression
+        for var in self.variables:
+            expression_copy = re.sub(var, var+"_", expression_copy)
+        bdd_copy = BDD(expression_copy, var_copy, build_new=False)
+        
+        bdd_copy.root = self.copy_node(self.root)
+        self.replace_variables_in_nodes(bdd_copy.root, self.root, [self.root])
+        
+        return bdd_copy
+        
+    def replace_variables_in_nodes(self, node_copy: BDDNode, original_node: BDDNode, visited_nodes: list[BDDNode]):
+        if original_node.negative_child and original_node.negative_child not in visited_nodes:
+            node_copy.negative_child = self.copy_node(original_node.negative_child)
+            visited_nodes.append(original_node.negative_child)
+            self.replace_variables_in_nodes(node_copy.negative_child, original_node.negative_child, visited_nodes)
+            
+        if original_node.positive_child and original_node.positive_child not in visited_nodes:
+            node_copy.positive_child= self.copy_node(original_node.positive_child)
+            visited_nodes.append(original_node.positive_child)
+            self.replace_variables_in_nodes(node_copy.positive_child, original_node.positive_child, visited_nodes)
+        return None
+
+            
+    def copy_node(self, node: BDDNode) -> BDDNode:
+        var = None
+        value = None
+        if node.isLeaf():
+            value = node.value
+        else:
+            var = node.var + "_"
+        node_assignment_copy = node.assignment.copy()
+        for i in range(len(node_assignment_copy)):
+            node_assignment_copy[i] = {k+"_": v for k, v in node_assignment_copy[i].items()}
+        return BDDNode(var = var, value=value, assignment=node_assignment_copy)
 
     # returns list of all nodes in breadth first bottom up order
     def breadth_first_bottom_up_search(self) -> list[BDDNode]:
@@ -304,4 +351,9 @@ bdd2 = BDD(e2, v)
 
 bdd1_and_bdd2 = BDD.unite(bdd1, bdd2, ["A", "B", "C"])
 bdd1_and_bdd2.generateDot(filename = "united_out")
+
+bdd1.generateDot("bdd1")
+bdd1_copy = bdd1.replace_variables()
+bdd1_copy.generateDot("bdd1_copy")
+
 
