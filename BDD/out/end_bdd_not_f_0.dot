@@ -1,46 +1,46 @@
 digraph{
 label="not ((x and y) or (x and not y and not z) or (not x and y and not z) or (not x and not y and z))\n\n"
-2931369141968[label=x]2931369142096[label="y {'x': False}"]
-2931369141968 -> 2931369142096[style=dashed]
-2931369142352[label="z {'x': False, 'y': False}"]
-2931369142096 -> 2931369142352[style=dashed]
-2931369141840[label="False
+1262055863504[label=x]1262055864272[label="y {'x': False}"]
+1262055863504 -> 1262055864272[style=dashed]
+1262055862480[label="z {'x': False, 'y': False}"]
+1262055864272 -> 1262055862480[style=dashed]
+1262055861712[label="True
 {'x': False, 'y': False, 'z': False}
 {'x': False, 'y': True, 'z': True}
 {'x': True, 'y': False, 'z': True}"]
-2931369142352 -> 2931369141840[style=dashed]
-2931369141712[label="True
+1262055862480 -> 1262055861712[style=dashed]
+1262055859152[label="False
 {'x': False, 'y': False, 'z': True}
 {'x': False, 'y': True, 'z': False}
 {'x': True, 'y': False, 'z': False}
 {'x': True, 'y': True, 'z': False}
 {'x': True, 'y': True, 'z': True}"]
-2931369142352 -> 2931369141712
-2931369143120[label="z {'x': False, 'y': True}
+1262055862480 -> 1262055859152
+1262055859792[label="z {'x': False, 'y': True}
 {'x': True, 'y': False}"]
-2931369142096 -> 2931369143120
-2931369141712[label="True
+1262055864272 -> 1262055859792
+1262055859152[label="False
 {'x': False, 'y': False, 'z': True}
 {'x': False, 'y': True, 'z': False}
 {'x': True, 'y': False, 'z': False}
 {'x': True, 'y': True, 'z': False}
 {'x': True, 'y': True, 'z': True}"]
-2931369143120 -> 2931369141712[style=dashed]
-2931369141840[label="False
+1262055859792 -> 1262055859152[style=dashed]
+1262055861712[label="True
 {'x': False, 'y': False, 'z': False}
 {'x': False, 'y': True, 'z': True}
 {'x': True, 'y': False, 'z': True}"]
-2931369143120 -> 2931369141840
-2931369143760[label="y {'x': True}"]
-2931369141968 -> 2931369143760
-2931369143120[label="z {'x': False, 'y': True}
+1262055859792 -> 1262055861712
+1262055857232[label="y {'x': True}"]
+1262055863504 -> 1262055857232
+1262055859792[label="z {'x': False, 'y': True}
 {'x': True, 'y': False}"]
-2931369143760 -> 2931369143120[style=dashed]
-2931369141712[label="True
+1262055857232 -> 1262055859792[style=dashed]
+1262055859152[label="False
 {'x': False, 'y': False, 'z': True}
 {'x': False, 'y': True, 'z': False}
 {'x': True, 'y': False, 'z': False}
 {'x': True, 'y': True, 'z': False}
 {'x': True, 'y': True, 'z': True}"]
-2931369143760 -> 2931369141712
+1262055857232 -> 1262055859152
 }

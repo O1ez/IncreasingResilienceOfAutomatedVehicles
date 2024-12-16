@@ -4,6 +4,8 @@ from collections import deque
 from typing import Optional, Any, Type
 import re
 from copy import copy, deepcopy
+import os
+import glob
 
 
 
@@ -39,6 +41,7 @@ class BDDNode:
             for dic in self.assignment:
                 if dic not in other.assignment:
                     assignments_match = False
+                    break
             return self.value == other.value and assignments_match
         return (
                 self.var == other.var and
@@ -63,8 +66,8 @@ class BDDNode:
                 deepcopy(self.var, memo), 
                 deepcopy(self.negative_child, memo),
                 deepcopy(self.positive_child, memo),
-                deepcopy(self.value, memo))
-            memo[id_self] = _copy 
+                deepcopy(self.value, memo),)
+            memo[id_self] = _copy
         return _copy
 
 
@@ -77,19 +80,6 @@ class BDD:
         self.root = None
         if build_new:
             self.build_new()
-            
-    def __copy__(self):
-        return type(self)(self.variables, self.expression, self.evaluation, self.leafs, self.root)
-    
-    def __deepcopy__(self, memo): # memo is a dict of id's to copies
-        id_self = id(self)        # memoization avoids unnecesary recursion
-        _copy = memo.get(id_self)
-        if _copy is None:
-            _copy = type(self)(
-                deepcopy(self.expression, memo),
-                deepcopy(self.variables, memo))
-            memo[id_self] = _copy 
-        return _copy
 
     def build_new(self):
         empty_dict = {}
@@ -142,15 +132,21 @@ class BDD:
         self.__merge_leafs(self.root)
         self.__remove_duplicate_subtree(self.root, mem={})
         self.__remove_equivalent_child_nodes(self.root)
+        
+        #TODO: fix hotfix
+        if self.root.negative_child.isLeaf() and self.root.positive_child.isLeaf():
+            if self.root.negative_child.value == self.root.positive_child.value:
+                self.root = self.root.negative_child
+        
         print("Reduction done.")
         return True
 
-    def __remove_duplicate_subtree(self, node, mem):
+    def __remove_duplicate_subtree(self, node: BDDNode, mem: dict[BDDNode, BDDNode]):
         if node.isLeaf():
             return node
 
         if node in mem:
-            mem[node].assignment.extend(node.assignment)
+            self.add_assignments(mem[node], node.assignment)
             return mem[node]
 
         node.negative_child = self.__remove_duplicate_subtree(node.negative_child, mem)
@@ -165,13 +161,13 @@ class BDD:
         child_node_negative_child = self.__merge_leafs(node.negative_child)
         if child_node_negative_child is not None:
             leaf = self.leafs[child_node_negative_child.value]
-            leaf.assignment.extend(child_node_negative_child.assignment.copy())
+            self.add_assignments(leaf, child_node_negative_child.assignment)
             node.negative_child = leaf
 
         child_node_positive_child = self.__merge_leafs(node.positive_child)
-        if child_node_positive_child is not None:
+        if child_node_positive_child is not None and child_node_positive_child not in self.leafs:
             leaf = self.leafs[child_node_positive_child.value]
-            leaf.assignment.extend(child_node_positive_child.assignment.copy())
+            self.add_assignments(leaf, child_node_positive_child.assignment)
             node.positive_child = leaf
 
         return None
@@ -191,6 +187,13 @@ class BDD:
                 node.positive_child):
             return node.negative_child
         return None
+    
+    #adds assignments that are not already in the node
+    @staticmethod
+    def add_assignments(node: BDDNode, assignments: list[dict]):
+        for a in assignments:
+            if a not in node.assignment:
+                node.assignment.append(a)
 
     def negate(self) -> bool:
         if not self.root.hasChildren():
@@ -200,6 +203,7 @@ class BDD:
         self.leafs[True].value = False
         #switch leafs in dictionary
         new_leafs = {False: self.leafs[True], True: self.leafs[False]}
+        self.leafs.clear()
         self.leafs = new_leafs
 
         self.expression = "not (" + self.expression + ")"
@@ -227,11 +231,15 @@ class BDD:
             raise Exception("BDD variables not in variable_order")
         if Node1.isLeaf() and Node2.isLeaf():
             solution = BDDNode(value=Node1.value and Node2.value)
+            BDD.add_assignments(solution, Node1.assignment)
+            BDD.add_assignments(solution, Node2.assignment)
             return solution
         elif Node1.var == Node2.var:
             solution = BDDNode(var=Node1.var)
             solution.negative_child = BDD.__apply(Node1.negative_child, Node2.negative_child, variable_order,united_bdd)
             solution.positive_child = BDD.__apply(Node1.positive_child, Node2.positive_child, variable_order,united_bdd)
+            BDD.add_assignments(solution, Node1.assignment)
+            BDD.add_assignments(solution, Node2.assignment)
             solution.reduce(united_bdd)
             return solution
         else:
@@ -250,6 +258,8 @@ class BDD:
             pos_child = higher_prio_BDD.positive_child
             solution.negative_child = BDD.__apply(higher_prio_BDD.negative_child, lower_prio_BDD, variable_order, united_bdd)
             solution.positive_child = BDD.__apply(higher_prio_BDD.positive_child, lower_prio_BDD, variable_order, united_bdd)
+            BDD.add_assignments(solution, Node1.assignment)
+            BDD.add_assignments(solution, Node2.assignment)
             solution.reduce(united_bdd)
             return solution
 
@@ -350,9 +360,32 @@ class BDD:
         if node.positive_child is not None:
             self.__reset_draw(node.positive_child)
         node.drawn = False
+        
+    def __copy__(self):
+        return type(self)(self.variables, self.expression, self.evaluation, self.leafs, self.root)
+    
+    def __deepcopy__(self, memo): # memo is a dict of id's to copies
+        id_self = id(self)        # memoization avoids unnecesary recursion
+        _copy = memo.get(id_self)
+        if _copy is None:
+            _copy = type(self)(
+                deepcopy(self.expression, memo),
+                deepcopy(self.variables, memo),
+                )
+            memo[id_self] = _copy 
+            _copy.reduce()
+        return _copy
+    
+    def delete_all_files_from_out():
+        files = glob.glob('/BDD/out')
+        for file in files:
+            os.remove(file)
+        
 
 def evaluate_expression(expr, assignment):
         return eval(expr, {}, assignment)
+    
+
 
 if __name__ == "__main__":
     #Example:

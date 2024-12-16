@@ -16,18 +16,19 @@ class Model:
 
     #TODO: implement this
     def calc_tp_fp(self, num_of_fp = ""):
-        self.f.generateDot("bdd_f"+num_of_fp)
+        self.f.generateDot(num_of_fp+"bdd_f")
         bdd_f_replaced = self.f.replace_variables()
-        bdd_f_replaced.generateDot("bdd_f_replaced"+num_of_fp)
+        bdd_f_replaced.generateDot(num_of_fp+"bdd_f_replaced")
         
         bdd_not_f = deepcopy(self.f)
         bdd_not_f.negate()
+        bdd_not_f.generateDot(num_of_fp+"bdd_not_f")
         bdd_not_f.reduce()
-        bdd_not_f.generateDot("bdd_not_f"+num_of_fp)
+        bdd_not_f.generateDot(num_of_fp+"bdd_not_f")
         
         bdd_not_uo = deepcopy(self.uo)
         bdd_not_uo.negate()
-        bdd_not_uo.generateDot("bdd_not_uo"+num_of_fp)
+        bdd_not_uo.generateDot(num_of_fp+"bdd_not_uo")
         
         
         if bdd_not_f.variables != bdd_not_uo.variables:
@@ -42,7 +43,7 @@ class Model:
         
         first_unite = BDD.unite(bdd_not_f, bdd_not_uo, not_f_vars)
         bdd_fp = BDD.unite(bdd_f_replaced, first_unite, f_united_vars)
-        bdd_fp.generateDot("bdd_fp"+num_of_fp)
+        bdd_fp.generateDot(num_of_fp+"bdd_fp")
         
 
         return 0.5, 0.5
@@ -63,7 +64,7 @@ class Model:
     def find_node_in_f(self, node_in_uo: BDDNode) -> list[BDDNode]:
         assignments = node_in_uo.assignment
         current_node = self.f.root
-        found_nodes = [BDDNode]
+        found_nodes = []
         for assignment in assignments:
             for var in assignment:
                 if current_node.var != var:
@@ -78,11 +79,11 @@ class Model:
     #TODO: rename this
     def algorithm(self):
         #1
-        tp_old, fp_old = self.calc_tp_fp()
+        tp_old, fp_old = self.calc_tp_fp("start_")
         print("Initial values: \ntp: " + str(tp_old) + "\nfp: " + str(fp_old))
         #2
         child_uo = self.find_node_in_uo()
-        while not self.uo.isOnlyRoot():
+        while child_uo:
             #a
             children_f = self.find_node_in_f(child_uo)
             #b
@@ -93,8 +94,9 @@ class Model:
             #d
             self.f.reduce()
             self.uo.reduce()
+            child_uo = self.find_node_in_uo()
         #3
-        tp_new, fp_new = self.calc_tp_fp()
+        tp_new, fp_new = self.calc_tp_fp("end_")
         print("New values: \ntp: " + str(tp_new) + "\nfp: " + str(fp_new))
         #4
         is_acceptable = self.check_acceptable(fp_new)
