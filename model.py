@@ -1,18 +1,19 @@
 from BDD import BDD, BDDNode
 from typing import Optional
 from copy import copy, deepcopy
+from gmpy2 import mpq
+
 
 
 class Model:
-    def __init__(self, acceptable_threshold: float, unobservable: str, f_guard: str, variables):
+    def __init__(self, acceptable_threshold: float, unobservable: str, f_guard: str, variables: list[str]):
         self.acceptable_threshold = acceptable_threshold
         self.uo = BDD(unobservable, variables)
         self.uo.reduce()
         self.f = BDD(f_guard, variables)
         self.f.reduce()
-        self.vars = vars
+        self.vars = variables
 
-    #TODO: implement this
     def calc_tp_fp(self, step = ""):
         self.f.generateDot(step+"0_bdd_f_")
         bdd_f_replaced = self.f.replace_variables("_")
@@ -42,19 +43,22 @@ class Model:
         bdd_fp = BDD.unite(bdd_f_replaced, first_unite, f_united_vars)
         bdd_fp.generateDot(step+"5_bdd_fp")
         
+        bdd_tp = BDD.unite(bdd_f_replaced, BDD.unite(self.uo, self.f, self.vars), f_united_vars)
+        bdd_tp.generateDot(step+"6_bdd_tp")
+        
         #mit Fehler in der Dok
-        bdd_f_replaced.negate()
-        
-        f_replaced_vars = bdd_f_replaced.variables
-        not_f_vars = bdd_not_f.variables
-        f_united_vars = []
-        for i in range(len(not_f_vars)):
-            f_united_vars.append(not_f_vars[i])
-            f_united_vars.append(f_replaced_vars[i])
-        
-        first_unite = BDD.unite(bdd_not_f, bdd_not_uo, not_f_vars)
-        bdd_fp_wrong = BDD.unite(bdd_f_replaced, first_unite, f_united_vars)
-        bdd_fp_wrong.generateDot(step+"5_wrong_bdd_fp")
+        #bdd_f_replaced.negate()
+        #
+        #f_replaced_vars = bdd_f_replaced.variables
+        #not_f_vars = bdd_not_f.variables
+        #f_united_vars = []
+        #for i in range(len(not_f_vars)):
+        #    f_united_vars.append(not_f_vars[i])
+        #    f_united_vars.append(f_replaced_vars[i])
+        #
+        #first_unite = BDD.unite(bdd_not_f, bdd_not_uo, not_f_vars)
+        #bdd_fp_wrong = BDD.unite(bdd_f_replaced, first_unite, f_united_vars)
+        #bdd_fp_wrong.generateDot(step+"5_wrong_bdd_fp")
 
         return 0.5, 0.5
 
@@ -106,8 +110,8 @@ class Model:
             #d
             self.f.reduce()
             self.f.generateDot("bdd_f_"+str(i))
-            self.uo.reduce()
-            self.uo.generateDot("bdd_uo_"+str(i))
+            bdd_uo_copy.reduce()
+            bdd_uo_copy.generateDot("bdd_uo_"+str(i))
             i+=1
             child_uo = self.find_node_in_uo(bdd_uo_copy)
         #3
@@ -131,6 +135,24 @@ if __name__ == "__main__":
 
     print("Start test")
     v = ["x", "y", "z"]
+    
+    # x'\x  0     1
+    # 0    0.2   0.3
+    # 1    0.4   0.1
+    
+    # y'\y  0     1
+    # 0    0.15  0.6
+    # 1    0.13  0.12
+    
+    # z'\z  0     1
+    # 0    0.23  0.17
+    # 1    0.2   0.4
+    #
+    #v = {
+    #    "x" : [mpq(0.2), mpq(0.3), mpq(0.4), mpq(0.1)],
+    #    "y" : [mpq(0.15), mpq(0.6), mpq(0.13), mpq(0.12)],
+    #    "z" : [mpq(0.23), mpq(0.17), mpq(0.2), mpq(0.4)]
+    #}
     f = "(x and y) or (x and not y and not z) or (not x and y and not z) or (not x and not y and z)"
     uo = "(x and z) or (not x and y)"
 

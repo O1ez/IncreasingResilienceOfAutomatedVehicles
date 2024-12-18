@@ -1,24 +1,24 @@
 digraph{
 label="not ((x and y) or (x and not y and not z) or (not x and y and not z) or (not x and not y and z))\n\n"
-2889594401744[label=x]2889594402000[label="z {'x': False, 'y': False}"]
-2889594401744 -> 2889594402000[style=dashed]
-2889594403792[label="True
+1889826361040[label=x]1889826372816[label="z {'x': False, 'y': False}"]
+1889826361040 -> 1889826372816[style=dashed]
+1889826371664[label="True
 {'x': False, 'y': False, 'z': False}
 {'x': False, 'y': True, 'z': True}
 {'x': True, 'y': False, 'z': True}"]
-2889594402000 -> 2889594403792[style=dashed]
-2889594403152[label="False
+1889826372816 -> 1889826371664[style=dashed]
+1889826371280[label="False
 {'x': False, 'y': False, 'z': True}
 {'x': False, 'y': True, 'z': False}
 {'x': True, 'y': False, 'z': False}
 {'x': True, 'y': True, 'z': False}
 {'x': True, 'y': True, 'z': True}"]
-2889594402000 -> 2889594403152
-2889594403152[label="False
+1889826372816 -> 1889826371280
+1889826371280[label="False
 {'x': False, 'y': False, 'z': True}
 {'x': False, 'y': True, 'z': False}
 {'x': True, 'y': False, 'z': False}
 {'x': True, 'y': True, 'z': False}
 {'x': True, 'y': True, 'z': True}"]
-2889594401744 -> 2889594403152
+1889826361040 -> 1889826371280
 }
