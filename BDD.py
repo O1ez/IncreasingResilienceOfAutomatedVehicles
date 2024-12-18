@@ -10,7 +10,7 @@ import glob
 
 
 class BDDNode:
-    def __init__(self, var=None, negative_child=None, positive_child=None, value=None, assignment: Optional[list[dict]] = None):
+    def __init__(self, var=None, negative_child: Optional[BDDNode] = None, positive_child: Optional[BDDNode] = None, value=None, assignment: Optional[list[dict]] = None):
         self.var = var  # The variable for decision (None for terminal nodes)
         self.negative_child = negative_child
         self.positive_child = positive_child
@@ -134,9 +134,8 @@ class BDD:
         self.__remove_equivalent_child_nodes(self.root)
         
         #TODO: fix hotfix
-        if self.root.negative_child.isLeaf() and self.root.positive_child.isLeaf():
-            if self.root.negative_child.value == self.root.positive_child.value:
-                self.root = self.root.negative_child
+        if self.root.negative_child == self.root.positive_child:
+            self.root = self.root.negative_child
         
         print("Reduction done.")
         return True
@@ -155,6 +154,9 @@ class BDD:
         return node
 
     def __merge_leafs(self, node: BDDNode) -> Optional[BDDNode]:
+        if node is None:
+            raise Exception("unexpected Node is None")
+        
         if node.isLeaf():
             return node
 
@@ -188,6 +190,7 @@ class BDD:
             return node.negative_child
         return None
     
+    
     #adds assignments that are not already in the node
     @staticmethod
     def add_assignments(node: BDDNode, assignments: list[dict]):
@@ -195,20 +198,22 @@ class BDD:
             if a not in node.assignment:
                 node.assignment.append(a)
 
-    def negate(self) -> bool:
-        if not self.root.hasChildren():
-            return False
-        #negate solutions
-        self.leafs[False].value = True
-        self.leafs[True].value = False
+    #TODO: Kopie von der Negation zurückgeben, damit es einheitlich mit der unite Funktion ist?
+    def negate(self):
+        #negate leaf values
+        false_leaf = self.leafs[False]
+        false_leaf.value = True
+        true_leaf = self.leafs[True]
+        true_leaf.value = False
+        
         #switch leafs in dictionary
-        new_leafs = {False: self.leafs[True], True: self.leafs[False]}
-        self.leafs.clear()
-        self.leafs = new_leafs
-
+        self.leafs[True] = false_leaf
+        self.leafs[False] = true_leaf
+        
         self.expression = "not (" + self.expression + ")"
-        return True
+        return
 
+    #TODO: assignment not set properly
     @staticmethod
     def unite(BDD1: BDD, BDD2: BDD, variable_order: list) -> BDD:
         for var in BDD1.variables:
@@ -221,7 +226,7 @@ class BDD:
 
         united = BDD(expression="(" + BDD1.expression + ")and(" + BDD2.expression + ")", variables=variable_order,build_new=False)
         united.root = BDD.__apply(BDD1.root, BDD2.root, variable_order, united)
-        #united.reduce()
+        united.reduce()
         return united
 
     @staticmethod
@@ -229,67 +234,92 @@ class BDD:
         if (Node1.var and (Node1.var not in variable_order)) or (Node2.var and (Node2.var not in variable_order)):
             print(Node1.var + Node2.var + str(variable_order))
             raise Exception("BDD variables not in variable_order")
+        
+        # if both nodes are leafs return new leaf with united value
         if Node1.isLeaf() and Node2.isLeaf():
             solution = BDDNode(value=Node1.value and Node2.value)
-            BDD.add_assignments(solution, Node1.assignment)
-            BDD.add_assignments(solution, Node2.assignment)
+            #BDD.add_assignments(solution, Node1.assignment)
+            #BDD.add_assignments(solution, Node2.assignment)
             return solution
+        
+        # if both nodes are of the same variable unite the negative children and positive children of both bdd
         elif Node1.var == Node2.var:
             solution = BDDNode(var=Node1.var)
             solution.negative_child = BDD.__apply(Node1.negative_child, Node2.negative_child, variable_order,united_bdd)
             solution.positive_child = BDD.__apply(Node1.positive_child, Node2.positive_child, variable_order,united_bdd)
-            BDD.add_assignments(solution, Node1.assignment)
-            BDD.add_assignments(solution, Node2.assignment)
-            solution.reduce(united_bdd)
+            #BDD.add_assignments(solution, Node1.assignment)
+            #BDD.add_assignments(solution, Node2.assignment)
+            if solution.negative_child is None or solution.positive_child is None:
+                raise Exception("Children are None")
+            #solution.reduce(united_bdd)
             return solution
+        
+        #if variables don't match deterine higher priority variable and unite children of higher prio variable with lower prio BDD
         else:
             gen = (var for var in variable_order if var == Node1.var or var == Node2.var)
             higher_variable = next(gen)
 
             if Node1.var == higher_variable:
-                higher_prio_BDD = Node1
-                lower_prio_BDD = Node2
+                higher_prio = Node1
+                lower_prio= Node2
             else:
-                higher_prio_BDD = Node2
-                lower_prio_BDD = Node1
+                higher_prio = Node2
+                lower_prio = Node1
 
-            solution = BDDNode(var=higher_prio_BDD.var)
-            neg_child = higher_prio_BDD.negative_child
-            pos_child = higher_prio_BDD.positive_child
-            solution.negative_child = BDD.__apply(higher_prio_BDD.negative_child, lower_prio_BDD, variable_order, united_bdd)
-            solution.positive_child = BDD.__apply(higher_prio_BDD.positive_child, lower_prio_BDD, variable_order, united_bdd)
-            BDD.add_assignments(solution, Node1.assignment)
-            BDD.add_assignments(solution, Node2.assignment)
-            solution.reduce(united_bdd)
+            solution = BDDNode(var=higher_prio.var)
+            #BDD.add_assignments(solution, higher_prio.assignment)
+            print("...")
+            solution.negative_child = BDD.__apply(higher_prio.negative_child, lower_prio, variable_order, united_bdd)
+            solution.positive_child = BDD.__apply(higher_prio.positive_child, lower_prio, variable_order, united_bdd)
+            if (solution.negative_child is None) or (solution.positive_child is None):
+                raise Exception("Children are None")
+            #TODO: doesn't work with reduced bdd's 
+            #in example child node C without neg or pos child??
+            #solution.reduce(united_bdd)
             return solution
 
-    def replace_variables(self) -> BDD:
-        bdd_copy = deepcopy(self)
-        bdd_copy.variables = [var + "_" for var in self.variables]
-        
+    def replace_variables(self, replacer : str) -> BDD:
+        #TODO: replacer richtig abfragen
+        if replacer in ["'", "/"]:
+            raise Exception("Replacer has not permitted characters")
+        var_copy = [var+replacer for var in self.variables.copy()]
         expression_copy = self.expression
         for var in self.variables:
-            expression_copy = re.sub(var, var + "_", expression_copy)
-        bdd_copy.expression = expression_copy
+            expression_copy = re.sub(var, var+replacer, expression_copy)
+        bdd_copy = BDD(expression_copy, var_copy, build_new=False)
         
-        self.__replace_variables(bdd_copy.root, [])
-        bdd_copy.reduce
+        bdd_copy.root = self.__replace_children_nodes(self.root, {}, replacer)
+        bdd_copy.__merge_leafs(bdd_copy.root)
+        
         return bdd_copy
+        
+    def __replace_children_nodes(self, original_node: BDDNode, visited_nodes: dict[BDDNode], replacer: str):
+        if original_node in visited_nodes:
+            node_copy = visited_nodes[original_node]
+            return node_copy
+            
+        if original_node.isLeaf():
+            node_copy = self.__copy_node(original_node, replacer)
+            return node_copy
+        
+        node_copy = self.__copy_node(original_node, replacer)
+        node_copy.negative_child = self.__replace_children_nodes(original_node.negative_child, visited_nodes, replacer)
+        node_copy.positive_child = self.__replace_children_nodes(original_node.positive_child, visited_nodes, replacer)
+        visited_nodes[original_node] = node_copy
+        return node_copy
+            
+    def __copy_node(self, node: BDDNode, replacer: str) -> BDDNode:
+        var = None
+        value = None
+        if node.isLeaf():
+            value = node.value
+        else:
+            var = node.var + replacer
+        node_assignment_copy = node.assignment.copy()
+        for i in range(len(node_assignment_copy)):
+            node_assignment_copy[i] = {k+replacer: v for k, v in node_assignment_copy[i].items()}
+        return BDDNode(var = var, value=value, assignment=node_assignment_copy)
 
-    def __replace_variables(self, node: BDDNode,  visited_nodes: list[BDDNode]):
-        if node and node not in visited_nodes:
-            visited_nodes.append(node)
-            self.__replace_values_in_node(node)
-            self.__replace_variables(node.negative_child, visited_nodes)
-            self.__replace_variables(node.positive_child, visited_nodes)
-        return 
-
-    def __replace_values_in_node(self, node: BDDNode):
-        if node.var in self.variables:
-            node.var = node.var + "_"
-        for i in range(len(node.assignment)):
-            node.assignment[i] = {k + "_": v for k, v in node.assignment[i].items()}
-        return
 
     # returns list of all nodes in breadth first bottom up order
     def breadth_first_bottom_up_search(self) -> list[BDDNode]:
@@ -316,9 +346,10 @@ class BDD:
     # Visualation
     def generateDot(self, filename="output"):
         node = self.root
+        label = node.value if node.isLeaf() else node.var 
         #out = open(f"C:\\Users\\annan\\PycharmProjects\\SaferThanPerception\\BDD\\out\\{filename}.dot", "w")
-        out = open(f"BDD\\out\\{filename}.dot", "w")
-        out.write(f"digraph{{\nlabel=\"{self.expression}\\n\\n\"\n{id(node)}[label={node.var}]")
+        out = open(f"out\\{filename}.dot", "w")
+        out.write(f"digraph{{\nlabel=\"{self.expression}\\n\\n\"\n{id(node)}[label={label}]")
         self.__generate_dot_recursive(node, out)
         out.write("}")
         print("Dot File generated")
@@ -364,8 +395,8 @@ class BDD:
     def __copy__(self):
         return type(self)(self.variables, self.expression, self.evaluation, self.leafs, self.root)
     
-    def __deepcopy__(self, memo): # memo is a dict of id's to copies
-        id_self = id(self)        # memoization avoids unnecesary recursion
+    def __deepcopy__(self, memo): 
+        id_self = id(self)       
         _copy = memo.get(id_self)
         if _copy is None:
             _copy = type(self)(
@@ -377,7 +408,7 @@ class BDD:
         return _copy
     
     def delete_all_files_from_out():
-        files = glob.glob('/BDD/out')
+        files = glob.glob('out/*')
         for file in files:
             os.remove(file)
         
@@ -403,17 +434,25 @@ if __name__ == "__main__":
     # for k, v in bdd.evaluation.items():
     #     print(f"{k}: {v}")
     #
+    
+    BDD.delete_all_files_from_out()
     e1 = "A or B"
-    e2 = "B or C"
-    v = ['A', 'B', 'C']
-    bdd1 = BDD(e1, v)
-    bdd1.generateDot("bdd1")
+    e2 = "(B or C) and (A and D)"
+    v = ['A', 'B', 'C', 'D']
+    #bdd1 = BDD(e1, v)
+    #bdd1.reduce()
+    #bdd1.generateDot("bdd1")
     bdd2 = BDD(e2, v)
-    bdd1.generateDot("bdd2")
-    
-    bdd1_and_bdd2 = BDD.unite(bdd1, bdd2, ["A", "B", "C"])
-    bdd1_and_bdd2.generateDot(filename="united_out")
-    
-    bdd1_copy = bdd1.replace_variables()
-    bdd1_copy.generateDot("bdd1_copy")
+    bdd2.reduce()
+    bdd2.generateDot("bdd2")
+    bdd2_replaced = bdd2.replace_variables("")
+    bdd2.generateDot("bdd2_2")
+    bdd2_replaced.negate()
+    bdd2_replaced.generateDot("bdd_2_negate")
+    #
+    #bdd1_and_bdd2 = BDD.unite(bdd1, bdd2, ["A", "B", "C"])
+    #bdd1_and_bdd2.generateDot(filename="united_out")
+    #
+    #bdd1_copy = bdd1.replace_variables(replacer="_")
+    #bdd1_copy.generateDot("bdd1_copy")
 

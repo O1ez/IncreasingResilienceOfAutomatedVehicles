@@ -1,0 +1,19 @@
+digraph{
+label="(not ((x and y) or (x and not y and not z) or (not x and y and not z) or (not x and not y and z)))and(not ((x and z) or (not x and y)))\n\n"
+2889594688720[label=x]2889594686160[label="y "]
+2889594688720 -> 2889594686160[style=dashed]
+2889594690000[label="z "]
+2889594686160 -> 2889594690000[style=dashed]
+2889594689232[label="True
+"]
+2889594690000 -> 2889594689232[style=dashed]
+2889594689872[label="False
+"]
+2889594690000 -> 2889594689872
+2889594689872[label="False
+"]
+2889594686160 -> 2889594689872
+2889594689872[label="False
+"]
+2889594688720 -> 2889594689872
+}

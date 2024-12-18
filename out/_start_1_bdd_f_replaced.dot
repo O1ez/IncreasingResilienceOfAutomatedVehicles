@@ -1,46 +1,46 @@
 digraph{
 label="(x_ and y_) or (x_ and not y_ and not z_) or (not x_ and y_ and not z_) or (not x_ and not y_ and z_)\n\n"
-1691972238544[label=x_]1691972239184[label="y_ {'x_': False}"]
-1691972238544 -> 1691972239184[style=dashed]
-1691972238288[label="z_ {'x_': False, 'y_': False}"]
-1691972239184 -> 1691972238288[style=dashed]
-1691972238032[label="False
+2889594401744[label=x_]2889594402000[label="y_ {'x_': False}"]
+2889594401744 -> 2889594402000[style=dashed]
+2889594403920[label="z_ {'x_': False, 'y_': False}"]
+2889594402000 -> 2889594403920[style=dashed]
+2889594403792[label="False
 {'x_': False, 'y_': False, 'z_': False}
 {'x_': False, 'y_': True, 'z_': True}
 {'x_': True, 'y_': False, 'z_': True}"]
-1691972238288 -> 1691972238032[style=dashed]
-1691972238672[label="True
+2889594403920 -> 2889594403792[style=dashed]
+2889594403152[label="True
 {'x_': False, 'y_': False, 'z_': True}
 {'x_': False, 'y_': True, 'z_': False}
 {'x_': True, 'y_': False, 'z_': False}
 {'x_': True, 'y_': True, 'z_': False}
 {'x_': True, 'y_': True, 'z_': True}"]
-1691972238288 -> 1691972238672
-1691972659792[label="z_ {'x_': False, 'y_': True}
+2889594403920 -> 2889594403152
+2889594683728[label="z_ {'x_': False, 'y_': True}
 {'x_': True, 'y_': False}"]
-1691972239184 -> 1691972659792
-1691972238672[label="True
+2889594402000 -> 2889594683728
+2889594403152[label="True
 {'x_': False, 'y_': False, 'z_': True}
 {'x_': False, 'y_': True, 'z_': False}
 {'x_': True, 'y_': False, 'z_': False}
 {'x_': True, 'y_': True, 'z_': False}
 {'x_': True, 'y_': True, 'z_': True}"]
-1691972659792 -> 1691972238672[style=dashed]
-1691972238032[label="False
+2889594683728 -> 2889594403152[style=dashed]
+2889594403792[label="False
 {'x_': False, 'y_': False, 'z_': False}
 {'x_': False, 'y_': True, 'z_': True}
 {'x_': True, 'y_': False, 'z_': True}"]
-1691972659792 -> 1691972238032
-1691972657872[label="y_ {'x_': True}"]
-1691972238544 -> 1691972657872
-1691972659792[label="z_ {'x_': False, 'y_': True}
+2889594683728 -> 2889594403792
+2889594685264[label="y_ {'x_': True}"]
+2889594401744 -> 2889594685264
+2889594683728[label="z_ {'x_': False, 'y_': True}
 {'x_': True, 'y_': False}"]
-1691972657872 -> 1691972659792[style=dashed]
-1691972238672[label="True
+2889594685264 -> 2889594683728[style=dashed]
+2889594403152[label="True
 {'x_': False, 'y_': False, 'z_': True}
 {'x_': False, 'y_': True, 'z_': False}
 {'x_': True, 'y_': False, 'z_': False}
 {'x_': True, 'y_': True, 'z_': False}
 {'x_': True, 'y_': True, 'z_': True}"]
-1691972657872 -> 1691972238672
+2889594685264 -> 2889594403152
 }

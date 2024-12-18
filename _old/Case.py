@@ -2,7 +2,7 @@ import math
 
 from tabulate import tabulate
 
-from TruthTableOut import TruthTableOut
+from old.TruthTableOut import TruthTableOut
 import scipy
 
 

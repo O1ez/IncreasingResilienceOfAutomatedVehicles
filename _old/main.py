@@ -1,7 +1,7 @@
 # This is a sample Python script.
 from tabulate import tabulate
 
-from Case import Case
+from old.Case import Case
 
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
