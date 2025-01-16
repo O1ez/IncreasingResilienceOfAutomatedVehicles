@@ -6,15 +6,19 @@ import re
 from copy import copy, deepcopy
 import os
 import glob
+from gmpy2 import mpq
 
 
 
 class BDDNode:
-    def __init__(self, var=None, negative_child: Optional[BDDNode] = None, positive_child: Optional[BDDNode] = None, value=None, assignment: Optional[list[dict]] = None):
+    def __init__(self, var=None, negative_child: Optional[BDDNode] = None, negative_probability: mpq = None, positive_child: Optional[BDDNode] = None, positive_probability: mpq = None, value=None, assignment: Optional[list[dict]] = None, is_alt = False):
         self.var = var  # The variable for decision (None for terminal nodes)
         self.negative_child = negative_child
+        self.negative_probability = negative_probability
         self.positive_child = positive_child
+        self.positive_probability = positive_probability
         self.value = value  # Terminal value (True or False for leaf nodes)
+        self.is_alt = is_alt
         if assignment is None:
             self.assignment = []
         else:
@@ -32,6 +36,19 @@ class BDDNode:
         temp_bdd = BDD(overarching_tree.expression, overarching_tree.variables, False)
         temp_bdd.root = self
         temp_bdd.reduce()
+    
+    #TODO: replace copy node in BDDNode   
+    def __copy_node(self, replacer: str) -> BDDNode:
+        var = None
+        value = None
+        if self.isLeaf():
+            value = self.value
+        else:
+            var = self.var + replacer
+        node_assignment_copy = self.assignment.copy()
+        for i in range(len(node_assignment_copy)):
+            node_assignment_copy[i] = {k+replacer: v for k, v in node_assignment_copy[i].items()}
+        return BDDNode(var = var, value=value, assignment=node_assignment_copy)
 
     def __eq__(self, other):
         if other is None or not isinstance(other, BDDNode):
@@ -66,20 +83,24 @@ class BDDNode:
                 deepcopy(self.var, memo), 
                 deepcopy(self.negative_child, memo),
                 deepcopy(self.positive_child, memo),
+                deepcopy(self.negative_probability, memo),
+                deepcopy(self.positive_probability, memo),
                 deepcopy(self.value, memo),)
             memo[id_self] = _copy
         return _copy
 
 
 class BDD:
-    def __init__(self, expression, variables: list[str], build_new=True):
+    def __init__(self, expression, variables: list[str], build_new=True, alt_variables: bool = False):
         self.variables = variables  # List of variables
         self.expression = expression
         self.evaluation = {}  #dict of all evaluations
         self.leafs = {False: BDDNode(value=False), True: BDDNode(value=True)}
         self.root = None
+        self.probabilities_set = False
         if build_new:
             self.build_new()
+            
 
     def build_new(self):
         empty_dict = {}
@@ -97,20 +118,20 @@ class BDD:
 
         #initiate node
         var = self.variables[var_index]
-        currentNode = BDDNode(var=var)
-        currentNode.assignment = [({var: val for var, val in current_assignment.items()})]
+        current_node = BDDNode(var=var)
+        current_node.assignment = [({var: val for var, val in current_assignment.items()})]
 
         # Create node for false subtree and true subtree
         current_assignment_negative = current_assignment.copy()
         current_assignment_negative[var] = False
         leftNode = self.build(var_index + 1, current_assignment_negative)
-        currentNode.negative_child = leftNode
+        current_node.negative_child = leftNode
 
         current_assignment_positive = current_assignment.copy()
         current_assignment_positive[var] = True
         positive_child = self.build(var_index + 1, current_assignment_positive)
-        currentNode.positive_child = positive_child
-        return currentNode
+        current_node.positive_child = positive_child
+        return current_node
 
     def isOnlyRoot(self):
         return not self.root.hasChildren
@@ -137,7 +158,7 @@ class BDD:
         if self.root.negative_child == self.root.positive_child:
             self.root = self.root.negative_child
         
-        print("Reduction done.")
+        #print("Reduction done.")
         return True
 
     def __remove_duplicate_subtree(self, node: BDDNode, mem: dict[BDDNode, BDDNode]):
@@ -225,28 +246,36 @@ class BDD:
                 raise Exception("Variable " + var + " from BDD2 not found in variables.")
 
         united = BDD(expression="(" + BDD1.expression + ")and(" + BDD2.expression + ")", variables=variable_order,build_new=False)
-        united.root = BDD.__apply(BDD1.root, BDD2.root, variable_order, united)
+        united.root = BDD.__unite_helper(BDD1.root, BDD2.root, variable_order, united)
         united.reduce()
         return united
 
     @staticmethod
-    def __apply(Node1: BDDNode, Node2: BDDNode, variable_order: list[str], united_bdd: BDD) -> BDDNode:
-        if (Node1.var and (Node1.var not in variable_order)) or (Node2.var and (Node2.var not in variable_order)):
-            print(Node1.var + Node2.var + str(variable_order))
-            raise Exception("BDD variables not in variable_order")
+    def __unite_helper(node1: BDDNode, node2: BDDNode, variable_order: list[str], united_bdd: BDD) -> BDDNode:
+        node1_var = None
+        node2_var = None
+        if node1.var:  
+            node1_var = node1.var + "_" if node1.is_alt else node1.var
+            if node1_var not in variable_order:
+                raise Exception(f"{node1_var} not in variable order {variable_order}.")
+        if node2.var:            
+            node2_var = node2.var + "_" if node2.is_alt else node2.var
+            if node2_var not in variable_order:
+                raise Exception(f"{node2_var} not in variable order {variable_order}.")
+            
         
         # if both nodes are leafs return new leaf with united value
-        if Node1.isLeaf() and Node2.isLeaf():
-            solution = BDDNode(value=Node1.value and Node2.value)
+        if node1.isLeaf() and node2.isLeaf():
+            solution = BDDNode(value=node1.value and node2.value)
             #BDD.add_assignments(solution, Node1.assignment)
             #BDD.add_assignments(solution, Node2.assignment)
             return solution
         
         # if both nodes are of the same variable unite the negative children and positive children of both bdd
-        elif Node1.var == Node2.var:
-            solution = BDDNode(var=Node1.var)
-            solution.negative_child = BDD.__apply(Node1.negative_child, Node2.negative_child, variable_order,united_bdd)
-            solution.positive_child = BDD.__apply(Node1.positive_child, Node2.positive_child, variable_order,united_bdd)
+        elif node1_var == node2_var:
+            solution = BDDNode(var=node1_var, is_alt=node1.is_alt)
+            solution.negative_child = BDD.__unite_helper(node1.negative_child, node2.negative_child, variable_order,united_bdd)
+            solution.positive_child = BDD.__unite_helper(node1.positive_child, node2.positive_child, variable_order,united_bdd)
             #BDD.add_assignments(solution, Node1.assignment)
             #BDD.add_assignments(solution, Node2.assignment)
             if solution.negative_child is None or solution.positive_child is None:
@@ -256,70 +285,179 @@ class BDD:
         
         #if variables don't match deterine higher priority variable and unite children of higher prio variable with lower prio BDD
         else:
-            gen = (var for var in variable_order if var == Node1.var or var == Node2.var)
+            gen = (var for var in variable_order if var == node1_var or var == node2_var)
             higher_variable = next(gen)
 
-            if Node1.var == higher_variable:
-                higher_prio = Node1
-                lower_prio= Node2
+            if node1_var == higher_variable:
+                higher_prio = node1
+                lower_prio= node2
             else:
-                higher_prio = Node2
-                lower_prio = Node1
+                higher_prio = node2
+                lower_prio = node1
 
-            solution = BDDNode(var=higher_prio.var)
+            solution = BDDNode(var=higher_prio.var, is_alt=higher_prio.is_alt)
             #BDD.add_assignments(solution, higher_prio.assignment)
-            print("...")
-            solution.negative_child = BDD.__apply(higher_prio.negative_child, lower_prio, variable_order, united_bdd)
-            solution.positive_child = BDD.__apply(higher_prio.positive_child, lower_prio, variable_order, united_bdd)
+            solution.negative_child = BDD.__unite_helper(higher_prio.negative_child, lower_prio, variable_order, united_bdd)
+            solution.positive_child = BDD.__unite_helper(higher_prio.positive_child, lower_prio, variable_order, united_bdd)
             if (solution.negative_child is None) or (solution.positive_child is None):
                 raise Exception("Children are None")
             #TODO: doesn't work with reduced bdd's 
             #in example child node C without neg or pos child??
             #solution.reduce(united_bdd)
             return solution
-
-    def replace_variables(self, replacer : str) -> BDD:
-        #TODO: replacer richtig abfragen
-        if replacer in ["'", "/"]:
-            raise Exception("Replacer has not permitted characters")
+        
+    def replace_variables(self) -> BDD:
+        return self.__make_copy_helper("_")
+    
+    def make_copy(self) -> BDD:
+        return self.__make_copy_helper("") 
+    
+    def __make_copy_helper(self, replacer : str) -> BDD:
         var_copy = [var+replacer for var in self.variables.copy()]
         expression_copy = self.expression
         for var in self.variables:
             expression_copy = re.sub(var, var+replacer, expression_copy)
-        bdd_copy = BDD(expression_copy, var_copy, build_new=False)
+            bdd_copy = BDD(expression_copy, var_copy, build_new=False)
         
-        bdd_copy.root = self.__replace_children_nodes(self.root, {}, replacer)
+        bdd_copy.root = self.__replace_children_nodes(self.root, {}, replacer == "_")
         bdd_copy.__merge_leafs(bdd_copy.root)
         
         return bdd_copy
         
-    def __replace_children_nodes(self, original_node: BDDNode, visited_nodes: dict[BDDNode], replacer: str):
+    def __replace_children_nodes(self, original_node: BDDNode, visited_nodes: dict[BDDNode], is_alt : bool):
         if original_node in visited_nodes:
             node_copy = visited_nodes[original_node]
             return node_copy
             
         if original_node.isLeaf():
-            node_copy = self.__copy_node(original_node, replacer)
+            node_copy = self.__copy_node(original_node, is_alt)
             return node_copy
         
-        node_copy = self.__copy_node(original_node, replacer)
-        node_copy.negative_child = self.__replace_children_nodes(original_node.negative_child, visited_nodes, replacer)
-        node_copy.positive_child = self.__replace_children_nodes(original_node.positive_child, visited_nodes, replacer)
+        node_copy = self.__copy_node(original_node, is_alt)
+        node_copy.negative_child = self.__replace_children_nodes(original_node.negative_child, visited_nodes, is_alt)
+        node_copy.positive_child = self.__replace_children_nodes(original_node.positive_child, visited_nodes, is_alt)
         visited_nodes[original_node] = node_copy
         return node_copy
             
-    def __copy_node(self, node: BDDNode, replacer: str) -> BDDNode:
+    def __copy_node(self, node: BDDNode, is_alt) -> BDDNode:
         var = None
         value = None
         if node.isLeaf():
             value = node.value
         else:
-            var = node.var + replacer
+            var = node.var #+ replacer
         node_assignment_copy = node.assignment.copy()
         for i in range(len(node_assignment_copy)):
-            node_assignment_copy[i] = {k+replacer: v for k, v in node_assignment_copy[i].items()}
-        return BDDNode(var = var, value=value, assignment=node_assignment_copy)
+            node_assignment_copy[i] = {k: v for k, v in node_assignment_copy[i].items()}
+        return BDDNode(var = var, value=value, assignment=node_assignment_copy, is_alt=is_alt)
+    
+    #only use if original and alternative Variables are united 
+    def set_probabilities(self, probabilities: dict[str: list(mpq)]):
+        root = self.root
+        if root.isLeaf():
+            raise Exception("Tree needs at least one Node that isn't a leaf!")
+        if not root.is_alt:
+            #p of only x
+            root.negative_probability = probabilities[root.var][0] + probabilities[root.var][2]
+            #p of only not x
+            root.positive_probability = probabilities[root.var][1] + probabilities[root.var][3]
+        else:
+            #p of only x_
+            root.negative_probability = probabilities[root.var][0] + probabilities[root.var][1]
+            #p of only not x_
+            root.negative_probability = probabilities[root.var][1] + probabilities[root.var][0]
+        self.__set_probabilities_helper(root, probabilities)
+        self.probabilities_set = True
+        return
+        
+    #helper method for set_probabilities
+    #sets probabilities of children
+    def __set_probabilities_helper(self, current_node : BDDNode, probabilities: dict[str: list(mpq)]):
+        # example of table/list:
+        # x'\x     0        1
+        # 0    [0] 0.2   [1] 0.3
+        # 1    [2] 0.4   [3] 0.1
+    
+        negative_child = current_node.negative_child
+        positive_child = current_node.positive_child
+        
+        if not negative_child.isLeaf():
+            if not current_node.is_alt and current_node.var == negative_child.var:
+                #child needs to be alt of current node -> current probability affects alt child probability
+                p_list = probabilities[current_node.var]
+                
+                # p = (p not x and not x_) / (p not x)
+                negative_child.negative_probability = p_list[0] / (p_list[0] + p_list[2])
+                # p = (p not x and x_) / (p not x)
+                negative_child.positive_probability = p_list[2] / (p_list[0] + p_list[2])
+            else: #child is not influenced by current node probability
+                p_list = probabilities[negative_child.var]
+                if not negative_child.is_alt:
+                    # p = not x
+                    negative_child.negative_probability = p_list[0] + p_list[2]
+                    # p = x
+                    negative_child.positive_probability = p_list[1] + p_list[3]
+                else:
+                    #child is alt child but doesn't match variable --> add both alt probabilities
+                    # p = not x_
+                    negative_child.negative_probability = p_list[0] + p_list[1]
+                    #p = not x
+                    negative_child.positive_probability = p_list[2] + p_list[3]
+            self.__set_probabilities_helper(negative_child, probabilities)
+                
+        #same for positive child
+        if not positive_child.isLeaf():
+            if not current_node.is_alt and current_node.var == positive_child.var:
+                #child needs to be alt of current node -> current probability affects alt child probability
+                p_list = probabilities[current_node.var]
+                
+                # p = (p x and not x_) / (p x)
+                positive_child.negative_probability = p_list[1] / (p_list[1] + p_list[3])
+                # p = (p x and x_) / (p x)
+                positive_child.positive_probability = p_list[3] / (p_list[1] + p_list[3])
+            else: #child is not influenced by current node probability
+                p_list = probabilities[positive_child.var]
+                
+                if not positive_child.is_alt:
+                    # p = not x
+                    positive_child.negative_probability = p_list[0] + p_list[2]
+                    # p = x
+                    positive_child.positive_probability = p_list[1] + p_list[3]
+                else:
+                    #child is alt child but doesn't match variable --> add both alt probabilities
+                    # p = not x_
+                    positive_child.negative_probability = p_list[0] + p_list[1]
+                    #p = not x
+                    positive_child.positive_probability = p_list[2] + p_list[3]
+            self.__set_probabilities_helper(positive_child, probabilities)  
 
+        #end case: both children are leafs
+        return
+    
+    #only use if probabilities are set
+    def sum_probabilities_positive_cases(self):
+        if not self.probabilities_set:
+            raise Exception("Set the probabilities first.")
+        return self.__sum_probabilities_helper(self.root, path_mul=1)
+        
+    def __sum_probabilities_helper(self, currentNode: BDDNode, path_mul: mpq) -> mpq:
+        #sum of path is complete
+        if currentNode.isLeaf():
+            #don't sum probabilities of paths that end in zero
+            if currentNode.value == 0:
+                return 0
+            else:
+                return path_mul
+        else:
+            negative_child = currentNode.negative_child
+            positive_child = currentNode.positive_child
+            
+            mul_negative_path = self.__sum_probabilities_helper(negative_child, path_mul * currentNode.negative_probability)
+            mul_positive_path = self.__sum_probabilities_helper(positive_child, path_mul * currentNode.positive_probability)
+            
+            return mul_negative_path + mul_positive_path
+        
+        
 
     # returns list of all nodes in breadth first bottom up order
     def breadth_first_bottom_up_search(self) -> list[BDDNode]:
@@ -344,43 +482,63 @@ class BDD:
 
 
     # Visualation
+    #TODO: draw probabilities
     def generateDot(self, filename="output"):
         node = self.root
-        label = node.value if node.isLeaf() else node.var 
+        alt_str = "_" if node.is_alt else ""
+        label = node.value if node.isLeaf() else node.var+alt_str 
         #out = open(f"C:\\Users\\annan\\PycharmProjects\\SaferThanPerception\\BDD\\out\\{filename}.dot", "w")
         out = open(f"out\\{filename}.dot", "w")
         out.write(f"digraph{{\nlabel=\"{self.expression}\\n\\n\"\n{id(node)}[label={label}]")
         self.__generate_dot_recursive(node, out)
         out.write("}")
-        print("Dot File generated")
+        #print(f"Dot File generated: {filename}.dot")
         self.__reset_draw(self.root)
 
-    def __generate_dot_recursive(self, node, out):
+    def __generate_dot_recursive(self, node: BDDNode, out):
         if not node.drawn:
             # draw negative_child childnode
             if node.negative_child is not None:
+                alt_str = "_" if node.negative_child.is_alt else ""
                 child_node = node.negative_child
-                if node.negative_child.var is not None:
+                #get probability
+                if node.negative_probability is not None:
+                        prob_str = f"{float(node.negative_probability):.2f}"
+                else: prob_str = ""
+                if child_node.var is not None:
+                    #draw child node
                     assignments = "\n".join(str(d) for d in child_node.assignment)
-                    out.write(f"{id(child_node)}[label=\"{child_node.var} {assignments}\"]\n")
-                    out.write(f"{id(node)} -> {id(child_node)}[style=dashed]\n")
+                    out.write(f"{id(child_node)}[label=\"{child_node.var+alt_str}\n{assignments}\"]\n")
+                    #draw edge node -> child_node
+                    out.write(f"{id(node)} -> {id(child_node)}[style=dashed label=\"{prob_str}\" fontcolor = gray]\n")
                     self.__generate_dot_recursive(child_node, out)
                 elif node.negative_child.value is not None:
+                    #draw leaf node
                     assignments = "\n".join(str(d) for d in child_node.assignment)
                     out.write(f"{id(child_node)}[label=\"{child_node.value}\n{assignments}\"]\n")
-                    out.write(f"{id(node)} -> {id(child_node)}[style=dashed]\n")
-            #draw right childnode
+                    #draw edge node -> leaf node
+                    out.write(f"{id(node)} -> {id(child_node)}[style=dashed label=\"{prob_str}\" fontcolor = gray]\n")
+            #draw positive childnode
             if node.positive_child is not None:
                 child_node = node.positive_child
-                if node.positive_child.var is not None:
+                alt_str = "_" if node.positive_child.is_alt else ""
+                #get probability 
+                if node.positive_probability is not None:
+                        prob_str = f"{float(node.positive_probability):.2f}"
+                else: prob_str = ""
+                if child_node.var is not None:
+                    #draw child node
                     assignments = "\n".join(str(d) for d in child_node.assignment)
-                    out.write(f"{id(child_node)}[label=\"{child_node.var} {assignments}\"]\n")
-                    out.write(f"{id(node)} -> {id(child_node)}\n")
-                    self.__generate_dot_recursive(node.positive_child, out)
-                elif node.positive_child.value is not None:
+                    out.write(f"{id(child_node)}[label=\"{child_node.var+alt_str}\n{assignments}\"]\n")
+                    #draw edge node -> child node
+                    out.write(f"{id(node)} -> {id(child_node)} [label=\"{prob_str}\" fontcolor = gray]\n")
+                    self.__generate_dot_recursive(child_node, out)
+                elif child_node.value is not None:
+                    #draw leaf node 
                     assignments = "\n".join(str(d) for d in child_node.assignment)
                     out.write(f"{id(child_node)}[label=\"{child_node.value}\n{assignments}\"]\n")
-                    out.write(f"{id(node)} -> {id(child_node)}\n")
+                    #draw edge node -> leaf node
+                    out.write(f"{id(node)} -> {id(child_node)} [label=\"{prob_str}\" fontcolor = gray]\n")
             node.drawn = True
 
     def __reset_draw(self, node):
@@ -437,22 +595,33 @@ if __name__ == "__main__":
     
     BDD.delete_all_files_from_out()
     e1 = "A or B"
-    e2 = "(B or C) and (A and D)"
-    v = ['A', 'B', 'C', 'D']
-    #bdd1 = BDD(e1, v)
-    #bdd1.reduce()
-    #bdd1.generateDot("bdd1")
+    e2 = "(B or C) and (A and C)"
+    v = ['A', 'B', 'C']
+    
+    p = {
+        "A" : [mpq(0.2), mpq(0.3), mpq(0.4), mpq(0.1)],
+        "B" : [mpq(0.15), mpq(0.6), mpq(0.13), mpq(0.12)],
+        "C" : [mpq(0.23), mpq(0.17), mpq(0.2), mpq(0.4)]
+    }
+    
+    bdd1 = BDD(e1, v)
+    bdd1.reduce()
+    bdd1.generateDot("1_bdd1")
+    
     bdd2 = BDD(e2, v)
     bdd2.reduce()
-    bdd2.generateDot("bdd2")
-    bdd2_replaced = bdd2.replace_variables("")
-    bdd2.generateDot("bdd2_2")
+    bdd2.generateDot("2_bdd2")
+    
+    bdd2_replaced = bdd2.replace_variables()
+    bdd2_replaced.generateDot("3_bdd2_replaced")
     bdd2_replaced.negate()
-    bdd2_replaced.generateDot("bdd_2_negate")
-    #
-    #bdd1_and_bdd2 = BDD.unite(bdd1, bdd2, ["A", "B", "C"])
-    #bdd1_and_bdd2.generateDot(filename="united_out")
-    #
-    #bdd1_copy = bdd1.replace_variables(replacer="_")
-    #bdd1_copy.generateDot("bdd1_copy")
+    bdd2_replaced.generateDot("4_bdd_2_negate")
+    
+    united = BDD.unite(bdd1, bdd2_replaced, ["A", "A_", "B", "B_", "C", "C_"])
+    united.generateDot(filename="5_united")
+    united.set_probabilities(p)
+    united.generateDot(filename="6_united_w_prob")
+    
+    
+    
 

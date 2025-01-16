@@ -6,24 +6,25 @@ from gmpy2 import mpq
 
 
 class Model:
-    def __init__(self, acceptable_threshold: float, unobservable: str, f_guard: str, variables: list[str]):
+    def __init__(self, acceptable_threshold: float, unobservable: str, f_guard: str, probabilities: list[str]):
         self.acceptable_threshold = acceptable_threshold
-        self.uo = BDD(unobservable, variables)
+        self.uo = BDD(unobservable, list(probabilities.keys()))
         self.uo.reduce()
-        self.f = BDD(f_guard, variables)
+        self.f = BDD(f_guard, list(probabilities.keys()))
         self.f.reduce()
-        self.vars = variables
+        self.vars = list(probabilities.keys())
+        self.probabilities = probabilities
 
     def calc_tp_fp(self, step = ""):
         self.f.generateDot(step+"0_bdd_f_")
-        bdd_f_replaced = self.f.replace_variables("_")
+        bdd_f_replaced = self.f.replace_variables()
         bdd_f_replaced.generateDot(step+"1_bdd_f_replaced")
         
-        bdd_not_f = self.f.replace_variables("")
+        bdd_not_f = self.f.make_copy()
         bdd_not_f.negate()
         bdd_not_f.generateDot(step+"2_bdd_not_f")
         
-        bdd_not_uo = self.uo.replace_variables("")
+        bdd_not_uo = self.uo.make_copy()
         bdd_not_uo.negate()
         bdd_not_uo.generateDot(step+"3_bdd_not_uo")
         
@@ -39,12 +40,16 @@ class Model:
             f_united_vars.append(f_replaced_vars[i])
         
         first_unite = BDD.unite(bdd_not_f, bdd_not_uo, not_f_vars)
-        first_unite.generateDot(step+"4_bdd_not_f_and_not_uo")
+        #first_unite.generateDot(step+"4_bdd_not_f_and_not_uo")
         bdd_fp = BDD.unite(bdd_f_replaced, first_unite, f_united_vars)
+        bdd_fp.set_probabilities(self.probabilities)
         bdd_fp.generateDot(step+"5_bdd_fp")
+        fp = bdd_fp.sum_probabilities_positive_cases()
         
         bdd_tp = BDD.unite(bdd_f_replaced, BDD.unite(self.uo, self.f, self.vars), f_united_vars)
+        bdd_tp.set_probabilities(self.probabilities)
         bdd_tp.generateDot(step+"6_bdd_tp")
+        tp = bdd_tp.sum_probabilities_positive_cases()
         
         #mit Fehler in der Dok
         #bdd_f_replaced.negate()
@@ -60,7 +65,7 @@ class Model:
         #bdd_fp_wrong = BDD.unite(bdd_f_replaced, first_unite, f_united_vars)
         #bdd_fp_wrong.generateDot(step+"5_wrong_bdd_fp")
 
-        return 0.5, 0.5
+        return tp, fp
 
     def check_acceptable(self, fp: float):
         return fp < self.acceptable_threshold
@@ -92,10 +97,10 @@ class Model:
 
     #TODO: rename this
     def algorithm(self):
-        bdd_uo_copy = self.uo.replace_variables("")
+        bdd_uo_copy = self.uo.replace_variables()
         #1
         tp_old, fp_old = self.calc_tp_fp("_start_")
-        print("Initial values: \ntp: " + str(tp_old) + "\nfp: " + str(fp_old))
+        print("Initial values: \ntp: " + f"{float(tp_old):.2f}" + "\nfp: " + f"{float(fp_old):.2f}")
         #2
         child_uo = self.find_node_in_uo(bdd_uo_copy)
         i = 1
@@ -116,7 +121,7 @@ class Model:
             child_uo = self.find_node_in_uo(bdd_uo_copy)
         #3
         tp_new, fp_new = self.calc_tp_fp("end_")
-        print("New values: \ntp: " + str(tp_new) + "\nfp: " + str(fp_new))
+        print("New values: \ntp: " + f"{float(tp_new):.2f}" + "\nfp: " + f"{float(tp_new):.2f}")
         #4
         is_acceptable = self.check_acceptable(fp_new)
 
@@ -134,28 +139,30 @@ if __name__ == "__main__":
     #print(f"tp: {tp}, fp: {fp}")
 
     print("Start test")
-    v = ["x", "y", "z"]
+    #v = ["x", "y", "z"]
     
     # x'\x  0     1
     # 0    0.2   0.3
     # 1    0.4   0.1
     
     # y'\y  0     1
-    # 0    0.15  0.6
-    # 1    0.13  0.12
+    # 0    0.15  0.6  0.75
+    # 1    0.13  0.12 0.25
+    #      0.28  0.72
     
     # z'\z  0     1
     # 0    0.23  0.17
     # 1    0.2   0.4
     #
-    #v = {
-    #    "x" : [mpq(0.2), mpq(0.3), mpq(0.4), mpq(0.1)],
-    #    "y" : [mpq(0.15), mpq(0.6), mpq(0.13), mpq(0.12)],
-    #    "z" : [mpq(0.23), mpq(0.17), mpq(0.2), mpq(0.4)]
-    #}
+    p = {
+        "x" : [mpq(0.2), mpq(0.3), mpq(0.4), mpq(0.1)],
+        "y" : [mpq(0.15), mpq(0.6), mpq(0.13), mpq(0.12)],
+        "z" : [mpq(0.23), mpq(0.17), mpq(0.2), mpq(0.4)]
+    }
     f = "(x and y) or (x and not y and not z) or (not x and y and not z) or (not x and not y and z)"
     uo = "(x and z) or (not x and y)"
 
     BDD.delete_all_files_from_out()
-    model = Model(0.1, uo, f, v)
+    model = Model(0.1, uo, f, p)
     model.algorithm()
+

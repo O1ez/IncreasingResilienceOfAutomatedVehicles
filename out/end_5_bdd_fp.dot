@@ -1,39 +1,45 @@
 digraph{
 label="((x_ and y_) or (x_ and not y_ and not z_) or (not x_ and y_ and not z_) or (not x_ and not y_ and z_))and((not ((x and y) or (x and not y and not z) or (not x and y and not z) or (not x and not y and z)))and(not ((x and z) or (not x and y))))\n\n"
-1889826368720[label=x]1889826370000[label="x_ "]
-1889826368720 -> 1889826370000[style=dashed]
-1889826370384[label="y "]
-1889826370000 -> 1889826370384[style=dashed]
-1889826371152[label="z "]
-1889826370384 -> 1889826371152[style=dashed]
-1889826371024[label="z_ "]
-1889826371152 -> 1889826371024[style=dashed]
-1889826367312[label="False
+2996655533072[label=x]2996655533872[label="x_
 "]
-1889826371024 -> 1889826367312[style=dashed]
-1889826368208[label="True
+2996655533072 -> 2996655533872[style=dashed label="0.60" fontcolor = gray]
+2996655534672[label="y
 "]
-1889826371024 -> 1889826368208
-1889826367312[label="False
+2996655533872 -> 2996655534672[style=dashed label="0.33" fontcolor = gray]
+2996655534032[label="z
 "]
-1889826371152 -> 1889826367312
-1889826367312[label="False
+2996655534672 -> 2996655534032[style=dashed label="0.28" fontcolor = gray]
+2996655533552[label="z_
 "]
-1889826370384 -> 1889826367312
-1889826366160[label="y "]
-1889826370000 -> 1889826366160
-1889826363856[label="z "]
-1889826366160 -> 1889826363856[style=dashed]
-1889826368208[label="True
+2996655534032 -> 2996655533552[style=dashed label="0.43" fontcolor = gray]
+2996655534832[label="False
 "]
-1889826363856 -> 1889826368208[style=dashed]
-1889826367312[label="False
+2996655533552 -> 2996655534832[style=dashed label="0.53" fontcolor = gray]
+2996655534192[label="True
 "]
-1889826363856 -> 1889826367312
-1889826367312[label="False
+2996655533552 -> 2996655534192 [label="0.47" fontcolor = gray]
+2996655534832[label="False
 "]
-1889826366160 -> 1889826367312
-1889826367312[label="False
+2996655534032 -> 2996655534832 [label="0.57" fontcolor = gray]
+2996655534832[label="False
 "]
-1889826368720 -> 1889826367312
+2996655534672 -> 2996655534832 [label="0.72" fontcolor = gray]
+2996655532912[label="y
+"]
+2996655533872 -> 2996655532912 [label="0.67" fontcolor = gray]
+2996655561200[label="z
+"]
+2996655532912 -> 2996655561200[style=dashed label="0.28" fontcolor = gray]
+2996655534192[label="True
+"]
+2996655561200 -> 2996655534192[style=dashed label="0.43" fontcolor = gray]
+2996655534832[label="False
+"]
+2996655561200 -> 2996655534832 [label="0.57" fontcolor = gray]
+2996655534832[label="False
+"]
+2996655532912 -> 2996655534832 [label="0.72" fontcolor = gray]
+2996655534832[label="False
+"]
+2996655533072 -> 2996655534832 [label="0.40" fontcolor = gray]
 }
