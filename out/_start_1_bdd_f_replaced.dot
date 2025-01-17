@@ -1,51 +1,51 @@
 digraph{
 label="(x_ and y_) or (x_ and not y_ and not z_) or (not x_ and y_ and not z_) or (not x_ and not y_ and z_)\n\n"
-2996655532912[label=x_]2996655531152[label="y_
+1987287100272[label=x_]1987287098512[label="y_
 {'x': False}"]
-2996655532912 -> 2996655531152[style=dashed label="" fontcolor = gray]
-2996655532112[label="z_
+1987287100272 -> 1987287098512[style=dashed label="" fontcolor = gray]
+1987287099472[label="z_
 {'x': False, 'y': False}"]
-2996655531152 -> 2996655532112[style=dashed label="" fontcolor = gray]
-2996655532592[label="False
+1987287098512 -> 1987287099472[style=dashed label="" fontcolor = gray]
+1987287099952[label="False
 {'x': False, 'y': False, 'z': False}
 {'x': False, 'y': True, 'z': True}
 {'x': True, 'y': False, 'z': True}"]
-2996655532112 -> 2996655532592[style=dashed label="" fontcolor = gray]
-2996655531952[label="True
+1987287099472 -> 1987287099952[style=dashed label="" fontcolor = gray]
+1987287099312[label="True
 {'x': False, 'y': False, 'z': True}
 {'x': False, 'y': True, 'z': False}
 {'x': True, 'y': False, 'z': False}
 {'x': True, 'y': True, 'z': False}
 {'x': True, 'y': True, 'z': True}"]
-2996655532112 -> 2996655531952 [label="" fontcolor = gray]
-2996655533552[label="z_
+1987287099472 -> 1987287099312 [label="" fontcolor = gray]
+1987287100912[label="z_
 {'x': False, 'y': True}
 {'x': True, 'y': False}"]
-2996655531152 -> 2996655533552 [label="" fontcolor = gray]
-2996655531952[label="True
+1987287098512 -> 1987287100912 [label="" fontcolor = gray]
+1987287099312[label="True
 {'x': False, 'y': False, 'z': True}
 {'x': False, 'y': True, 'z': False}
 {'x': True, 'y': False, 'z': False}
 {'x': True, 'y': True, 'z': False}
 {'x': True, 'y': True, 'z': True}"]
-2996655533552 -> 2996655531952[style=dashed label="" fontcolor = gray]
-2996655532592[label="False
+1987287100912 -> 1987287099312[style=dashed label="" fontcolor = gray]
+1987287099952[label="False
 {'x': False, 'y': False, 'z': False}
 {'x': False, 'y': True, 'z': True}
 {'x': True, 'y': False, 'z': True}"]
-2996655533552 -> 2996655532592 [label="" fontcolor = gray]
-2996655534032[label="y_
+1987287100912 -> 1987287099952 [label="" fontcolor = gray]
+1987287101392[label="y_
 {'x': True}"]
-2996655532912 -> 2996655534032 [label="" fontcolor = gray]
-2996655533552[label="z_
+1987287100272 -> 1987287101392 [label="" fontcolor = gray]
+1987287100912[label="z_
 {'x': False, 'y': True}
 {'x': True, 'y': False}"]
-2996655534032 -> 2996655533552[style=dashed label="" fontcolor = gray]
-2996655531952[label="True
+1987287101392 -> 1987287100912[style=dashed label="" fontcolor = gray]
+1987287099312[label="True
 {'x': False, 'y': False, 'z': True}
 {'x': False, 'y': True, 'z': False}
 {'x': True, 'y': False, 'z': False}
 {'x': True, 'y': True, 'z': False}
 {'x': True, 'y': True, 'z': True}"]
-2996655534032 -> 2996655531952 [label="" fontcolor = gray]
+1987287101392 -> 1987287099312 [label="" fontcolor = gray]
 }

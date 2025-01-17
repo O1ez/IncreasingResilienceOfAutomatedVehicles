@@ -1,25 +1,25 @@
 digraph{
 label="(x_ and y_) or (x_ and not y_ and not z_) or (not x_ and y_ and not z_) or (not x_ and not y_ and z_)\n\n"
-2996655530672[label=x_]2996655537552[label="z_
+1987287098032[label=x_]1987287104912[label="z_
 {'x': False, 'y': False}"]
-2996655530672 -> 2996655537552[style=dashed label="" fontcolor = gray]
-2996655531472[label="False
+1987287098032 -> 1987287104912[style=dashed label="" fontcolor = gray]
+1987287098832[label="False
 {'x': False, 'y': False, 'z': False}
 {'x': False, 'y': True, 'z': True}
 {'x': True, 'y': False, 'z': True}"]
-2996655537552 -> 2996655531472[style=dashed label="" fontcolor = gray]
-2996655531632[label="True
+1987287104912 -> 1987287098832[style=dashed label="" fontcolor = gray]
+1987287098992[label="True
 {'x': False, 'y': False, 'z': True}
 {'x': False, 'y': True, 'z': False}
 {'x': True, 'y': False, 'z': False}
 {'x': True, 'y': True, 'z': False}
 {'x': True, 'y': True, 'z': True}"]
-2996655537552 -> 2996655531632 [label="" fontcolor = gray]
-2996655531632[label="True
+1987287104912 -> 1987287098992 [label="" fontcolor = gray]
+1987287098992[label="True
 {'x': False, 'y': False, 'z': True}
 {'x': False, 'y': True, 'z': False}
 {'x': True, 'y': False, 'z': False}
 {'x': True, 'y': True, 'z': False}
 {'x': True, 'y': True, 'z': True}"]
-2996655530672 -> 2996655531632 [label="" fontcolor = gray]
+1987287098032 -> 1987287098992 [label="" fontcolor = gray]
 }

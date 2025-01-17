@@ -39,6 +39,7 @@ class Model:
             f_united_vars.append(not_f_vars[i])
             f_united_vars.append(f_replaced_vars[i])
         
+        #build fp = f_ and not f and not uo
         first_unite = BDD.unite(bdd_not_f, bdd_not_uo, not_f_vars)
         #first_unite.generateDot(step+"4_bdd_not_f_and_not_uo")
         bdd_fp = BDD.unite(bdd_f_replaced, first_unite, f_united_vars)
@@ -46,7 +47,8 @@ class Model:
         bdd_fp.generateDot(step+"5_bdd_fp")
         fp = bdd_fp.sum_probabilities_positive_cases()
         
-        bdd_tp = BDD.unite(bdd_f_replaced, BDD.unite(self.uo, self.f, self.vars), f_united_vars)
+        #build tp = f_ and f and not uo
+        bdd_tp = BDD.unite(bdd_f_replaced, BDD.unite(bdd_not_uo, self.f, self.vars), f_united_vars)
         bdd_tp.set_probabilities(self.probabilities)
         bdd_tp.generateDot(step+"6_bdd_tp")
         tp = bdd_tp.sum_probabilities_positive_cases()
@@ -121,9 +123,10 @@ class Model:
             child_uo = self.find_node_in_uo(bdd_uo_copy)
         #3
         tp_new, fp_new = self.calc_tp_fp("end_")
-        print("New values: \ntp: " + f"{float(tp_new):.2f}" + "\nfp: " + f"{float(tp_new):.2f}")
+        print("New values: \ntp: " + f"{float(tp_new):.2f}" + "\nfp: " + f"{float(fp_new):.2f}")
         #4
         is_acceptable = self.check_acceptable(fp_new)
+        print(f"The fp Value ({float(fp_new):.2f}) is {'not' if not is_acceptable else ''} acceptable. -> {float(fp_new):.2f} {'>' if not is_acceptable else '<=' } {self.acceptable_threshold}")
 
 
 if __name__ == "__main__":
@@ -163,6 +166,6 @@ if __name__ == "__main__":
     uo = "(x and z) or (not x and y)"
 
     BDD.delete_all_files_from_out()
-    model = Model(0.1, uo, f, p)
+    model = Model(0.055, uo, f, p)
     model.algorithm()
 
