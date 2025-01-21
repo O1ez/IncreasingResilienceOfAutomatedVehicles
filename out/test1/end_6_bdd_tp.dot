@@ -1,0 +1,57 @@
+digraph{
+label="((x_ and y) or (x_ and not y_ and not z) or (not x_ and y_ and not z) or (not x_ and not y_ and z))and((not ((x and z) or (not x and y)))and((x and y) or (x and not y and not z) or (not x and y and not z) or (not x and not y and z)))\n\n"
+2045853847056[label=x]2045853847856[label="x_
+"]
+2045853847056 -> 2045853847856[style=dashed label="0.60" fontcolor = gray]
+2045853846256[label="y
+"]
+2045853847856 -> 2045853846256[style=dashed label="0.33" fontcolor = gray]
+2045853844976[label="z
+"]
+2045853846256 -> 2045853844976[style=dashed label="0.28" fontcolor = gray]
+2045853847216[label="False
+"]
+2045853844976 -> 2045853847216[style=dashed label="0.43" fontcolor = gray]
+2045853849296[label="z_
+"]
+2045853844976 -> 2045853849296 [label="0.57" fontcolor = gray]
+2045853847216[label="False
+"]
+2045853849296 -> 2045853847216[style=dashed label="0.53" fontcolor = gray]
+2045853846416[label="True
+"]
+2045853849296 -> 2045853846416 [label="0.47" fontcolor = gray]
+2045853847216[label="False
+"]
+2045853846256 -> 2045853847216 [label="0.72" fontcolor = gray]
+2045853845296[label="y
+"]
+2045853847856 -> 2045853845296 [label="0.67" fontcolor = gray]
+2045853849296[label="z_
+"]
+2045853845296 -> 2045853849296[style=dashed label="0.28" fontcolor = gray]
+2045853847216[label="False
+"]
+2045853845296 -> 2045853847216 [label="0.72" fontcolor = gray]
+2045853845936[label="x_
+"]
+2045853847056 -> 2045853845936 [label="0.40" fontcolor = gray]
+2045853850896[label="z
+"]
+2045853845936 -> 2045853850896[style=dashed label="0.75" fontcolor = gray]
+2045853849296[label="z_
+"]
+2045853850896 -> 2045853849296[style=dashed label="0.43" fontcolor = gray]
+2045853847216[label="False
+"]
+2045853850896 -> 2045853847216 [label="0.57" fontcolor = gray]
+2045853851056[label="z
+"]
+2045853845936 -> 2045853851056 [label="0.25" fontcolor = gray]
+2045853846416[label="True
+"]
+2045853851056 -> 2045853846416[style=dashed label="0.43" fontcolor = gray]
+2045853847216[label="False
+"]
+2045853851056 -> 2045853847216 [label="0.57" fontcolor = gray]
+}

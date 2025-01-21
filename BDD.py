@@ -6,6 +6,7 @@ import re
 from copy import copy, deepcopy
 import os
 import glob
+import shutil
 from gmpy2 import mpq
 
 
@@ -316,7 +317,7 @@ class BDD:
         var_copy = [var+replacer for var in self.variables.copy()]
         expression_copy = self.expression
         for var in self.variables:
-            expression_copy = re.sub(var, var+replacer, expression_copy)
+            expression_copy = re.sub(f"{var} ", f"{var+replacer} ", expression_copy)
             bdd_copy = BDD(expression_copy, var_copy, build_new=False)
         
         bdd_copy.root = self.__replace_children_nodes(self.root, {}, replacer == "_")
@@ -365,14 +366,14 @@ class BDD:
             #p of only x_
             root.negative_probability = probabilities[root.var][0] + probabilities[root.var][1]
             #p of only not x_
-            root.negative_probability = probabilities[root.var][1] + probabilities[root.var][0]
-        self.__set_probabilities_helper(root, probabilities)
+            root.positive_probability = probabilities[root.var][1] + probabilities[root.var][0]
+        self.__set_probabilities_recursion(root, probabilities)
         self.probabilities_set = True
         return
         
     #helper method for set_probabilities
     #sets probabilities of children
-    def __set_probabilities_helper(self, current_node : BDDNode, probabilities: dict[str: list(mpq)]):
+    def __set_probabilities_recursion(self, current_node : BDDNode, probabilities: dict[str: list(mpq)]):
         # example of table/list:
         # x'\x     0        1
         # 0    [0] 0.2   [1] 0.3
@@ -403,7 +404,7 @@ class BDD:
                     negative_child.negative_probability = p_list[0] + p_list[1]
                     #p = not x
                     negative_child.positive_probability = p_list[2] + p_list[3]
-            self.__set_probabilities_helper(negative_child, probabilities)
+            self.__set_probabilities_recursion(negative_child, probabilities)
                 
         #same for positive child
         if not positive_child.isLeaf():
@@ -429,7 +430,7 @@ class BDD:
                     positive_child.negative_probability = p_list[0] + p_list[1]
                     #p = not x
                     positive_child.positive_probability = p_list[2] + p_list[3]
-            self.__set_probabilities_helper(positive_child, probabilities)  
+            self.__set_probabilities_recursion(positive_child, probabilities)  
 
         #end case: both children are leafs
         return
@@ -445,7 +446,7 @@ class BDD:
         if currentNode.isLeaf():
             #don't sum probabilities of paths that end in zero
             if currentNode.value == 0:
-                return 0
+                return path_mul 
             else:
                 return path_mul
         else:
@@ -483,12 +484,20 @@ class BDD:
 
     # Visualation
     #TODO: draw probabilities
-    def generateDot(self, filename="output"):
+    def generateDot(self, path="output"):
+        #add "_" to node label if BDD is alternative version of another BDD
         node = self.root
         alt_str = "_" if node.is_alt else ""
         label = node.value if node.isLeaf() else node.var+alt_str 
-        #out = open(f"C:\\Users\\annan\\PycharmProjects\\SaferThanPerception\\BDD\\out\\{filename}.dot", "w")
-        out = open(f"out\\{filename}.dot", "w")
+        
+        #make file
+        path = f"out\\{path}.dot"
+        directory = os.path.dirname(path)
+        
+        os.makedirs(directory, exist_ok=True)
+        out = open(path, "w")
+        
+        #write start of the dot file and the root node
         out.write(f"digraph{{\nlabel=\"{self.expression}\\n\\n\"\n{id(node)}[label={label}]")
         self.__generate_dot_recursive(node, out)
         out.write("}")
@@ -567,8 +576,11 @@ class BDD:
     
     def delete_all_files_from_out():
         files = glob.glob('out/*')
-        for file in files:
-            os.remove(file)
+        for obj in files:
+            if os.path.isfile(obj):
+                os.remove(obj)   
+            elif os.path.isdir(obj):  
+                shutil.rmtree(obj) 
         
 
 def evaluate_expression(expr, assignment):
@@ -618,9 +630,9 @@ if __name__ == "__main__":
     bdd2_replaced.generateDot("4_bdd_2_negate")
     
     united = BDD.unite(bdd1, bdd2_replaced, ["A", "A_", "B", "B_", "C", "C_"])
-    united.generateDot(filename="5_united")
+    united.generateDot(path="5_united")
     united.set_probabilities(p)
-    united.generateDot(filename="6_united_w_prob")
+    united.generateDot(path="6_united_w_prob")
     
     
     

@@ -1,0 +1,51 @@
+digraph{
+label="(x_ and y) or (x_ and not y_ and not z) or (not x_ and y_ and not z) or (not x_ and not y_ and z)\n\n"
+2045853823888[label=x_]2045853825488[label="y_
+{'x': False}"]
+2045853823888 -> 2045853825488[style=dashed label="" fontcolor = gray]
+2045853825648[label="z_
+{'x': False, 'y': False}"]
+2045853825488 -> 2045853825648[style=dashed label="" fontcolor = gray]
+2045853825808[label="False
+{'x': False, 'y': False, 'z': False}
+{'x': False, 'y': True, 'z': True}
+{'x': True, 'y': False, 'z': True}"]
+2045853825648 -> 2045853825808[style=dashed label="" fontcolor = gray]
+2045853824688[label="True
+{'x': False, 'y': False, 'z': True}
+{'x': False, 'y': True, 'z': False}
+{'x': True, 'y': False, 'z': False}
+{'x': True, 'y': True, 'z': False}
+{'x': True, 'y': True, 'z': True}"]
+2045853825648 -> 2045853824688 [label="" fontcolor = gray]
+2045853826288[label="z_
+{'x': False, 'y': True}
+{'x': True, 'y': False}"]
+2045853825488 -> 2045853826288 [label="" fontcolor = gray]
+2045853824688[label="True
+{'x': False, 'y': False, 'z': True}
+{'x': False, 'y': True, 'z': False}
+{'x': True, 'y': False, 'z': False}
+{'x': True, 'y': True, 'z': False}
+{'x': True, 'y': True, 'z': True}"]
+2045853826288 -> 2045853824688[style=dashed label="" fontcolor = gray]
+2045853825808[label="False
+{'x': False, 'y': False, 'z': False}
+{'x': False, 'y': True, 'z': True}
+{'x': True, 'y': False, 'z': True}"]
+2045853826288 -> 2045853825808 [label="" fontcolor = gray]
+2045853826768[label="y_
+{'x': True}"]
+2045853823888 -> 2045853826768 [label="" fontcolor = gray]
+2045853826288[label="z_
+{'x': False, 'y': True}
+{'x': True, 'y': False}"]
+2045853826768 -> 2045853826288[style=dashed label="" fontcolor = gray]
+2045853824688[label="True
+{'x': False, 'y': False, 'z': True}
+{'x': False, 'y': True, 'z': False}
+{'x': True, 'y': False, 'z': False}
+{'x': True, 'y': True, 'z': False}
+{'x': True, 'y': True, 'z': True}"]
+2045853826768 -> 2045853824688 [label="" fontcolor = gray]
+}

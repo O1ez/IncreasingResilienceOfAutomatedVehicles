@@ -15,18 +15,18 @@ class Model:
         self.vars = list(probabilities.keys())
         self.probabilities = probabilities
 
-    def calc_tp_fp(self, step = ""):
-        self.f.generateDot(step+"0_bdd_f_")
+    def calc_tp_fp(self, path: str, step = ""):
+        self.f.generateDot(f"{path}\\{step}0_bdd_f_")
         bdd_f_replaced = self.f.replace_variables()
-        bdd_f_replaced.generateDot(step+"1_bdd_f_replaced")
+        bdd_f_replaced.generateDot(f"{path}\\{step}1_bdd_f_replaced")
         
         bdd_not_f = self.f.make_copy()
         bdd_not_f.negate()
-        bdd_not_f.generateDot(step+"2_bdd_not_f")
+        bdd_not_f.generateDot(f"{path}\\{step}2_bdd_not_f")
         
         bdd_not_uo = self.uo.make_copy()
         bdd_not_uo.negate()
-        bdd_not_uo.generateDot(step+"3_bdd_not_uo")
+        bdd_not_uo.generateDot(f"{path}\\{step}3_bdd_not_uo")
         
         
         if bdd_not_f.variables != bdd_not_uo.variables:
@@ -44,13 +44,13 @@ class Model:
         #first_unite.generateDot(step+"4_bdd_not_f_and_not_uo")
         bdd_fp = BDD.unite(bdd_f_replaced, first_unite, f_united_vars)
         bdd_fp.set_probabilities(self.probabilities)
-        bdd_fp.generateDot(step+"5_bdd_fp")
+        bdd_fp.generateDot(f"{path}\\{step}5_bdd_fp")
         fp = bdd_fp.sum_probabilities_positive_cases()
         
         #build tp = f_ and f and not uo
         bdd_tp = BDD.unite(bdd_f_replaced, BDD.unite(bdd_not_uo, self.f, self.vars), f_united_vars)
         bdd_tp.set_probabilities(self.probabilities)
-        bdd_tp.generateDot(step+"6_bdd_tp")
+        bdd_tp.generateDot(f"{path}\\{step}6_bdd_tp")
         tp = bdd_tp.sum_probabilities_positive_cases()
         
         #mit Fehler in der Dok
@@ -98,11 +98,11 @@ class Model:
         return found_nodes
 
     #TODO: rename this
-    def algorithm(self):
+    def algorithm(self, path : str):
         bdd_uo_copy = self.uo.replace_variables()
         #1
-        tp_old, fp_old = self.calc_tp_fp("_start_")
-        print("Initial values: \ntp: " + f"{float(tp_old):.2f}" + "\nfp: " + f"{float(fp_old):.2f}")
+        tp_old, fp_old = self.calc_tp_fp(path, "_start_")
+        print(f"\033[96m\n\033[1m{path}:\033[0m\nInitial values: \ntp: " + f"{float(tp_old):.2f}" + "\nfp: " + f"{float(fp_old):.2f}")
         #2
         child_uo = self.find_node_in_uo(bdd_uo_copy)
         i = 1
@@ -116,17 +116,17 @@ class Model:
             child_uo.positive_child = child_uo.negative_child
             #d
             self.f.reduce()
-            self.f.generateDot("bdd_f_"+str(i))
+            self.f.generateDot(f"{path}\\bdd_f_"+str(i))
             bdd_uo_copy.reduce()
-            bdd_uo_copy.generateDot("bdd_uo_"+str(i))
+            bdd_uo_copy.generateDot(f"{path}\\bdd_uo_"+str(i))
             i+=1
             child_uo = self.find_node_in_uo(bdd_uo_copy)
         #3
-        tp_new, fp_new = self.calc_tp_fp("end_")
+        tp_new, fp_new = self.calc_tp_fp(path, "end_")
         print("New values: \ntp: " + f"{float(tp_new):.2f}" + "\nfp: " + f"{float(fp_new):.2f}")
         #4
         is_acceptable = self.check_acceptable(fp_new)
-        print(f"The fp Value ({float(fp_new):.2f}) is {'not' if not is_acceptable else ''} acceptable. -> {float(fp_new):.2f} {'>' if not is_acceptable else '<=' } {self.acceptable_threshold}")
+        print(f"The fp Value ({float(fp_new):.2f}) is {'not' if not is_acceptable else ''} acceptable. -> {float(fp_new):.2f} {'>' if not is_acceptable else '<=' } {self.acceptable_threshold}\n---------------------------------\n")
 
 
 if __name__ == "__main__":
@@ -141,13 +141,12 @@ if __name__ == "__main__":
     #tp, fp = model.calc_tp_fp()
     #print(f"tp: {tp}, fp: {fp}")
 
-    print("Start test")
     #v = ["x", "y", "z"]
     
     # x'\x  0     1
     # 0    0.2   0.3
     # 1    0.4   0.1
-    
+    #      
     # y'\y  0     1
     # 0    0.15  0.6  0.75
     # 1    0.13  0.12 0.25
@@ -164,8 +163,18 @@ if __name__ == "__main__":
     }
     f = "(x and y) or (x and not y and not z) or (not x and y and not z) or (not x and not y and z)"
     uo = "(x and z) or (not x and y)"
+    
+    p2 = {
+        "a" : [mpq(0.05), mpq(0.65), mpq(0.05), mpq(0.25)],
+        "b" : [mpq(0.2), mpq(0.4), mpq(0.1), mpq(0.3)],
+        "c" : [mpq(0.13), mpq(0.62), mpq(0.1), mpq(0.15)]
+    }
+    f2 = "a and (b or c and (a or not c))"
+    uo2 = "not a and (b or (not b and c))"
 
     BDD.delete_all_files_from_out()
     model = Model(0.055, uo, f, p)
-    model.algorithm()
+    model.algorithm("test1")
+    model2 = Model(0.055, uo2, f2, p2)
+    model2.algorithm("test2")
 

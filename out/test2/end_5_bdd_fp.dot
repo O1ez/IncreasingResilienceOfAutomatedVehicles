@@ -1,0 +1,39 @@
+digraph{
+label="(a_ and (b_ or c_ and (a_ or not c)))and((not (a and (b or c and (a or not c))))and(not (not a and (b or (not b and c)))))\n\n"
+2045853878544[label=a_]2045853883504[label="False
+"]
+2045853878544 -> 2045853883504[style=dashed label="0.70" fontcolor = gray]
+2045853877744[label="b
+"]
+2045853878544 -> 2045853877744 [label="0.70" fontcolor = gray]
+2045853878064[label="b_
+"]
+2045853877744 -> 2045853878064[style=dashed label="0.30" fontcolor = gray]
+2045853876944[label="c
+"]
+2045853878064 -> 2045853876944[style=dashed label="0.67" fontcolor = gray]
+2045853876624[label="c_
+"]
+2045853876944 -> 2045853876624[style=dashed label="0.23" fontcolor = gray]
+2045853883504[label="False
+"]
+2045853876624 -> 2045853883504[style=dashed label="0.57" fontcolor = gray]
+2045853879024[label="True
+"]
+2045853876624 -> 2045853879024 [label="0.43" fontcolor = gray]
+2045853883504[label="False
+"]
+2045853876944 -> 2045853883504 [label="0.77" fontcolor = gray]
+2045853877264[label="c
+"]
+2045853878064 -> 2045853877264 [label="0.33" fontcolor = gray]
+2045853879024[label="True
+"]
+2045853877264 -> 2045853879024[style=dashed label="0.23" fontcolor = gray]
+2045853883504[label="False
+"]
+2045853877264 -> 2045853883504 [label="0.77" fontcolor = gray]
+2045853883504[label="False
+"]
+2045853877744 -> 2045853883504 [label="0.70" fontcolor = gray]
+}

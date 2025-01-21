@@ -1,0 +1,25 @@
+digraph{
+label="not a_ and (b_ or (not b_ and c))\n\n"
+2045853826128[label=a_]2045853823888[label="b_
+{'a': False}"]
+2045853826128 -> 2045853823888[style=dashed label="" fontcolor = gray]
+2045853824208[label="False
+{'a': False, 'b': False, 'c': False}
+{'a': True, 'b': False, 'c': False}
+{'a': True, 'b': False, 'c': True}
+{'a': True, 'b': True, 'c': False}
+{'a': True, 'b': True, 'c': True}"]
+2045853823888 -> 2045853824208[style=dashed label="" fontcolor = gray]
+2045853825968[label="True
+{'a': False, 'b': False, 'c': True}
+{'a': False, 'b': True, 'c': False}
+{'a': False, 'b': True, 'c': True}"]
+2045853823888 -> 2045853825968 [label="" fontcolor = gray]
+2045853824208[label="False
+{'a': False, 'b': False, 'c': False}
+{'a': True, 'b': False, 'c': False}
+{'a': True, 'b': False, 'c': True}
+{'a': True, 'b': True, 'c': False}
+{'a': True, 'b': True, 'c': True}"]
+2045853826128 -> 2045853824208 [label="" fontcolor = gray]
+}

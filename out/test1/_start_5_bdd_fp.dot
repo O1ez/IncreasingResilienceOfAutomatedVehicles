@@ -1,0 +1,63 @@
+digraph{
+label="((x_ and y) or (x_ and not y_ and not z) or (not x_ and y_ and not z) or (not x_ and not y_ and z))and((not ((x and y) or (x and not y and not z) or (not x and y and not z) or (not x and not y and z)))and(not ((x and z) or (not x and y))))\n\n"
+2045853846896[label=x]2045853847216[label="x_
+"]
+2045853846896 -> 2045853847216[style=dashed label="0.60" fontcolor = gray]
+2045853846576[label="y
+"]
+2045853847216 -> 2045853846576[style=dashed label="0.33" fontcolor = gray]
+2045853846096[label="y_
+"]
+2045853846576 -> 2045853846096[style=dashed label="0.28" fontcolor = gray]
+2045853845616[label="z
+"]
+2045853846096 -> 2045853845616[style=dashed label="0.54" fontcolor = gray]
+2045853848016[label="z_
+"]
+2045853845616 -> 2045853848016[style=dashed label="0.43" fontcolor = gray]
+2045853846736[label="False
+"]
+2045853848016 -> 2045853846736[style=dashed label="0.53" fontcolor = gray]
+2045853846256[label="True
+"]
+2045853848016 -> 2045853846256 [label="0.47" fontcolor = gray]
+2045853846736[label="False
+"]
+2045853845616 -> 2045853846736 [label="0.57" fontcolor = gray]
+2045853847376[label="z
+"]
+2045853846096 -> 2045853847376 [label="0.46" fontcolor = gray]
+2045853849136[label="z_
+"]
+2045853847376 -> 2045853849136[style=dashed label="0.43" fontcolor = gray]
+2045853846256[label="True
+"]
+2045853849136 -> 2045853846256[style=dashed label="0.40" fontcolor = gray]
+2045853846736[label="False
+"]
+2045853849136 -> 2045853846736 [label="0.60" fontcolor = gray]
+2045853846736[label="False
+"]
+2045853847376 -> 2045853846736 [label="0.57" fontcolor = gray]
+2045853846736[label="False
+"]
+2045853846576 -> 2045853846736 [label="0.72" fontcolor = gray]
+2045853846416[label="y
+"]
+2045853847216 -> 2045853846416 [label="0.67" fontcolor = gray]
+2045853851056[label="y_
+"]
+2045853846416 -> 2045853851056[style=dashed label="0.28" fontcolor = gray]
+2045853847376[label="z
+"]
+2045853851056 -> 2045853847376[style=dashed label="0.54" fontcolor = gray]
+2045853849136[label="z_
+"]
+2045853851056 -> 2045853849136 [label="0.46" fontcolor = gray]
+2045853846736[label="False
+"]
+2045853846416 -> 2045853846736 [label="0.72" fontcolor = gray]
+2045853846736[label="False
+"]
+2045853846896 -> 2045853846736 [label="0.40" fontcolor = gray]
+}
