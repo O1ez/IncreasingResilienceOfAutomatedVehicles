@@ -1,93 +1,93 @@
 digraph{
 label="((x_ and y) or (x_ and not y_ and not z) or (not x_ and y_ and not z) or (not x_ and not y_ and z))and((not ((x and z) or (not x and y)))and((x and y) or (x and not y and not z) or (not x and y and not z) or (not x and not y and z)))\n\n"
-2045853855376[label=x]2045853850576[label="x_
+1192242509168[label=x]1192242504368[label="x_
 "]
-2045853855376 -> 2045853850576[style=dashed label="0.60" fontcolor = gray]
-2045853851536[label="y
+1192242509168 -> 1192242504368[style=dashed label="0.60" fontcolor = gray]
+1192242505328[label="y
 "]
-2045853850576 -> 2045853851536[style=dashed label="0.33" fontcolor = gray]
-2045853854416[label="y_
+1192242504368 -> 1192242505328[style=dashed label="0.33" fontcolor = gray]
+1192242508208[label="y_
 "]
-2045853851536 -> 2045853854416[style=dashed label="0.28" fontcolor = gray]
-2045853854896[label="z
+1192242505328 -> 1192242508208[style=dashed label="0.28" fontcolor = gray]
+1192242508688[label="z
 "]
-2045853854416 -> 2045853854896[style=dashed label="0.54" fontcolor = gray]
-2045853852176[label="False
+1192242508208 -> 1192242508688[style=dashed label="0.54" fontcolor = gray]
+1192242505968[label="False
 "]
-2045853854896 -> 2045853852176[style=dashed label="0.43" fontcolor = gray]
-2045853852976[label="z_
+1192242508688 -> 1192242505968[style=dashed label="0.43" fontcolor = gray]
+1192242506768[label="z_
 "]
-2045853854896 -> 2045853852976 [label="0.57" fontcolor = gray]
-2045853852176[label="False
+1192242508688 -> 1192242506768 [label="0.57" fontcolor = gray]
+1192242505968[label="False
 "]
-2045853852976 -> 2045853852176[style=dashed label="0.53" fontcolor = gray]
-2045853853136[label="True
+1192242506768 -> 1192242505968[style=dashed label="0.53" fontcolor = gray]
+1192242506928[label="True
 "]
-2045853852976 -> 2045853853136 [label="0.47" fontcolor = gray]
-2045853854736[label="z
+1192242506768 -> 1192242506928 [label="0.47" fontcolor = gray]
+1192242508528[label="z
 "]
-2045853854416 -> 2045853854736 [label="0.46" fontcolor = gray]
-2045853852176[label="False
+1192242508208 -> 1192242508528 [label="0.46" fontcolor = gray]
+1192242505968[label="False
 "]
-2045853854736 -> 2045853852176[style=dashed label="0.43" fontcolor = gray]
-2045853852016[label="z_
+1192242508528 -> 1192242505968[style=dashed label="0.43" fontcolor = gray]
+1192242505808[label="z_
 "]
-2045853854736 -> 2045853852016 [label="0.57" fontcolor = gray]
-2045853853136[label="True
+1192242508528 -> 1192242505808 [label="0.57" fontcolor = gray]
+1192242506928[label="True
 "]
-2045853852016 -> 2045853853136[style=dashed label="0.40" fontcolor = gray]
-2045853852176[label="False
+1192242505808 -> 1192242506928[style=dashed label="0.40" fontcolor = gray]
+1192242505968[label="False
 "]
-2045853852016 -> 2045853852176 [label="0.60" fontcolor = gray]
-2045853852176[label="False
+1192242505808 -> 1192242505968 [label="0.60" fontcolor = gray]
+1192242505968[label="False
 "]
-2045853851536 -> 2045853852176 [label="0.72" fontcolor = gray]
-2045853853936[label="y
+1192242505328 -> 1192242505968 [label="0.72" fontcolor = gray]
+1192242507728[label="y
 "]
-2045853850576 -> 2045853853936 [label="0.67" fontcolor = gray]
-2045853849296[label="y_
+1192242504368 -> 1192242507728 [label="0.67" fontcolor = gray]
+1192242503088[label="y_
 "]
-2045853853936 -> 2045853849296[style=dashed label="0.28" fontcolor = gray]
-2045853854736[label="z
+1192242507728 -> 1192242503088[style=dashed label="0.28" fontcolor = gray]
+1192242508528[label="z
 "]
-2045853849296 -> 2045853854736[style=dashed label="0.54" fontcolor = gray]
-2045853852976[label="z_
+1192242503088 -> 1192242508528[style=dashed label="0.54" fontcolor = gray]
+1192242506768[label="z_
 "]
-2045853849296 -> 2045853852976 [label="0.46" fontcolor = gray]
-2045853852176[label="False
+1192242503088 -> 1192242506768 [label="0.46" fontcolor = gray]
+1192242505968[label="False
 "]
-2045853853936 -> 2045853852176 [label="0.72" fontcolor = gray]
-2045853851376[label="x_
+1192242507728 -> 1192242505968 [label="0.72" fontcolor = gray]
+1192242505168[label="x_
 "]
-2045853855376 -> 2045853851376 [label="0.40" fontcolor = gray]
-2045853856816[label="y_
+1192242509168 -> 1192242505168 [label="0.40" fontcolor = gray]
+1192242510608[label="y_
 "]
-2045853851376 -> 2045853856816[style=dashed label="0.75" fontcolor = gray]
-2045853857136[label="z
+1192242505168 -> 1192242510608[style=dashed label="0.75" fontcolor = gray]
+1192242510928[label="z
 "]
-2045853856816 -> 2045853857136[style=dashed label="0.75" fontcolor = gray]
-2045853852976[label="z_
+1192242510608 -> 1192242510928[style=dashed label="0.75" fontcolor = gray]
+1192242506768[label="z_
 "]
-2045853857136 -> 2045853852976[style=dashed label="0.43" fontcolor = gray]
-2045853852176[label="False
+1192242510928 -> 1192242506768[style=dashed label="0.43" fontcolor = gray]
+1192242505968[label="False
 "]
-2045853857136 -> 2045853852176 [label="0.57" fontcolor = gray]
-2045853857296[label="z
+1192242510928 -> 1192242505968 [label="0.57" fontcolor = gray]
+1192242511088[label="z
 "]
-2045853856816 -> 2045853857296 [label="0.25" fontcolor = gray]
-2045853852016[label="z_
+1192242510608 -> 1192242511088 [label="0.25" fontcolor = gray]
+1192242505808[label="z_
 "]
-2045853857296 -> 2045853852016[style=dashed label="0.43" fontcolor = gray]
-2045853852176[label="False
+1192242511088 -> 1192242505808[style=dashed label="0.43" fontcolor = gray]
+1192242505968[label="False
 "]
-2045853857296 -> 2045853852176 [label="0.57" fontcolor = gray]
-2045853856976[label="y_
+1192242511088 -> 1192242505968 [label="0.57" fontcolor = gray]
+1192242510768[label="y_
 "]
-2045853851376 -> 2045853856976 [label="0.25" fontcolor = gray]
-2045853857296[label="z
+1192242505168 -> 1192242510768 [label="0.25" fontcolor = gray]
+1192242511088[label="z
 "]
-2045853856976 -> 2045853857296[style=dashed label="0.75" fontcolor = gray]
-2045853852016[label="z_
+1192242510768 -> 1192242511088[style=dashed label="0.75" fontcolor = gray]
+1192242505808[label="z_
 "]
-2045853856976 -> 2045853852016 [label="0.25" fontcolor = gray]
+1192242510768 -> 1192242505808 [label="0.25" fontcolor = gray]
 }

@@ -1,33 +1,33 @@
 digraph{
 label="not (a and (b or c and (a or not c)))\n\n"
-2045853885424[label=a]2045853825488[label="True
+1192242502128[label=a]1192242504528[label="True
 {'a': False, 'b': False, 'c': False}
 {'a': False, 'b': False, 'c': True}
 {'a': False, 'b': True, 'c': False}
 {'a': False, 'b': True, 'c': True}
 {'a': True, 'b': False, 'c': False}"]
-2045853885424 -> 2045853825488[style=dashed label="" fontcolor = gray]
-2045853883664[label="b
+1192242502128 -> 1192242504528[style=dashed label="" fontcolor = gray]
+1192242508848[label="b
 {'a': True}"]
-2045853885424 -> 2045853883664 [label="" fontcolor = gray]
-2045853882544[label="c
+1192242502128 -> 1192242508848 [label="" fontcolor = gray]
+1192242511088[label="c
 {'a': True, 'b': False}"]
-2045853883664 -> 2045853882544[style=dashed label="" fontcolor = gray]
-2045853825488[label="True
+1192242508848 -> 1192242511088[style=dashed label="" fontcolor = gray]
+1192242504528[label="True
 {'a': False, 'b': False, 'c': False}
 {'a': False, 'b': False, 'c': True}
 {'a': False, 'b': True, 'c': False}
 {'a': False, 'b': True, 'c': True}
 {'a': True, 'b': False, 'c': False}"]
-2045853882544 -> 2045853825488[style=dashed label="" fontcolor = gray]
-2045853824368[label="False
+1192242511088 -> 1192242504528[style=dashed label="" fontcolor = gray]
+1192242511248[label="False
 {'a': True, 'b': False, 'c': True}
 {'a': True, 'b': True, 'c': False}
 {'a': True, 'b': True, 'c': True}"]
-2045853882544 -> 2045853824368 [label="" fontcolor = gray]
-2045853824368[label="False
+1192242511088 -> 1192242511248 [label="" fontcolor = gray]
+1192242511248[label="False
 {'a': True, 'b': False, 'c': True}
 {'a': True, 'b': True, 'c': False}
 {'a': True, 'b': True, 'c': True}"]
-2045853883664 -> 2045853824368 [label="" fontcolor = gray]
+1192242508848 -> 1192242511248 [label="" fontcolor = gray]
 }
