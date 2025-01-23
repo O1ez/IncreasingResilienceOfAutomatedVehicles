@@ -1,57 +1,57 @@
 digraph{
 label="((x_ and y) or (x_ and not y_ and not z) or (not x_ and y_ and not z) or (not x_ and not y_ and z))and((not ((x and z) or (not x and y)))and((x and y) or (x and not y and not z) or (not x and y and not z) or (not x and not y and z)))\n\n"
-2201125833616[label=x]2201125833776[label="x_
+2643642410576[label=x]2643642409952[label="x_
 "]
-2201125833616 -> 2201125833776[style=dashed label=" x 0.60\n" fontcolor = gray]
-2201125832816[label="y
+2643642410576 -> 2643642409952[style=dashed label=" x 0.60\n" fontcolor = gray]
+2643642410624[label="y
 "]
-2201125833776 -> 2201125832816[style=dashed label=" x 0.33\n" fontcolor = gray]
-2201125831696[label="z
+2643642409952 -> 2643642410624[style=dashed label=" x 0.33\n" fontcolor = gray]
+2643642409040[label="z
 "]
-2201125832816 -> 2201125831696[style=dashed label=" x_ 0.28\n" fontcolor = gray]
-2201125834096[label="False
+2643642410624 -> 2643642409040[style=dashed label=" x_ 0.28\n" fontcolor = gray]
+2643642590224[label="False
 "]
-2201125831696 -> 2201125834096[style=dashed label=" y 0.43\n" fontcolor = gray]
-2201125836016[label="z_
+2643642409040 -> 2643642590224[style=dashed label=" y 0.43\n" fontcolor = gray]
+2643642410672[label="z_
 "]
-2201125831696 -> 2201125836016 [label=" y 0.57\n" fontcolor = gray]
-2201125834096[label="False
+2643642409040 -> 2643642410672 [label=" y 0.57\n" fontcolor = gray]
+2643642590224[label="False
 "]
-2201125836016 -> 2201125834096[style=dashed label="   z 0.30\ny 0.40\nz 0.53\n" fontcolor = gray]
-2201125833136[label="True
+2643642410672 -> 2643642590224[style=dashed label="   z 0.30\ny 0.40\nz 0.53\n" fontcolor = gray]
+2643642406496[label="True
 "]
-2201125836016 -> 2201125833136 [label="   z 0.70\ny 0.60\nz 0.47\n" fontcolor = gray]
-2201125834096[label="False
+2643642410672 -> 2643642406496 [label="   z 0.70\ny 0.60\nz 0.47\n" fontcolor = gray]
+2643642590224[label="False
 "]
-2201125832816 -> 2201125834096 [label=" x_ 0.72\n" fontcolor = gray]
-2201125832656[label="y
+2643642410624 -> 2643642590224 [label=" x_ 0.72\n" fontcolor = gray]
+2643642407024[label="y
 "]
-2201125833776 -> 2201125832656 [label=" x 0.67\n" fontcolor = gray]
-2201125836016[label="z_
+2643642409952 -> 2643642407024 [label=" x 0.67\n" fontcolor = gray]
+2643642410672[label="z_
 "]
-2201125832656 -> 2201125836016[style=dashed label=" x_ 0.28\n" fontcolor = gray]
-2201125834096[label="False
+2643642407024 -> 2643642410672[style=dashed label=" x_ 0.28\n" fontcolor = gray]
+2643642590224[label="False
 "]
-2201125832656 -> 2201125834096 [label=" x_ 0.72\n" fontcolor = gray]
-2201125835856[label="x_
+2643642407024 -> 2643642590224 [label=" x_ 0.72\n" fontcolor = gray]
+2643642407120[label="x_
 "]
-2201125833616 -> 2201125835856 [label=" x 0.40\n" fontcolor = gray]
-2201125840176[label="z
+2643642410576 -> 2643642407120 [label=" x 0.40\n" fontcolor = gray]
+2643642409856[label="z
 "]
-2201125835856 -> 2201125840176[style=dashed label=" x 0.75\n" fontcolor = gray]
-2201125836016[label="z_
+2643642407120 -> 2643642409856[style=dashed label=" x 0.75\n" fontcolor = gray]
+2643642410672[label="z_
 "]
-2201125840176 -> 2201125836016[style=dashed label=" x_ 0.43\n" fontcolor = gray]
-2201125834096[label="False
+2643642409856 -> 2643642410672[style=dashed label=" x_ 0.43\n" fontcolor = gray]
+2643642590224[label="False
 "]
-2201125840176 -> 2201125834096 [label=" x_ 0.57\n" fontcolor = gray]
-2201125840336[label="z
+2643642409856 -> 2643642590224 [label=" x_ 0.57\n" fontcolor = gray]
+2643642410384[label="z
 "]
-2201125835856 -> 2201125840336 [label=" x 0.25\n" fontcolor = gray]
-2201125833136[label="True
+2643642407120 -> 2643642410384 [label=" x 0.25\n" fontcolor = gray]
+2643642406496[label="True
 "]
-2201125840336 -> 2201125833136[style=dashed label=" x_ 0.43\n" fontcolor = gray]
-2201125834096[label="False
+2643642410384 -> 2643642406496[style=dashed label=" x_ 0.43\n" fontcolor = gray]
+2643642590224[label="False
 "]
-2201125840336 -> 2201125834096 [label=" x_ 0.57\n" fontcolor = gray]
+2643642410384 -> 2643642590224 [label=" x_ 0.57\n" fontcolor = gray]
 }
