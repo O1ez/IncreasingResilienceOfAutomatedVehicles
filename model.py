@@ -20,12 +20,10 @@ class Model:
         bdd_f_replaced = self.f.rename_variables()
         bdd_f_replaced.generateDot(f"{path}\\{step}1_bdd_f_replaced")
 
-        bdd_not_f = self.f.copy_bdd()
-        bdd_not_f.negate()
+        bdd_not_f = self.f.negate()
         bdd_not_f.generateDot(f"{path}\\{step}2_bdd_not_f")
 
-        bdd_not_uo = self.uo.copy_bdd()
-        bdd_not_uo.negate()
+        bdd_not_uo = self.uo.negate()
         bdd_not_uo.generateDot(f"{path}\\{step}3_bdd_not_uo")
 
         if bdd_not_f.variables != bdd_not_uo.variables:

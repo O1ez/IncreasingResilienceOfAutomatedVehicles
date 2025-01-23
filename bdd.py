@@ -205,20 +205,21 @@ class BDD:
             if a not in node.assignment:
                 node.assignment.append(a)
 
-    #TODO: Kopie von der Negation zurückgeben, damit es einheitlich mit der unite Funktion ist?
+    #makes a copy of BDD and negates it
     def negate(self):
+        negated_BDD = self.copy_bdd()
         #negate leaf values
-        false_leaf = self.leafs[False]
+        false_leaf = negated_BDD.leafs[False]
         false_leaf.value = True
-        true_leaf = self.leafs[True]
+        true_leaf = negated_BDD.leafs[True]
         true_leaf.value = False
 
         #switch leafs in dictionary
-        self.leafs[True] = false_leaf
-        self.leafs[False] = true_leaf
+        negated_BDD.leafs[True] = false_leaf
+        negated_BDD.leafs[False] = true_leaf
 
-        self.expression = "not (" + self.expression + ")"
-        return
+        negated_BDD.expression = "not (" + negated_BDD.expression + ")"
+        return negated_BDD
 
     #TODO: assignment not set properly
     @staticmethod
