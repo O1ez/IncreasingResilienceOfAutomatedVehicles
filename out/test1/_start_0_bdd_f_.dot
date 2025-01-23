@@ -1,51 +1,51 @@
 digraph{
 label="(x and y) or (x and not y and not z) or (not x and y and not z) or (not x and not y and z)\n\n"
-2643642593728[label=x]2643642591664[label="y
+2590059642496[label=x]2590059550784[label="y
 {'x': False}"]
-2643642593728 -> 2643642591664[style=dashed label="" fontcolor = gray]
-2643642591232[label="z
+2590059642496 -> 2590059550784[style=dashed label="" fontcolor = gray]
+2590059547568[label="z
 {'x': False, 'y': False}"]
-2643642591664 -> 2643642591232[style=dashed label="" fontcolor = gray]
-2643642593296[label="False
+2590059550784 -> 2590059547568[style=dashed label="" fontcolor = gray]
+2590059642448[label="False
 {'x': False, 'y': False, 'z': False}
 {'x': False, 'y': True, 'z': True}
 {'x': True, 'y': False, 'z': True}"]
-2643642591232 -> 2643642593296[style=dashed label="" fontcolor = gray]
-2643642593440[label="True
+2590059547568 -> 2590059642448[style=dashed label="" fontcolor = gray]
+2590059642544[label="True
 {'x': False, 'y': False, 'z': True}
 {'x': False, 'y': True, 'z': False}
 {'x': True, 'y': False, 'z': False}
 {'x': True, 'y': True, 'z': False}
 {'x': True, 'y': True, 'z': True}"]
-2643642591232 -> 2643642593440 [label="" fontcolor = gray]
-2643642589504[label="z
+2590059547568 -> 2590059642544 [label="" fontcolor = gray]
+2590059546320[label="z
 {'x': False, 'y': True}
 {'x': True, 'y': False}"]
-2643642591664 -> 2643642589504 [label="" fontcolor = gray]
-2643642593440[label="True
+2590059550784 -> 2590059546320 [label="" fontcolor = gray]
+2590059642544[label="True
 {'x': False, 'y': False, 'z': True}
 {'x': False, 'y': True, 'z': False}
 {'x': True, 'y': False, 'z': False}
 {'x': True, 'y': True, 'z': False}
 {'x': True, 'y': True, 'z': True}"]
-2643642589504 -> 2643642593440[style=dashed label="" fontcolor = gray]
-2643642593296[label="False
+2590059546320 -> 2590059642544[style=dashed label="" fontcolor = gray]
+2590059642448[label="False
 {'x': False, 'y': False, 'z': False}
 {'x': False, 'y': True, 'z': True}
 {'x': True, 'y': False, 'z': True}"]
-2643642589504 -> 2643642593296 [label="" fontcolor = gray]
-2643642591568[label="y
+2590059546320 -> 2590059642448 [label="" fontcolor = gray]
+2590059546752[label="y
 {'x': True}"]
-2643642593728 -> 2643642591568 [label="" fontcolor = gray]
-2643642589504[label="z
+2590059642496 -> 2590059546752 [label="" fontcolor = gray]
+2590059546320[label="z
 {'x': False, 'y': True}
 {'x': True, 'y': False}"]
-2643642591568 -> 2643642589504[style=dashed label="" fontcolor = gray]
-2643642593440[label="True
+2590059546752 -> 2590059546320[style=dashed label="" fontcolor = gray]
+2590059642544[label="True
 {'x': False, 'y': False, 'z': True}
 {'x': False, 'y': True, 'z': False}
 {'x': True, 'y': False, 'z': False}
 {'x': True, 'y': True, 'z': False}
 {'x': True, 'y': True, 'z': True}"]
-2643642591568 -> 2643642593440 [label="" fontcolor = gray]
+2590059546752 -> 2590059642544 [label="" fontcolor = gray]
 }

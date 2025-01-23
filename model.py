@@ -50,7 +50,7 @@ class Model:
         bdd_tp.set_probabilities(self.probabilities)
         bdd_tp.generateDot(f"{path}\\{step}6_bdd_tp")
         tp = bdd_tp.sum_probabilities_positive_cases()
-        bdd_tp.sum_all_probability_paths()
+        #bdd_tp.sum_all_probability_paths()
 
         return tp, fp
 
@@ -114,7 +114,7 @@ class Model:
         #4
         is_acceptable = self.check_acceptable(fp_new)
         print(
-            f"The fp Value ({float(fp_new):.2f}) is {'not' if not is_acceptable else ''} acceptable. "
+            f"The fp Value ({float(fp_new):.2f}) is {'not ' if not is_acceptable else ''}acceptable. "
             f"-> {float(fp_new):.2f} "f"{'>' if not is_acceptable else '<='} {self.acceptable_threshold}"
             "\n---------------------------------\n")
 
@@ -162,8 +162,18 @@ if __name__ == "__main__":
     f2 = "a and (b or c and (a or not c))"
     uo2 = "not a and (b or (not b and c))"
 
+    p3 ={
+        "m": [mpq(0.7), mpq(0.0,), mpq(0.17), mpq(0.1)],
+        "n": [mpq(0.08), mpq(0.53), mpq(0.03), mpq(0.36)],
+        "l": [mpq(0.25), mpq(0.31), mpq(0.27), mpq(0.17)]
+    }
+    f3 = "((m or l) and (not m and n)) or (m and n)"
+    uo3 = "(not m and not n) or (n and l)"
+
     delete_all_files_from_out()
-    model = Model(0.055, uo, f, p)
+    model = Model(0.05, uo, f, p)
     model.algorithm("test1")
-    model2 = Model(0.055, uo2, f2, p2)
+    model2 = Model(0.05, uo2, f2, p2)
     model2.algorithm("test2")
+    model3 = Model(0.05, uo3, f3, p3)
+    model3.algorithm("test3")
