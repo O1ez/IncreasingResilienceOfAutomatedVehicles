@@ -1,4 +1,4 @@
-from BDD import BDD, BDDNode
+from bdd import BDD, BDDNode  
 from typing import Optional
 from copy import copy, deepcopy
 from gmpy2 import mpq
@@ -45,13 +45,15 @@ class Model:
         bdd_fp = BDD.unite(bdd_f_replaced, first_unite, f_united_vars)
         bdd_fp.set_probabilities(self.probabilities)
         bdd_fp.generateDot(f"{path}\\{step}5_bdd_fp")
-        fp = bdd_fp.sum_probabilities_positive_cases()
+        fp = bdd_fp.sum_probabilities_positive_cases()        
+        
         
         #build tp = f_ and f and not uo
         bdd_tp = BDD.unite(bdd_f_replaced, BDD.unite(bdd_not_uo, self.f, self.vars), f_united_vars)
         bdd_tp.set_probabilities(self.probabilities)
         bdd_tp.generateDot(f"{path}\\{step}6_bdd_tp")
         tp = bdd_tp.sum_probabilities_positive_cases()
+        #bdd_tp.sum_all_probability_paths()
         
         #mit Fehler in der Dok
         #bdd_f_replaced.negate()
@@ -177,4 +179,5 @@ if __name__ == "__main__":
     model.algorithm("test1")
     model2 = Model(0.055, uo2, f2, p2)
     model2.algorithm("test2")
+    
 

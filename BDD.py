@@ -1,5 +1,4 @@
 from __future__ import annotations
-from BDDNode import BDDNode
 from collections import deque
 from typing import Optional
 import re
@@ -8,6 +7,95 @@ import os
 import glob
 import shutil
 from gmpy2 import mpq
+import pprint
+
+class BDDNode:
+    def __init__(self, var :str =None,  value :str =None, assignment: Optional[list[dict]] = None, is_alt = False,
+                    negative_child: Optional[BDDNode] = None, 
+                    negative_probability: dict[BDDNode, list[mpq]] = None, 
+                    positive_child: Optional[BDDNode] = None, 
+                    positive_probability: dict[BDDNode, list[mpq]] = None):
+        
+        self.var = var  # The variable for decision (None for terminal nodes)
+        self.negative_child = negative_child
+        self.negative_probability = {} if negative_probability == None else negative_probability
+        self.positive_child = positive_child
+        self.positive_probability = {} if positive_probability == None else positive_probability
+        self.value = value  # Terminal value (True or False for leaf nodes)
+        self.is_alt = is_alt
+        if assignment is None:
+            self.assignment = []
+        else:
+            self.assignment = assignment
+        self.drawn = False
+
+    def isLeaf(self):
+        # Check if the node is a terminal node (leaf with True/False)
+        return self.value is not None
+    
+    def hasChildren(self):
+        return self.negative_child or self.positive_child
+
+    def reduce(self, overarching_tree: BDD):
+        temp_bdd = BDD(overarching_tree.expression, overarching_tree.variables, False)
+        temp_bdd.root = self
+        temp_bdd.reduce()
+        
+    def isEmpty(self):
+        return self.var == None and self.value == None 
+    
+    #TODO: replace copy node in BDDNode   
+    def __copy_node(self, replacer: str) -> BDDNode:
+        var = None
+        value = None
+        if self.isLeaf():
+            value = self.value
+        else:
+            var = self.var + replacer
+        node_assignment_copy = self.assignment.copy()
+        for i in range(len(node_assignment_copy)):
+            node_assignment_copy[i] = {k+replacer: v for k, v in node_assignment_copy[i].items()}
+        return BDDNode(var = var, value=value, assignment=node_assignment_copy)
+
+    def __eq__(self, other):
+        if other is None or not isinstance(other, BDDNode):
+            return False
+        if self.isLeaf() and other.isLeaf():
+            assignments_match = True
+            for dic in self.assignment:
+                if dic not in other.assignment:
+                    assignments_match = False
+                    break
+            return self.value == other.value and assignments_match
+        return (
+                self.var == other.var and
+                self.negative_child == other.negative_child and
+                self.positive_child == other.positive_child
+        )
+
+    def __hash__(self):
+        # Hash für Leaf-Nodes basierend auf ihrem Wert, ansonsten auf (var, left, right)
+        if self.isLeaf():
+            return hash(self.value)
+        return hash((self.var, self.negative_child, self.positive_child))
+    
+    def __copy__(self):
+        return type(self)(self.var, self.negative_child, self.positive_child, self.value)
+    
+    def __deepcopy__(self, memo): # memo is a dict of id's to copies
+        id_self = id(self)        # memoization avoids unnecesary recursion
+        _copy = memo.get(id_self)
+        if _copy is None:
+            _copy = type(self)(
+                deepcopy(self.var, memo), 
+                deepcopy(self.negative_child, memo),
+                deepcopy(self.positive_child, memo),
+                deepcopy(self.negative_probability, memo),
+                deepcopy(self.positive_probability, memo),
+                deepcopy(self.value, memo),)
+            memo[id_self] = _copy
+        return _copy
+
 
 class BDD:
     def __init__(self, expression, variables: list[str], build_new=True, alt_variables: bool = False):
@@ -54,6 +142,8 @@ class BDD:
 
     def isOnlyRoot(self):
         return not self.root.hasChildren
+    
+
 
     #TODO: needed?
     # # traverses down the diagram to evaluate it
@@ -275,22 +365,23 @@ class BDD:
         root = self.root
         if root.isLeaf():
             raise Exception("Tree needs at least one Node that isn't a leaf!")
+        #root handled seperately because it does not have a parent node 
         if not root.is_alt:
             #p of only x
-            root.negative_probability = probabilities[root.var][0] + probabilities[root.var][2]
+            root.negative_probability[root] = probabilities[root.var][0] + probabilities[root.var][2]
             #p of only not x
-            root.positive_probability = probabilities[root.var][1] + probabilities[root.var][3]
+            root.positive_probability[root] = probabilities[root.var][1] + probabilities[root.var][3]
         else:
             #p of only x_
-            root.negative_probability = probabilities[root.var][0] + probabilities[root.var][1]
+            root.negative_probability[root] = probabilities[root.var][0] + probabilities[root.var][1]
             #p of only not x_
-            root.positive_probability = probabilities[root.var][1] + probabilities[root.var][0]
+            root.positive_probability[root] = probabilities[root.var][1] + probabilities[root.var][0]
         self.__set_probabilities_recursion(root, probabilities)
         self.probabilities_set = True
         return
         
     #helper method for set_probabilities
-    #sets probabilities of children
+    #sets probabilities of children for each parent node seperately
     def __set_probabilities_recursion(self, current_node : BDDNode, probabilities: dict[str: list(mpq)]):
         # example of table/list:
         # x'\x     0        1
@@ -306,22 +397,22 @@ class BDD:
                 p_list = probabilities[current_node.var]
                 
                 # p = (p not x and not x_) / (p not x)
-                negative_child.negative_probability = p_list[0] / (p_list[0] + p_list[2])
+                negative_child.negative_probability[current_node] = p_list[0] / (p_list[0] + p_list[2])
                 # p = (p not x and x_) / (p not x)
-                negative_child.positive_probability = p_list[2] / (p_list[0] + p_list[2])
+                negative_child.positive_probability[current_node] = p_list[2] / (p_list[0] + p_list[2])
             else: #child is not influenced by current node probability
                 p_list = probabilities[negative_child.var]
                 if not negative_child.is_alt:
                     # p = not x
-                    negative_child.negative_probability = p_list[0] + p_list[2]
+                    negative_child.negative_probability[current_node] = p_list[0] + p_list[2]
                     # p = x
-                    negative_child.positive_probability = p_list[1] + p_list[3]
+                    negative_child.positive_probability[current_node] = p_list[1] + p_list[3]
                 else:
                     #child is alt child but doesn't match variable --> add both alt probabilities
                     # p = not x_
-                    negative_child.negative_probability = p_list[0] + p_list[1]
+                    negative_child.negative_probability[current_node] = p_list[0] + p_list[1]
                     #p = not x
-                    negative_child.positive_probability = p_list[2] + p_list[3]
+                    negative_child.positive_probability[current_node] = p_list[2] + p_list[3]
             self.__set_probabilities_recursion(negative_child, probabilities)
                 
         #same for positive child
@@ -331,23 +422,23 @@ class BDD:
                 p_list = probabilities[current_node.var]
                 
                 # p = (p x and not x_) / (p x)
-                positive_child.negative_probability = p_list[1] / (p_list[1] + p_list[3])
+                positive_child.negative_probability[current_node] = p_list[1] / (p_list[1] + p_list[3])
                 # p = (p x and x_) / (p x)
-                positive_child.positive_probability = p_list[3] / (p_list[1] + p_list[3])
+                positive_child.positive_probability[current_node] = p_list[3] / (p_list[1] + p_list[3])
             else: #child is not influenced by current node probability
                 p_list = probabilities[positive_child.var]
                 
                 if not positive_child.is_alt:
                     # p = not x
-                    positive_child.negative_probability = p_list[0] + p_list[2]
+                    positive_child.negative_probability[current_node] = p_list[0] + p_list[2]
                     # p = x
-                    positive_child.positive_probability = p_list[1] + p_list[3]
+                    positive_child.positive_probability[current_node] = p_list[1] + p_list[3]
                 else:
                     #child is alt child but doesn't match variable --> add both alt probabilities
                     # p = not x_
-                    positive_child.negative_probability = p_list[0] + p_list[1]
+                    positive_child.negative_probability[current_node] = p_list[0] + p_list[1]
                     #p = not x
-                    positive_child.positive_probability = p_list[2] + p_list[3]
+                    positive_child.positive_probability[current_node] = p_list[2] + p_list[3]
             self.__set_probabilities_recursion(positive_child, probabilities)  
 
         #end case: both children are leafs
@@ -357,24 +448,59 @@ class BDD:
     def sum_probabilities_positive_cases(self):
         if not self.probabilities_set:
             raise Exception("Set the probabilities first.")
-        return self.__sum_probabilities_helper(self.root, path_mul=1)
+        empty_node = BDDNode()
+        return self.__sum_probabilities_helper(self.root, self.root, path_mul=1)
         
-    def __sum_probabilities_helper(self, currentNode: BDDNode, path_mul: mpq) -> mpq:
+    def __sum_probabilities_helper(self, current_node: BDDNode, parent_node: BDDNode, path_mul: mpq) -> mpq:
         #sum of path is complete
-        if currentNode.isLeaf():
+        if current_node.isLeaf():
             #don't sum probabilities of paths that end in zero
-            if currentNode.value == 0:
-                return path_mul 
+            if current_node.value == 0:
+                return 0 
             else:
                 return path_mul
         else:
-            negative_child = currentNode.negative_child
-            positive_child = currentNode.positive_child
+            negative_child = current_node.negative_child
+            positive_child = current_node.positive_child
             
-            mul_negative_path = self.__sum_probabilities_helper(negative_child, path_mul * currentNode.negative_probability)
-            mul_positive_path = self.__sum_probabilities_helper(positive_child, path_mul * currentNode.positive_probability)
+            mul_negative_path = self.__sum_probabilities_helper(negative_child, current_node, path_mul * current_node.negative_probability[parent_node])
+            mul_positive_path = self.__sum_probabilities_helper(positive_child, current_node, path_mul * current_node.positive_probability[parent_node])
             
             return mul_negative_path + mul_positive_path
+        
+        
+    def sum_all_probability_paths(self):
+        self.__sum_all_probability_paths_recursion(current_node=self.root, visited_nodes= {self.root : mpq(1)})
+        return
+        
+    def __sum_all_probability_paths_recursion(self, current_node : BDDNode, visited_nodes : dict[BDDNode, mpq], sum = 0, path_mul = 1):
+        #visited_nodes.append(current_node.var if not current_node.is_alt else current_node+"_")
+        if current_node.isLeaf():
+            sum += path_mul
+            out = "Path: "
+            for n in visited_nodes:
+                if n.isEmpty():
+                    continue
+                p = visited_nodes[n]
+                out = out + (n.var if not n.is_alt else n.var + "_") + f": {float(visited_nodes[n]):.2f} "
+            print(out+"pathprobability = "+f"{float(path_mul):.2f}"+" new sum = "+f"{float(sum):.2f}")
+            return sum
+        else:
+            
+            negative_child = current_node.negative_child
+            positive_child = current_node.positive_child
+            parent_node = list(visited_nodes.keys())[-1]
+            
+            temp1 = dict(visited_nodes)
+            temp1[current_node] = current_node.negative_probability[parent_node]
+            sum = self.__sum_all_probability_paths_recursion(negative_child, temp1, sum, path_mul * current_node.negative_probability[parent_node])
+            
+            temp2 = dict(visited_nodes) 
+            temp2[current_node] = current_node.negative_probability[parent_node]
+            visited_nodes[current_node] = current_node.positive_probability[parent_node]
+            sum = self.__sum_all_probability_paths_recursion(positive_child, temp2, sum, path_mul * current_node.positive_probability[parent_node])
+            
+        return sum
         
         
 
@@ -428,10 +554,14 @@ class BDD:
             if node.negative_child is not None:
                 alt_str = "_" if node.negative_child.is_alt else ""
                 child_node = node.negative_child
-                #get probability
+                #get probabilies
+                prob_str = ""
                 if node.negative_probability is not None:
-                        prob_str = f"{float(node.negative_probability):.2f}"
-                else: prob_str = ""
+                    for p in node.negative_probability:
+                        if p.var is not None:
+                            prob_str = " "+ prob_str + (p.var if not p.is_alt else p.var + "_") + " "
+                        prob_str = prob_str + f"{float(node.negative_probability[p]):.2f}"
+                        prob_str = prob_str + "\\n"
                 if child_node.var is not None:
                     #draw child node
                     assignments = "\n".join(str(d) for d in child_node.assignment)
@@ -449,10 +579,14 @@ class BDD:
             if node.positive_child is not None:
                 child_node = node.positive_child
                 alt_str = "_" if node.positive_child.is_alt else ""
-                #get probability 
+                #get probability
+                prob_str = ""
                 if node.positive_probability is not None:
-                        prob_str = f"{float(node.positive_probability):.2f}"
-                else: prob_str = ""
+                    for p in node.positive_probability:
+                        if p.var is not None:
+                            prob_str = " "+ prob_str + (p.var if not p.is_alt else p.var + "_") + " "
+                        prob_str = prob_str + f"{float(node.positive_probability[p]):.2f}"
+                        prob_str = prob_str + "\\n"
                 if child_node.var is not None:
                     #draw child node
                     assignments = "\n".join(str(d) for d in child_node.assignment)
@@ -551,6 +685,8 @@ if __name__ == "__main__":
     united.generateDot(path="5_united")
     united.set_probabilities(p)
     united.generateDot(path="6_united_w_prob")
+    print(f"Sum of all positive paths is: {float(united.sum_probabilities_positive_cases()):.2f}\n")
+    united.sum_all_probability_paths()
     
     
     
