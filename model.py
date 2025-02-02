@@ -66,7 +66,7 @@ class Model:
                     return n
 
     def find_node_in_f(self, node_in_uo: BDDNode) -> set[BDDNode]:
-        assignments = node_in_uo.assignment
+        assignments = node_in_uo.assignments
         current_node = self.f.root
         found_nodes = set()
         for assignment in assignments:

@@ -1,0 +1,33 @@
+digraph{
+label="(((m_ or l) and (not m_ and n)) or (m_ and n))and((not ((not m and not n) or (n and l)))and(((m or l) and (not m and n)) or (m and n)))\n\n"
+2007922073808[label=m]2007922071408[label="False
+"]
+2007922073808 -> 2007922071408[style=dashed label=" m 0.87\n" fontcolor = gray]
+2007922073488[label="m_
+"]
+2007922073808 -> 2007922073488 [label=" m 0.10\n" fontcolor = gray]
+2007922071408[label="False
+"]
+2007922073488 -> 2007922071408[style=dashed label=" m 0.00\n" fontcolor = gray]
+2007922075088[label="n
+"]
+2007922073488 -> 2007922075088 [label=" m 1.00\n" fontcolor = gray]
+2007922071408[label="False
+"]
+2007922075088 -> 2007922071408[style=dashed label=" m_ 0.11\n" fontcolor = gray]
+2007922076368[label="n_
+"]
+2007922075088 -> 2007922076368 [label=" m_ 0.89\n" fontcolor = gray]
+2007922071408[label="False
+"]
+2007922076368 -> 2007922071408[style=dashed label=" n 0.60\n" fontcolor = gray]
+2007922077168[label="l
+"]
+2007922076368 -> 2007922077168 [label=" n 0.40\n" fontcolor = gray]
+2007922065968[label="True
+"]
+2007922077168 -> 2007922065968[style=dashed label=" n_ 0.52\n" fontcolor = gray]
+2007922071408[label="False
+"]
+2007922077168 -> 2007922071408 [label=" n_ 0.48\n" fontcolor = gray]
+}

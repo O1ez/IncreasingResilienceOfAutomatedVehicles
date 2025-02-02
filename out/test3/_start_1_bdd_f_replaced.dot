@@ -1,0 +1,43 @@
+digraph{
+label="((m_ or l) and (not m_ and n)) or (m_ and n)\n\n"
+2007921917808[label=m_]2007921916368[label="n_
+{'m': False}"]
+2007921917808 -> 2007921916368[style=dashed label="" fontcolor = gray]
+2007921914928[label="False
+{'m': False, 'n': False, 'l': False}
+{'m': False, 'n': False, 'l': True}
+{'m': False, 'n': True, 'l': False}
+{'m': True, 'n': False, 'l': False}
+{'m': True, 'n': False, 'l': True}"]
+2007921916368 -> 2007921914928[style=dashed label="" fontcolor = gray]
+2007921915408[label="l_
+{'m': False, 'n': True}"]
+2007921916368 -> 2007921915408 [label="" fontcolor = gray]
+2007921914928[label="False
+{'m': False, 'n': False, 'l': False}
+{'m': False, 'n': False, 'l': True}
+{'m': False, 'n': True, 'l': False}
+{'m': True, 'n': False, 'l': False}
+{'m': True, 'n': False, 'l': True}"]
+2007921915408 -> 2007921914928[style=dashed label="" fontcolor = gray]
+2007921917328[label="True
+{'m': False, 'n': True, 'l': True}
+{'m': True, 'n': True, 'l': False}
+{'m': True, 'n': True, 'l': True}"]
+2007921915408 -> 2007921917328 [label="" fontcolor = gray]
+2007922024336[label="n_
+{'m': True}"]
+2007921917808 -> 2007922024336 [label="" fontcolor = gray]
+2007921914928[label="False
+{'m': False, 'n': False, 'l': False}
+{'m': False, 'n': False, 'l': True}
+{'m': False, 'n': True, 'l': False}
+{'m': True, 'n': False, 'l': False}
+{'m': True, 'n': False, 'l': True}"]
+2007922024336 -> 2007921914928[style=dashed label="" fontcolor = gray]
+2007921917328[label="True
+{'m': False, 'n': True, 'l': True}
+{'m': True, 'n': True, 'l': False}
+{'m': True, 'n': True, 'l': True}"]
+2007922024336 -> 2007921917328 [label="" fontcolor = gray]
+}

@@ -1,34 +1,34 @@
 digraph{
 label="not ((x and z) or (not x and y))\n\n"
-2543586814576[label=x]2543586814288[label="y
+2007921916368[label=x]2007921915408[label="y
 {'x': False}"]
-2543586814576 -> 2543586814288[style=dashed label="" fontcolor = gray]
-2543586814240[label="True
+2007921916368 -> 2007921915408[style=dashed label="" fontcolor = gray]
+2007921917488[label="True
 {'x': False, 'y': False, 'z': False}
 {'x': False, 'y': False, 'z': True}
 {'x': True, 'y': False, 'z': False}
 {'x': True, 'y': True, 'z': False}"]
-2543586814288 -> 2543586814240[style=dashed label="" fontcolor = gray]
-2543586809728[label="False
+2007921915408 -> 2007921917488[style=dashed label="" fontcolor = gray]
+2007921917168[label="False
 {'x': False, 'y': True, 'z': False}
 {'x': False, 'y': True, 'z': True}
 {'x': True, 'y': False, 'z': True}
 {'x': True, 'y': True, 'z': True}"]
-2543586814288 -> 2543586809728 [label="" fontcolor = gray]
-2543586814816[label="z
+2007921915408 -> 2007921917168 [label="" fontcolor = gray]
+2007921914608[label="z
 {'x': True, 'y': False}
 {'x': True, 'y': True}"]
-2543586814576 -> 2543586814816 [label="" fontcolor = gray]
-2543586814240[label="True
+2007921916368 -> 2007921914608 [label="" fontcolor = gray]
+2007921917488[label="True
 {'x': False, 'y': False, 'z': False}
 {'x': False, 'y': False, 'z': True}
 {'x': True, 'y': False, 'z': False}
 {'x': True, 'y': True, 'z': False}"]
-2543586814816 -> 2543586814240[style=dashed label="" fontcolor = gray]
-2543586809728[label="False
+2007921914608 -> 2007921917488[style=dashed label="" fontcolor = gray]
+2007921917168[label="False
 {'x': False, 'y': True, 'z': False}
 {'x': False, 'y': True, 'z': True}
 {'x': True, 'y': False, 'z': True}
 {'x': True, 'y': True, 'z': True}"]
-2543586814816 -> 2543586809728 [label="" fontcolor = gray]
+2007921914608 -> 2007921917168 [label="" fontcolor = gray]
 }
