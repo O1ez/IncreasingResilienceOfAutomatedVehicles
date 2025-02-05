@@ -1,0 +1,27 @@
+digraph{
+label="(B_ or C) and (A_ and C)\n\n"
+2781966213488[label=A_]2781965877808[label="False
+{'A': False, 'B': False, 'C': False}
+{'A': False, 'B': False, 'C': True}
+{'A': False, 'B': True, 'C': False}
+{'A': False, 'B': True, 'C': True}
+{'A': True, 'B': False, 'C': False}
+{'A': True, 'B': True, 'C': False}"]
+2781966213488 -> 2781965877808[style=dashed label="" fontcolor = gray]
+2781966216048[label="C_
+{'A': True, 'B': False}
+{'A': True, 'B': True}"]
+2781966213488 -> 2781966216048 [label="" fontcolor = gray]
+2781965877808[label="False
+{'A': False, 'B': False, 'C': False}
+{'A': False, 'B': False, 'C': True}
+{'A': False, 'B': True, 'C': False}
+{'A': False, 'B': True, 'C': True}
+{'A': True, 'B': False, 'C': False}
+{'A': True, 'B': True, 'C': False}"]
+2781966216048 -> 2781965877808[style=dashed label="" fontcolor = gray]
+2781965877648[label="True
+{'A': True, 'B': False, 'C': True}
+{'A': True, 'B': True, 'C': True}"]
+2781966216048 -> 2781965877648 [label="" fontcolor = gray]
+}

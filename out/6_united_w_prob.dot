@@ -1,0 +1,33 @@
+digraph{
+label="(A or B)and((B_ or C) and (A_ and C))\n\n"
+2781966215728[label=A]2781966214928[label="A_
+"]
+2781966215728 -> 2781966214928[style=dashed label=" A 0.60\n" fontcolor = gray]
+2781966215888[label="False
+"]
+2781966214928 -> 2781966215888[style=dashed label=" A 0.33\n" fontcolor = gray]
+2781966216208[label="B
+"]
+2781966214928 -> 2781966216208 [label=" A 0.67\n" fontcolor = gray]
+2781966215888[label="False
+"]
+2781966216208 -> 2781966215888[style=dashed label=" A_ 0.28\n" fontcolor = gray]
+2781966217008[label="C_
+"]
+2781966216208 -> 2781966217008 [label=" A_ 0.72\n" fontcolor = gray]
+2781966215888[label="False
+"]
+2781966217008 -> 2781966215888[style=dashed label="  B 0.40\nA_ 0.40\n" fontcolor = gray]
+2781966215568[label="True
+"]
+2781966217008 -> 2781966215568 [label="  B 0.60\nA_ 0.60\n" fontcolor = gray]
+2781966215088[label="A_
+"]
+2781966215728 -> 2781966215088 [label=" A 0.40\n" fontcolor = gray]
+2781966215888[label="False
+"]
+2781966215088 -> 2781966215888[style=dashed label=" A 0.75\n" fontcolor = gray]
+2781966217008[label="C_
+"]
+2781966215088 -> 2781966217008 [label=" A 0.25\n" fontcolor = gray]
+}

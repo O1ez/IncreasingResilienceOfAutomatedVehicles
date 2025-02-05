@@ -71,7 +71,7 @@ class Model:
         found_nodes = set()
         for assignment in assignments:
             for var in assignment:
-                if current_node.var != var:
+                if current_node.variable != var:
                     continue
                 if assignment[var]:
                     current_node = current_node.positive_child
