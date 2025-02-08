@@ -54,6 +54,25 @@ class TestCalculations(unittest.TestCase):
         bdd1 = BDD("X and Y", ["X", "Y"])
         bdd1.reduce()
         self.assertEqual(bdd1, bdd_XandY)
+
+    def test_build_X_or_Y(self):
+        # example X and Y reduced
+        expression_X_or_Y = "X or Y"
+        variables_X_Y = ["X", "Y"]
+        bdd_XorY = BDD(expression_X_or_Y, variables_X_Y, build_new=False)
+        root = BDDNode(var="X")
+        child = BDDNode(var="Y")
+        leaf_true = BDDNode(value=True)
+        leaf_false = BDDNode(value=False)
+        root.positive_child = leaf_true
+        root.negative_child = child
+        child.positive_child = leaf_true
+        child.negative_child = leaf_false
+        bdd_XorY.root = root
+
+        bdd1 = BDD("X or Y", ["X", "Y"])
+        bdd1.reduce()
+        self.assertEqual(bdd1, bdd_XorY)
         
     def test_build_X(self):
         #example X
@@ -171,8 +190,6 @@ class TestCalculations(unittest.TestCase):
         bdd2.root = root
         
         bdd1._BDD__remove_equivalent_child_nodes(bdd1.root)
-        bdd1.generateDot("a")
-        bdd2.generateDot("b")
         self.assertEqual(bdd1, bdd2)   
         
 if __name__ == '__main__':

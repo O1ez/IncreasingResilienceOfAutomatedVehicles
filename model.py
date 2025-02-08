@@ -37,14 +37,14 @@ class Model:
             f_united_vars.append(f_replaced_vars[i])
 
         #build fp = f_ and not f and not uo
-        first_unite = BDD.unite(bdd_not_f, bdd_not_uo, not_f_vars)
-        bdd_fp = BDD.unite(bdd_f_replaced, first_unite, f_united_vars)
+        first_unite = BDD.apply_operand(bdd_not_f, bdd_not_uo, "and", not_f_vars)
+        bdd_fp = BDD.apply_operand(bdd_f_replaced, first_unite,"and", f_united_vars)
         bdd_fp.set_probabilities(self.probabilities)
         bdd_fp.generateDot(f"{path}\\{step}5_bdd_fp")
         fp = bdd_fp.sum_probabilities_positive_cases()
 
         #build tp = f_ and f and not uo
-        bdd_tp = BDD.unite(bdd_f_replaced, BDD.unite(bdd_not_uo, self.f, self.vars), f_united_vars)
+        bdd_tp = BDD.apply_operand(bdd_f_replaced, BDD.apply_operand(bdd_not_uo, self.f,"and", self.vars),"and", f_united_vars)
         bdd_tp.set_probabilities(self.probabilities)
         bdd_tp.generateDot(f"{path}\\{step}6_bdd_tp")
         tp = bdd_tp.sum_probabilities_positive_cases()
@@ -66,7 +66,8 @@ class Model:
                     return n
 
     def find_node_in_f(self, node_in_uo: BDDNode) -> set[BDDNode]:
-        assignments = node_in_uo.assignments
+        #assignments = node_in_uo.assignments
+        assignments = self.uo.find_paths(node_in_uo)
         current_node = self.f.root
         found_nodes = set()
         for assignment in assignments:
@@ -82,7 +83,7 @@ class Model:
 
     #TODO: rename this
     def algorithm(self, path: str):
-        bdd_uo_copy = self.uo.rename_variables()
+        bdd_uo_copy = self.uo.copy_bdd()
         #1
         tp_old, fp_old = self.calc_tp_fp(path, "_start_")
         print(
@@ -149,7 +150,7 @@ if __name__ == "__main__":
         "y": [mpq(0.15), mpq(0.6), mpq(0.13), mpq(0.12)],
         "z": [mpq(0.23), mpq(0.17), mpq(0.2), mpq(0.4)]
     }
-    f = "(x and y) or (x and not y and not z) or (not x and y and not z) or (not x and not y and z)"
+    f = "((x and y) or ((x and not y) and not z)) or (((not x and y) and not z) or ((not x and not y) and z))"
     uo = "(x and z) or (not x and y)"
 
     p2 = {
@@ -157,7 +158,7 @@ if __name__ == "__main__":
         "b": [mpq(0.2), mpq(0.4), mpq(0.1), mpq(0.3)],
         "c": [mpq(0.13), mpq(0.62), mpq(0.1), mpq(0.15)]
     }
-    f2 = "a and (b or c and (a or not c))"
+    f2 = "a and ((b or c) and (a or not c))"
     uo2 = "not a and (b or (not b and c))"
 
     p3 ={
