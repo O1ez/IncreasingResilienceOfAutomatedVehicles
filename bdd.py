@@ -70,12 +70,12 @@ class BDDNode:
         if other is None or not isinstance(other, BDDNode):
             return False
         if self.isLeaf() and other.isLeaf():
-            assignments_match = True
-            for dic in self.assignments:
-                if dic not in other.assignments:
-                    assignments_match = False
-                    break
-            return self.value == other.value and assignments_match
+#            assignments_match = True
+#            for dic in self.assignments:
+#                if dic not in other.assignments:
+#                    assignments_match = False
+#                    break
+            return self.value == other.value #and assignments_match
         return (
                 self.variable == other.variable and
                 self.negative_child == other.negative_child and
@@ -130,9 +130,6 @@ class BDD:
         current_node.positive_child = positive_child
         return current_node
 
-    def isOnlyRoot(self):
-        return not self.root.hasChildren
-
     def reduce(self):
         if not self.root.hasChildren:
             print("BDD only has root.")
@@ -140,10 +137,6 @@ class BDD:
         self.__merge_leafs(self.root)
         self.__remove_duplicate_subtree(self.root, mem={})
         self.__remove_equivalent_child_nodes(self.root)
-
-        #TODO: hotfix
-        if self.root.negative_child == self.root.positive_child:
-            self.root = self.root.negative_child
 
         #print("Reduction done.")
         return True
@@ -183,6 +176,12 @@ class BDD:
         return None
 
     def __remove_equivalent_child_nodes(self, node: BDDNode) -> Optional[BDDNode]:
+        #if root is reducable reduce it and set new root
+        if node == self.root:
+            while self.root.negative_child == self.root.positive_child:
+                self.root = self.root.negative_child
+                node = self.root
+        
         if node.negative_child is not None:
             child_of_neg_child = self.__remove_equivalent_child_nodes(node.negative_child)
             #if not None, the children of the neg child node are identical -> original negative child gets skipped over
@@ -590,6 +589,15 @@ class BDD:
             self.__reset_draw(node.positive_child)
         node.drawn = False
 
+    def __eq__(self, other):
+        if other is None or not isinstance(other, BDD):
+            return False
+        return(
+            self.variables == other.variables and
+            self.expression == other.expression and
+            #checks all child nodes in tree
+            self.root == other.root
+        )
 
 def evaluate_expression(expr, assignment):
     return eval(expr, {}, assignment)
