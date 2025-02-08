@@ -1,9 +1,0 @@
-digraph{
-label="X and Y\n\n"
-3129867520912[label=Y]3129867522832[label="False
-"]
-3129867520912 -> 3129867522832[style=dashed label="" fontcolor = gray]
-3129867521392[label="True
-"]
-3129867520912 -> 3129867521392 [label="" fontcolor = gray]
-}

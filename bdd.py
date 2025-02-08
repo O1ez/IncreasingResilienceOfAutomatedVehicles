@@ -1,11 +1,25 @@
 from __future__ import annotations
 from collections import deque
+import operator
 from typing import Optional
 import re
 import os
 import glob
 import shutil
+import boolean_parser
 from gmpy2 import mpq
+from pyparsing import Word, alphas, nums, infix_expr, LEFT_ASSOC, RIGHT_ASSOC
+
+var_convention = Word(alphas + nums)
+
+expr = infix_expr(
+    var_convention,
+    [
+        ("not", 1, RIGHT_ASSOC),  # "not" ist unär und rechtsassoziativ
+        ("and", 2, LEFT_ASSOC),   # "and" ist binär und linksassoziativ
+        ("or", 2, LEFT_ASSOC),    # "or" ist binär und linksassoziativ
+    ],
+)
 
 # deletes all files from the out folder 
 def delete_all_files_from_out():
@@ -15,14 +29,14 @@ def delete_all_files_from_out():
             os.remove(obj)
         elif os.path.isdir(obj):
             shutil.rmtree(obj)
-
+            
 
 class BDDNode:
     def __init__(self, var: str = None, value: bool = None, assignments: Optional[list[dict]] = None, is_alt=False,
-                 negative_child: Optional[BDDNode] = None,
-                 negative_probability: dict[BDDNode, mpq] = None,
-                 positive_child: Optional[BDDNode] = None,
-                 positive_probability: dict[BDDNode, mpq] = None):
+                negative_child: Optional[BDDNode] = None,
+                negative_probability: dict[BDDNode, mpq] = None,
+                positive_child: Optional[BDDNode] = None,
+                positive_probability: dict[BDDNode, mpq] = None):
 
         self.variable = var  #None for leaf nodes
         self.is_alt = is_alt #used to differentiate variables and their renamed counterpart
@@ -87,6 +101,8 @@ class BDDNode:
         if self.isLeaf():
             return hash(self.value)
         return hash((self.variable, self.negative_child, self.positive_child))
+#______________________________________________________________________________________________________________________________
+
 
 class BDD:
     def __init__(self, expression: str, variables: list[str], build_new=True):
@@ -100,35 +116,36 @@ class BDD:
             self.build_new()
 
     def build_new(self):
-        empty_dict = {}
-        self.root = self.build(0, empty_dict)
+        ops = expr.parse_string(self.expression)
+        self.root = self.build(ops)
 
-    def build(self, var_index, current_assignment: dict):
-        # end of recursion if node is a leaf
-        if var_index == len(self.variables):
-            current_assignment = {var: val for var, val in current_assignment.items()}  # copies current_assignment
-            value = evaluate_expression(self.expression, current_assignment)
-            self.evaluation[tuple(current_assignment.items())] = value
-            leaf = BDDNode(value=value)
-            leaf.assignments = [current_assignment]
-            return leaf
-
-        #initiate node
-        var = self.variables[var_index]
-        current_node = BDDNode(var=var)
-        current_node.assignments = [({var: val for var, val in current_assignment.items()})]
-
-        # Create node for false subtree and true subtree
-        current_assignment_negative = current_assignment.copy()
-        current_assignment_negative[var] = False
-        leftNode = self.build(var_index + 1, current_assignment_negative)
-        current_node.negative_child = leftNode
-
-        current_assignment_positive = current_assignment.copy()
-        current_assignment_positive[var] = True
-        positive_child = self.build(var_index + 1, current_assignment_positive)
-        current_node.positive_child = positive_child
-        return current_node
+    def build(self, ops: boolean_parser.ParseResults):
+        None
+        ## end of recursion if node is a leaf
+        #if var_index == len(self.variables):
+        #    current_assignment = {var: val for var, val in current_assignment.items()}  # copies current_assignment
+        #    value = evaluate_expression(self.expression, current_assignment)
+        #    self.evaluation[tuple(current_assignment.items())] = value
+        #    leaf = BDDNode(value=value)
+        #    leaf.assignments = [current_assignment]
+        #    return leaf
+#
+        ##initiate node
+        #var = self.variables[var_index]
+        #current_node = BDDNode(var=var)
+        #current_node.assignments = [({var: val for var, val in current_assignment.items()})]
+#
+        ## Create node for false subtree and true subtree
+        #current_assignment_negative = current_assignment.copy()
+        #current_assignment_negative[var] = False
+        #leftNode = self.build(var_index + 1, current_assignment_negative)
+        #current_node.negative_child = leftNode
+#
+        #current_assignment_positive = current_assignment.copy()
+        #current_assignment_positive[var] = True
+        #positive_child = self.build(var_index + 1, current_assignment_positive)
+        #current_node.positive_child = positive_child
+        #return current_node
 
     def reduce(self):
         if not self.root.hasChildren:
@@ -226,7 +243,7 @@ class BDD:
 
     #TODO: assignment not set properly
     @staticmethod
-    def unite(BDD1: BDD, BDD2: BDD, variable_order: list) -> BDD:
+    def apply_operand(BDD1: BDD, BDD2: BDD, operand: str, variable_order: list) -> BDD:
         for var in BDD1.variables:
             if var not in variable_order:
                 raise Exception("Variable " + var + " from BDD1 not found in variables.")
@@ -236,13 +253,13 @@ class BDD:
                 raise Exception("Variable " + var + " from BDD2 not found in variables.")
 
         united_bdd = BDD(expression="(" + BDD1.expression + ")and(" + BDD2.expression + ")", variables=variable_order,
-                         build_new=False)
-        united_bdd.root = BDD.__unite_helper(BDD1.root, BDD2.root, variable_order, united_bdd)
+                        build_new=False)
+        united_bdd.root = BDD.__apply_operand_recursion(BDD1.root, BDD2.root, operand, variable_order, united_bdd)
         united_bdd.reduce()
         return united_bdd
 
     @staticmethod
-    def __unite_helper(node1: BDDNode, node2: BDDNode, variable_order: list[str], united_bdd: BDD) -> BDDNode:
+    def __apply_operand_recursion(node1: BDDNode, node2: BDDNode, operand: str, variable_order: list[str], united_bdd: BDD) -> BDDNode:
         node1_var = None
         node2_var = None
         if node1.variable:
@@ -257,14 +274,14 @@ class BDD:
 
         # if both nodes are leafs return new leaf with united value
         if node1.isLeaf() and node2.isLeaf():
-            solution = BDDNode(value = node1.value and node2.value)
+            solution = BDDNode(value =  ops_dict[operand](node1.value, node2.value))
             return solution
 
         # if both nodes are of the same variable unite the negative children and positive children of both bdd
         elif node1_var == node2_var:
             solution = BDDNode(var=node1_var, is_alt=node1.is_alt)
-            solution.negative_child = BDD.__unite_helper(node1.negative_child, node2.negative_child, variable_order, united_bdd)
-            solution.positive_child = BDD.__unite_helper(node1.positive_child, node2.positive_child, variable_order, united_bdd)
+            solution.negative_child = BDD.__apply_operand_recursion(node1.negative_child, node2.negative_child, variable_order, united_bdd)
+            solution.positive_child = BDD.__apply_operand_recursion(node1.positive_child, node2.positive_child, variable_order, united_bdd)
             if solution.negative_child is None or solution.positive_child is None:
                 raise Exception("Children are None")
             #solution.reduce(united_bdd)
@@ -284,8 +301,8 @@ class BDD:
                 lower_prio = node1
 
             solution = BDDNode(var=higher_prio.variable, is_alt=higher_prio.is_alt)
-            solution.negative_child = BDD.__unite_helper(higher_prio.negative_child, lower_prio, variable_order, united_bdd)
-            solution.positive_child = BDD.__unite_helper(higher_prio.positive_child, lower_prio, variable_order, united_bdd)
+            solution.negative_child = BDD.__apply_operand_recursion(higher_prio.negative_child, lower_prio, variable_order, united_bdd)
+            solution.positive_child = BDD.__apply_operand_recursion(higher_prio.positive_child, lower_prio, variable_order, united_bdd)
             if (solution.negative_child is None) or (solution.positive_child is None):
                 raise Exception("Children are None")
             #TODO: doesn't work with reduced bdd's 
@@ -452,8 +469,8 @@ class BDD:
         return
 
     def __sum_all_probability_paths_recursion(self, current_node: BDDNode, visited_nodes: dict[BDDNode, mpq],
-                                              all_path_sum: mpq = 0,
-                                              path_mul: mpq = 1) -> mpq:
+                                            all_path_sum: mpq = 0,
+                                            path_mul: mpq = 1) -> mpq:
         #visited_nodes.append(current_node.var if not current_node.is_alt else current_node+"_")
         if current_node.isLeaf():
             all_path_sum += path_mul
@@ -474,13 +491,13 @@ class BDD:
             temp1[current_node] = current_node.negative_probability[parent_node]
             all_path_sum = self.__sum_all_probability_paths_recursion(negative_child, temp1, all_path_sum,
                                                                       path_mul * current_node.negative_probability[
-                                                                          parent_node])
+                                                                        parent_node])
 
             temp2 = dict(visited_nodes)
             temp2[current_node] = current_node.negative_probability[parent_node]
             all_path_sum = self.__sum_all_probability_paths_recursion(positive_child, temp2, all_path_sum,
                                                                       path_mul * current_node.positive_probability[
-                                                                          parent_node])
+                                                                        parent_node])
 
         return all_path_sum
 
@@ -644,7 +661,7 @@ def main():
     bdd2_replaced.negate()
     bdd2_replaced.generateDot("4_bdd_2_negate")
 
-    united = BDD.unite(bdd1, bdd2_replaced, ["A", "A_", "B", "B_", "C", "C_"])
+    united = BDD.apply_operand(bdd1, bdd2_replaced, ["A", "A_", "B", "B_", "C", "C_"])
     united.generateDot(path="5_united")
     united.set_probabilities(p)
     united.generateDot(path="6_united_w_prob")
