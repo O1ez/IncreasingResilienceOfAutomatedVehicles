@@ -1,0 +1,9 @@
+digraph{
+label="(not m and not n) or (n and l)\n\n"
+1947405567152[label=m]1947405567472[label="True
+"]
+1947405567152 -> 1947405567472[style=dashed label="" fontcolor = gray]
+1947405567632[label="False
+"]
+1947405567152 -> 1947405567632 [label="" fontcolor = gray]
+}

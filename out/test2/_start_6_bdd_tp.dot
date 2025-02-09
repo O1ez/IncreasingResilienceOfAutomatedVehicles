@@ -1,0 +1,45 @@
+digraph{
+label="(a_ and ((b_ or c) and (a_ or not c)))and((not (not a and (b or (not b and c))))and(a and ((b or c) and (a or not c))))\n\n"
+1947405578192[label=a]1947405578832[label="False
+"]
+1947405578192 -> 1947405578832[style=dashed label=" a 0.10\n" fontcolor = gray]
+1947405575632[label="a_
+"]
+1947405578192 -> 1947405575632 [label=" a 0.90\n" fontcolor = gray]
+1947405578832[label="False
+"]
+1947405575632 -> 1947405578832[style=dashed label=" a 0.72\n" fontcolor = gray]
+1947405566352[label="b
+"]
+1947405575632 -> 1947405566352 [label=" a 0.28\n" fontcolor = gray]
+1947405574672[label="b_
+"]
+1947405566352 -> 1947405574672[style=dashed label=" a_ 0.30\n" fontcolor = gray]
+1947405572112[label="c
+"]
+1947405574672 -> 1947405572112[style=dashed label=" b 0.67\n" fontcolor = gray]
+1947405578832[label="False
+"]
+1947405572112 -> 1947405578832[style=dashed label=" b_ 0.23\n" fontcolor = gray]
+1947405575792[label="c_
+"]
+1947405572112 -> 1947405575792 [label=" b_ 0.77\n" fontcolor = gray]
+1947405578832[label="False
+"]
+1947405575792 -> 1947405578832[style=dashed label="   c 0.81\nb_ 0.75\nb_ 0.75\n" fontcolor = gray]
+1947405567152[label="True
+"]
+1947405575792 -> 1947405567152 [label="   c 0.19\nb_ 0.25\nb_ 0.25\n" fontcolor = gray]
+1947405575792[label="c_
+"]
+1947405574672 -> 1947405575792 [label=" b 0.33\n" fontcolor = gray]
+1947405568752[label="b_
+"]
+1947405566352 -> 1947405568752 [label=" a_ 0.70\n" fontcolor = gray]
+1947405575792[label="c_
+"]
+1947405568752 -> 1947405575792[style=dashed label=" b 0.57\n" fontcolor = gray]
+1947405567152[label="True
+"]
+1947405568752 -> 1947405567152 [label=" b 0.43\n" fontcolor = gray]
+}

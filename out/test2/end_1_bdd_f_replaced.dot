@@ -1,0 +1,21 @@
+digraph{
+label="a_ and ((b_ or c) and (a_ or not c))\n\n"
+1947405579312[label=a_]1947405581552[label="False
+"]
+1947405579312 -> 1947405581552[style=dashed label="" fontcolor = gray]
+1947405568912[label="b_
+"]
+1947405579312 -> 1947405568912 [label="" fontcolor = gray]
+1947405568272[label="c_
+"]
+1947405568912 -> 1947405568272[style=dashed label="" fontcolor = gray]
+1947405581552[label="False
+"]
+1947405568272 -> 1947405581552[style=dashed label="" fontcolor = gray]
+1947405576432[label="True
+"]
+1947405568272 -> 1947405576432 [label="" fontcolor = gray]
+1947405576432[label="True
+"]
+1947405568912 -> 1947405576432 [label="" fontcolor = gray]
+}

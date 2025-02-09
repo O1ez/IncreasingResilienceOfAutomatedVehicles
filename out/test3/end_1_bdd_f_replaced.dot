@@ -1,0 +1,27 @@
+digraph{
+label="((m_ or l) and (not m_ and n)) or (m_ and n)\n\n"
+1947405573072[label=m_]1947405570992[label="n_
+"]
+1947405573072 -> 1947405570992[style=dashed label="" fontcolor = gray]
+1947405568752[label="False
+"]
+1947405570992 -> 1947405568752[style=dashed label="" fontcolor = gray]
+1947405574832[label="l_
+"]
+1947405570992 -> 1947405574832 [label="" fontcolor = gray]
+1947405568752[label="False
+"]
+1947405574832 -> 1947405568752[style=dashed label="" fontcolor = gray]
+1947405579632[label="True
+"]
+1947405574832 -> 1947405579632 [label="" fontcolor = gray]
+1947405570352[label="n_
+"]
+1947405573072 -> 1947405570352 [label="" fontcolor = gray]
+1947405568752[label="False
+"]
+1947405570352 -> 1947405568752[style=dashed label="" fontcolor = gray]
+1947405579632[label="True
+"]
+1947405570352 -> 1947405579632 [label="" fontcolor = gray]
+}

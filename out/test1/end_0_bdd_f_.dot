@@ -1,0 +1,33 @@
+digraph{
+label="((x and y) or ((x and not y) and not z)) or (((not x and y) and not z) or ((not x and not y) and z))\n\n"
+1947379544656[label=x]1947379542256[label="y
+"]
+1947379544656 -> 1947379542256[style=dashed label="" fontcolor = gray]
+1947379542416[label="z
+"]
+1947379542256 -> 1947379542416[style=dashed label="" fontcolor = gray]
+1947379540176[label="False
+"]
+1947379542416 -> 1947379540176[style=dashed label="" fontcolor = gray]
+1947379540336[label="True
+"]
+1947379542416 -> 1947379540336 [label="" fontcolor = gray]
+1947379543216[label="z
+"]
+1947379542256 -> 1947379543216 [label="" fontcolor = gray]
+1947379540336[label="True
+"]
+1947379543216 -> 1947379540336[style=dashed label="" fontcolor = gray]
+1947379540176[label="False
+"]
+1947379543216 -> 1947379540176 [label="" fontcolor = gray]
+1947379544816[label="y
+"]
+1947379544656 -> 1947379544816 [label="" fontcolor = gray]
+1947379543216[label="z
+"]
+1947379544816 -> 1947379543216[style=dashed label="" fontcolor = gray]
+1947379540336[label="True
+"]
+1947379544816 -> 1947379540336 [label="" fontcolor = gray]
+}

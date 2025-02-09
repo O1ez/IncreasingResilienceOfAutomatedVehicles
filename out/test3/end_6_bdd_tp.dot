@@ -1,0 +1,57 @@
+digraph{
+label="(((m_ or l) and (not m_ and n)) or (m_ and n))and((not ((not m and not n) or (n and l)))and(((m or l) and (not m and n)) or (m and n)))\n\n"
+1947405230128[label=m]1947405223888[label="False
+"]
+1947405230128 -> 1947405223888[style=dashed label=" m 0.87\n" fontcolor = gray]
+1947405225168[label="m_
+"]
+1947405230128 -> 1947405225168 [label=" m 0.10\n" fontcolor = gray]
+1947405231728[label="n
+"]
+1947405225168 -> 1947405231728[style=dashed label=" m 0.00\n" fontcolor = gray]
+1947405223888[label="False
+"]
+1947405231728 -> 1947405223888[style=dashed label=" m_ 0.11\n" fontcolor = gray]
+1947405232368[label="n_
+"]
+1947405231728 -> 1947405232368 [label=" m_ 0.89\n" fontcolor = gray]
+1947405223888[label="False
+"]
+1947405232368 -> 1947405223888[style=dashed label=" n 0.60\n" fontcolor = gray]
+1947405233648[label="l
+"]
+1947405232368 -> 1947405233648 [label=" n 0.40\n" fontcolor = gray]
+1947405233968[label="l_
+"]
+1947405233648 -> 1947405233968[style=dashed label=" n_ 0.52\n" fontcolor = gray]
+1947405223888[label="False
+"]
+1947405233968 -> 1947405223888[style=dashed label=" l 0.48\n" fontcolor = gray]
+1947405224368[label="True
+"]
+1947405233968 -> 1947405224368 [label=" l 0.52\n" fontcolor = gray]
+1947405223888[label="False
+"]
+1947405233648 -> 1947405223888 [label=" n_ 0.48\n" fontcolor = gray]
+1947405231888[label="n
+"]
+1947405225168 -> 1947405231888 [label=" m 1.00\n" fontcolor = gray]
+1947405223888[label="False
+"]
+1947405231888 -> 1947405223888[style=dashed label=" m_ 0.11\n" fontcolor = gray]
+1947405235248[label="n_
+"]
+1947405231888 -> 1947405235248 [label=" m_ 0.89\n" fontcolor = gray]
+1947405223888[label="False
+"]
+1947405235248 -> 1947405223888[style=dashed label=" n 0.60\n" fontcolor = gray]
+1947405236048[label="l
+"]
+1947405235248 -> 1947405236048 [label=" n 0.40\n" fontcolor = gray]
+1947405224368[label="True
+"]
+1947405236048 -> 1947405224368[style=dashed label=" n_ 0.52\n" fontcolor = gray]
+1947405223888[label="False
+"]
+1947405236048 -> 1947405223888 [label=" n_ 0.48\n" fontcolor = gray]
+}
