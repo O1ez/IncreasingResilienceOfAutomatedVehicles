@@ -31,7 +31,7 @@ def delete_all_files_from_out():
             os.remove(obj)
         elif os.path.isdir(obj):
             shutil.rmtree(obj)
-            
+
 
 class BDDNode:
     def __init__(self, var: str = None, value: bool = None, assignments: Optional[list[dict]] = None, is_alt=False,
