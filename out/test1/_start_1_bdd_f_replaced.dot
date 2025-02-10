@@ -1,33 +1,33 @@
 digraph{
 label="((x_ and y) or ((x_ and not y) and not z)) or (((not x_ and y) and not z) or ((not x_ and not y) and z))\n\n"
-1947379543696[label=x_]1947379543056[label="y_
+2746076251312[label=x_]2746076254352[label="y_
 "]
-1947379543696 -> 1947379543056[style=dashed label="" fontcolor = gray]
-1947379541776[label="z_
+2746076251312 -> 2746076254352[style=dashed label="" fontcolor = gray]
+2746076253872[label="z_
 "]
-1947379543056 -> 1947379541776[style=dashed label="" fontcolor = gray]
-1947379541296[label="False
+2746076254352 -> 2746076253872[style=dashed label="" fontcolor = gray]
+2746076251632[label="False
 "]
-1947379541776 -> 1947379541296[style=dashed label="" fontcolor = gray]
-1947379546416[label="True
+2746076253872 -> 2746076251632[style=dashed label="" fontcolor = gray]
+2746076255792[label="True
 "]
-1947379541776 -> 1947379546416 [label="" fontcolor = gray]
-1947379546256[label="z_
+2746076253872 -> 2746076255792 [label="" fontcolor = gray]
+2746076252752[label="z_
 "]
-1947379543056 -> 1947379546256 [label="" fontcolor = gray]
-1947379546416[label="True
+2746076254352 -> 2746076252752 [label="" fontcolor = gray]
+2746076255792[label="True
 "]
-1947379546256 -> 1947379546416[style=dashed label="" fontcolor = gray]
-1947379541296[label="False
+2746076252752 -> 2746076255792[style=dashed label="" fontcolor = gray]
+2746076251632[label="False
 "]
-1947379546256 -> 1947379541296 [label="" fontcolor = gray]
-1947379541616[label="y_
+2746076252752 -> 2746076251632 [label="" fontcolor = gray]
+2746076253712[label="y_
 "]
-1947379543696 -> 1947379541616 [label="" fontcolor = gray]
-1947379546256[label="z_
+2746076251312 -> 2746076253712 [label="" fontcolor = gray]
+2746076252752[label="z_
 "]
-1947379541616 -> 1947379546256[style=dashed label="" fontcolor = gray]
-1947379546416[label="True
+2746076253712 -> 2746076252752[style=dashed label="" fontcolor = gray]
+2746076255792[label="True
 "]
-1947379541616 -> 1947379546416 [label="" fontcolor = gray]
+2746076253712 -> 2746076255792 [label="" fontcolor = gray]
 }

@@ -1,15 +1,15 @@
 digraph{
 label="not a and (b or (not b and c))\n\n"
-1947405570672[label=a]1947405581552[label="b
+2746076261392[label=a]2746076264432[label="b
 "]
-1947405570672 -> 1947405581552[style=dashed label="" fontcolor = gray]
-1947405572752[label="False
+2746076261392 -> 2746076264432[style=dashed label="" fontcolor = gray]
+2746076264112[label="False
 "]
-1947405581552 -> 1947405572752[style=dashed label="" fontcolor = gray]
-1947405577392[label="True
+2746076264432 -> 2746076264112[style=dashed label="" fontcolor = gray]
+2746076250512[label="True
 "]
-1947405581552 -> 1947405577392 [label="" fontcolor = gray]
-1947405572752[label="False
+2746076264432 -> 2746076250512 [label="" fontcolor = gray]
+2746076264112[label="False
 "]
-1947405570672 -> 1947405572752 [label="" fontcolor = gray]
+2746076261392 -> 2746076264112 [label="" fontcolor = gray]
 }

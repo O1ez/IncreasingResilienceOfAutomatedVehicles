@@ -1,39 +1,39 @@
 digraph{
 label="(a_ and ((b_ or c) and (a_ or not c)))and((not (a and ((b or c) and (a or not c))))and(not (not a and (b or (not b and c)))))\n\n"
-1947405574512[label=a_]1947405569712[label="False
+2746076264272[label=a_]2746076253712[label="False
 "]
-1947405574512 -> 1947405569712[style=dashed label=" a_ 0.70\n" fontcolor = gray]
-1947405567312[label="b
+2746076264272 -> 2746076253712[style=dashed label=" a_ 0.70\n" fontcolor = gray]
+2746076255152[label="b
 "]
-1947405574512 -> 1947405567312 [label=" a_ 0.70\n" fontcolor = gray]
-1947405572912[label="b_
+2746076264272 -> 2746076255152 [label=" a_ 0.70\n" fontcolor = gray]
+2746076254192[label="b_
 "]
-1947405567312 -> 1947405572912[style=dashed label=" a_ 0.30\n" fontcolor = gray]
-1947405580432[label="c
+2746076255152 -> 2746076254192[style=dashed label=" a_ 0.30\n" fontcolor = gray]
+2746076252432[label="c
 "]
-1947405572912 -> 1947405580432[style=dashed label=" b 0.67\n" fontcolor = gray]
-1947405568112[label="c_
+2746076254192 -> 2746076252432[style=dashed label=" b 0.67\n" fontcolor = gray]
+2746076693360[label="c_
 "]
-1947405580432 -> 1947405568112[style=dashed label=" b_ 0.23\n" fontcolor = gray]
-1947405569712[label="False
+2746076252432 -> 2746076693360[style=dashed label=" b_ 0.23\n" fontcolor = gray]
+2746076253712[label="False
 "]
-1947405568112 -> 1947405569712[style=dashed label=" c 0.57\n" fontcolor = gray]
-1947405566672[label="True
+2746076693360 -> 2746076253712[style=dashed label=" c 0.57\n" fontcolor = gray]
+2746076254992[label="True
 "]
-1947405568112 -> 1947405566672 [label=" c 0.43\n" fontcolor = gray]
-1947405569712[label="False
+2746076693360 -> 2746076254992 [label=" c 0.43\n" fontcolor = gray]
+2746076253712[label="False
 "]
-1947405580432 -> 1947405569712 [label=" b_ 0.77\n" fontcolor = gray]
-1947405575952[label="c
+2746076252432 -> 2746076253712 [label=" b_ 0.77\n" fontcolor = gray]
+2746076257232[label="c
 "]
-1947405572912 -> 1947405575952 [label=" b 0.33\n" fontcolor = gray]
-1947405566672[label="True
+2746076254192 -> 2746076257232 [label=" b 0.33\n" fontcolor = gray]
+2746076254992[label="True
 "]
-1947405575952 -> 1947405566672[style=dashed label=" b_ 0.23\n" fontcolor = gray]
-1947405569712[label="False
+2746076257232 -> 2746076254992[style=dashed label=" b_ 0.23\n" fontcolor = gray]
+2746076253712[label="False
 "]
-1947405575952 -> 1947405569712 [label=" b_ 0.77\n" fontcolor = gray]
-1947405569712[label="False
+2746076257232 -> 2746076253712 [label=" b_ 0.77\n" fontcolor = gray]
+2746076253712[label="False
 "]
-1947405567312 -> 1947405569712 [label=" a_ 0.70\n" fontcolor = gray]
+2746076255152 -> 2746076253712 [label=" a_ 0.70\n" fontcolor = gray]
 }

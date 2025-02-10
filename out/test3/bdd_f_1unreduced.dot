@@ -12,9 +12,9 @@ label="((m or l) and (not m and n)) or (m and n)\n\n"
 2746076252432[label="False
 "]
 2746076262512 -> 2746076252432[style=dashed label="" fontcolor = gray]
-2746076253712[label="True
+2746076252432[label="False
 "]
-2746076262512 -> 2746076253712 [label="" fontcolor = gray]
+2746076262512 -> 2746076252432 [label="" fontcolor = gray]
 2746076266032[label="n
 "]
 2746076258992 -> 2746076266032 [label="" fontcolor = gray]

@@ -1,33 +1,15 @@
 digraph{
 label="((x_ and y) or ((x_ and not y) and not z)) or (((not x_ and y) and not z) or ((not x_ and not y) and z))\n\n"
-1947379547856[label=x_]1947379539696[label="y_
+2746076260112[label=x_]2746076259312[label="z_
 "]
-1947379547856 -> 1947379539696[style=dashed label="" fontcolor = gray]
-1947379548016[label="z_
+2746076260112 -> 2746076259312[style=dashed label="" fontcolor = gray]
+2746076253232[label="False
 "]
-1947379539696 -> 1947379548016[style=dashed label="" fontcolor = gray]
-1947379544496[label="False
+2746076259312 -> 2746076253232[style=dashed label="" fontcolor = gray]
+2746076254512[label="True
 "]
-1947379548016 -> 1947379544496[style=dashed label="" fontcolor = gray]
-1947379547536[label="True
+2746076259312 -> 2746076254512 [label="" fontcolor = gray]
+2746076254512[label="True
 "]
-1947379548016 -> 1947379547536 [label="" fontcolor = gray]
-1947379545616[label="z_
-"]
-1947379539696 -> 1947379545616 [label="" fontcolor = gray]
-1947379547536[label="True
-"]
-1947379545616 -> 1947379547536[style=dashed label="" fontcolor = gray]
-1947379544496[label="False
-"]
-1947379545616 -> 1947379544496 [label="" fontcolor = gray]
-1947379545936[label="y_
-"]
-1947379547856 -> 1947379545936 [label="" fontcolor = gray]
-1947379545616[label="z_
-"]
-1947379545936 -> 1947379545616[style=dashed label="" fontcolor = gray]
-1947379547536[label="True
-"]
-1947379545936 -> 1947379547536 [label="" fontcolor = gray]
+2746076260112 -> 2746076254512 [label="" fontcolor = gray]
 }

@@ -12,22 +12,10 @@ label="((x and y) or ((x and not y) and not z)) or (((not x and y) and not z) or
 2746076151664[label="True
 "]
 2746076250992 -> 2746076151664 [label="" fontcolor = gray]
-2746076253232[label="z
+2746076250992[label="z
 "]
-2746076252272 -> 2746076253232 [label="" fontcolor = gray]
+2746076252272 -> 2746076250992 [label="" fontcolor = gray]
 2746076151664[label="True
 "]
-2746076253232 -> 2746076151664[style=dashed label="" fontcolor = gray]
-2746076151344[label="False
-"]
-2746076253232 -> 2746076151344 [label="" fontcolor = gray]
-2746076254832[label="y
-"]
-2746076254672 -> 2746076254832 [label="" fontcolor = gray]
-2746076253232[label="z
-"]
-2746076254832 -> 2746076253232[style=dashed label="" fontcolor = gray]
-2746076151664[label="True
-"]
-2746076254832 -> 2746076151664 [label="" fontcolor = gray]
+2746076254672 -> 2746076151664 [label="" fontcolor = gray]
 }

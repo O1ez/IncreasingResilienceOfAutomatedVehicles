@@ -238,10 +238,10 @@ class BDD:
                 node.assignments.append(a)
 
     def find_paths(self, target: BDDNode,
-                   current_node: BDDNode = None,
-                   overall_assignments: list[dict[str, bool]] = None,
-                   current_assignments: list[dict[str, bool]] = None,
-                   searched_variables: list[str] = None) -> list[dict[str, bool]]:
+                    current_node: BDDNode = None,
+                    overall_assignments: list[dict[str, bool]] = None,
+                    current_assignments: list[dict[str, bool]] = None,
+                    searched_variables: list[str] = None) -> list[dict[str, bool]]:
         #init
         if overall_assignments is None:
             overall_assignments = []
@@ -277,18 +277,20 @@ class BDD:
 
 
         #children nodes need to be searched further for target
+        current_assignments = [assignment.copy() for assignment in current_assignments]
         for assignment in current_assignments:
             assignment[current_node.variable] = False
-        self.find_paths(target, current_node.negative_child, overall_assignments, current_assignments, searched_variables)
-
+        self.find_paths(target, current_node.negative_child, overall_assignments, current_assignments.copy(), searched_variables)
+        
+        current_assignments = [assignment.copy() for assignment in current_assignments]
         for assignment in current_assignments:
             assignment[current_node.variable] = True
-        self.find_paths(target, current_node.positive_child, overall_assignments, current_assignments, searched_variables)
+        self.find_paths(target, current_node.positive_child, overall_assignments, current_assignments.copy(), searched_variables)
 
         return overall_assignments
 
 
-
+        
 
     #makes a copy of BDD and negates it
     def negate(self):

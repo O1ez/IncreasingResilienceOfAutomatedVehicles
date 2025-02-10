@@ -1,21 +1,21 @@
 digraph{
 label="a_ and ((b_ or c) and (a_ or not c))\n\n"
-1947405581072[label=a_]1947405578032[label="False
+2746076261712[label=a_]2746076259792[label="False
 "]
-1947405581072 -> 1947405578032[style=dashed label="" fontcolor = gray]
-1947405576912[label="b_
+2746076261712 -> 2746076259792[style=dashed label="" fontcolor = gray]
+2746076251632[label="b_
 "]
-1947405581072 -> 1947405576912 [label="" fontcolor = gray]
-1947405579152[label="c_
+2746076261712 -> 2746076251632 [label="" fontcolor = gray]
+2746076263312[label="c_
 "]
-1947405576912 -> 1947405579152[style=dashed label="" fontcolor = gray]
-1947405578032[label="False
+2746076251632 -> 2746076263312[style=dashed label="" fontcolor = gray]
+2746076259792[label="False
 "]
-1947405579152 -> 1947405578032[style=dashed label="" fontcolor = gray]
-1947405573232[label="True
+2746076263312 -> 2746076259792[style=dashed label="" fontcolor = gray]
+2746076263952[label="True
 "]
-1947405579152 -> 1947405573232 [label="" fontcolor = gray]
-1947405573232[label="True
+2746076263312 -> 2746076263952 [label="" fontcolor = gray]
+2746076263952[label="True
 "]
-1947405576912 -> 1947405573232 [label="" fontcolor = gray]
+2746076251632 -> 2746076263952 [label="" fontcolor = gray]
 }

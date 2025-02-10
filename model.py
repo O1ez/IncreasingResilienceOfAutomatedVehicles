@@ -4,9 +4,9 @@ from gmpy2 import mpq
 
 class Model:
     def __init__(self, acceptable_threshold: float,
-                 unobservable: str,
-                 f_guard: str,
-                 probabilities: dict[str, list[mpq]]):
+                unobservable: str,
+                f_guard: str,
+                probabilities: dict[str, list[mpq]]):
         self.acceptable_threshold = acceptable_threshold
         self.uo = BDD(unobservable, list(probabilities.keys()))
         self.uo.reduce()
@@ -68,9 +68,9 @@ class Model:
     def find_node_in_f(self, node_in_uo: BDDNode) -> set[BDDNode]:
         #assignments = node_in_uo.assignments
         assignments = self.uo.find_paths(node_in_uo)
-        current_node = self.f.root
         found_nodes = set()
         for assignment in assignments:
+            current_node = self.f.root
             for var in assignment:
                 if current_node.variable != var:
                     continue
@@ -78,7 +78,8 @@ class Model:
                     current_node = current_node.positive_child
                 else:
                     current_node = current_node.negative_child
-            found_nodes.add(current_node)
+            if node_in_uo.variable == current_node.variable:
+                found_nodes.add(current_node)
         return found_nodes
 
     #TODO: rename this
@@ -101,6 +102,7 @@ class Model:
             #c
             child_uo.positive_child = child_uo.negative_child
             #d
+            self.f.generateDot(f"{path}\\bdd_f_" + str(i) + "unreduced")
             self.f.reduce()
             self.f.generateDot(f"{path}\\bdd_f_" + str(i))
             bdd_uo_copy.reduce()
