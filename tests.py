@@ -13,6 +13,19 @@ def delete_all_files_from_out():
             os.remove(obj)
         elif os.path.isdir(obj):
             shutil.rmtree(obj)
+            
+    #tests made:
+    # Node:
+    # isLeaf()
+    # copyNode()
+    # build() in various ways
+    # 
+    # BDD:
+    # reduce Leafs
+    # reduce common children
+
+    
+    
 
 class TestCalculations(unittest.TestCase):
     assignments1 = ({"X" : False, "Y" :True}, {"X" : False, "Y" :False})

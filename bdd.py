@@ -10,6 +10,7 @@ import boolean_parser
 from gmpy2 import mpq
 import pyparsing as pp
 from sqlalchemy.sql.operators import is_associative
+from collections import defaultdict
 
 variable = pp.Word(pp.alphas)
 expr = pp.infix_notation(
@@ -289,7 +290,37 @@ class BDD:
 
         return overall_assignments
 
-
+    def __make_lookup_table_corr_nodes(self, bdd_from: BDD, bdd_to: BDD) -> dict[BDDNode, list[BDDNode]]:
+        if bdd_from.variables != bdd_to.variables:
+            raise Exception("Both BDDs have to have the same variable priorization!")
+        
+        #automatically creates empty list in every object
+        result = defaultdict(list)
+        self.__make_lookup_table_corr_nodes_recursive(bdd_from.variables, bdd_from.root, bdd_to.root, result)
+        
+        
+    #creates a lookup table mapping nodes of bdd1 to corresponding nodes of bdd2 for all non-leaf nodes
+    #bdds have to have same variables 
+    #needs roots of bdd_from and bdd_to as first node inputs
+    def __make_lookup_table_corr_nodes_recursive(self, variables: list[str], node_from: BDDNode = None, node_to: BDDNode = None, result : dict[BDDNode, list[BDDNode]] = None) -> dict[BDDNode, list[BDDNode]]:
+        if node_from.isLeaf() or node_to.isLeaf():
+            return
+                
+        #both nodes have the same variable
+        if node_from.variable == node_to.variable:
+            result[node_from].append(node_to)
+            self.make_lookup_table_corr_nodes(node_from.negative_child, node_to.negative_child, result)
+            self.make_lookup_table_corr_nodes(node_from.positive_child, node_to.positive_child, result)
+        #variables don't match -> one graph is skipping at least one node 
+        #node from has higher priority
+        elif variables.index(node_from.variable) < variables.index(node_to.variable):
+            print("None")
+        #node from has lower priority, higher index in variables
+        # -> bdd_from skipped a variable
+        # -> also skip variable in bdd_to 
+        else:
+            self.make_lookup_table_corr_nodes(node_from, node_to.negative_child, result)
+            self.make_lookup_table_corr_nodes(node_from, node_to.positive_child, result)
         
 
     #makes a copy of BDD and negates it
