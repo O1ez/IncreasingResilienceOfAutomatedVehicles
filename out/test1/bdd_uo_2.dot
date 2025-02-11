@@ -1,9 +1,0 @@
-digraph{
-label="(x and z) or (not x and y)\n\n"
-2746076251952[label=x]2746076253392[label="False
-"]
-2746076251952 -> 2746076253392[style=dashed label="" fontcolor = gray]
-2746076253392[label="False
-"]
-2746076251952 -> 2746076253392 [label="" fontcolor = gray]
-}

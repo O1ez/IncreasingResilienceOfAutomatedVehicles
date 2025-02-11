@@ -72,28 +72,23 @@ class BDDNode:
         temp_bdd.root = self
         temp_bdd.reduce()
 
-    def copy_node(self, is_alt: bool) -> BDDNode:
+    def copy_node(self, renaming: bool) -> BDDNode:
         var = None
         value = None
         if self.isLeaf():
             value = self.value
         else:
             var = self.variable
-        node_assignment_copy = self.assignments.copy()
-        for i in range(len(node_assignment_copy)):
-            node_assignment_copy[i] = {k: v for k, v in node_assignment_copy[i].items()}
-        return BDDNode(var=var, value=value, assignments=node_assignment_copy, is_alt=is_alt)
+        #node_assignment_copy = self.assignments.copy()
+        #for i in range(len(node_assignment_copy)):
+        #    node_assignment_copy[i] = {k: v for k, v in node_assignment_copy[i].items()}
+        return BDDNode(var=var, value=value, is_alt=renaming)
 
     def __eq__(self, other):
         if other is None or not isinstance(other, BDDNode):
             return False
         if self.isLeaf() and other.isLeaf():
-#            assignments_match = True
-#            for dic in self.assignments:
-#                if dic not in other.assignments:
-#                    assignments_match = False
-#                    break
-            return self.value == other.value #and assignments_match
+            return self.value == other.value 
         return (
                 self.variable == other.variable and
                 self.negative_child == other.negative_child and
@@ -164,24 +159,22 @@ class BDD:
             print("BDD only has root.")
             return False
         self.__merge_leafs(self.root)
-        self.__remove_duplicate_subtree(self.root, mem={})
+        self.__remove_duplicate_subgraph(self.root, mem=[])
         self.__remove_equivalent_child_nodes(self.root)
 
         #print("Reduction done.")
         return True
 
-    def __remove_duplicate_subtree(self, node: BDDNode, mem: dict[BDDNode, BDDNode]):
+    def __remove_duplicate_subgraph(self, node: BDDNode, mem: list[BDDNode]):
         if node.isLeaf():
             return node
-
-        if node in mem:
-            self.add_assignments(mem[node], node.assignments)
-            return mem[node]
-
-        node.negative_child = self.__remove_duplicate_subtree(node.negative_child, mem)
-        node.positive_child = self.__remove_duplicate_subtree(node.positive_child, mem)
-        mem[node] = node
-        return node
+        elif node in mem:
+            return mem[mem.index(node)]
+        else:
+            mem.append(node)
+            node.negative_child = self.__remove_duplicate_subgraph(node.negative_child, mem)
+            node.positive_child = self.__remove_duplicate_subgraph(node.positive_child, mem)
+            return node
 
     def __merge_leafs(self, node: BDDNode) -> Optional[BDDNode]:
         if node is None:

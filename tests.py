@@ -42,12 +42,63 @@ class TestCalculations(unittest.TestCase):
         leaf.value = None
         self.assertFalse(leaf.isLeaf())
         
+    def test_node_equals_false(self):
+        # x and y bdd
+        root = BDDNode(var = "X")
+        child = BDDNode(var ="Y")
+        leaf_true = BDDNode(value=True)
+        leaf_false = BDDNode(value=False)
+        root.positive_child = child
+        root.negative_child = leaf_false
+        child.positive_child = leaf_true
+        child.negative_child = leaf_false
+        
+        # x or y bdd
+        root1 = BDDNode(var = "X")
+        child1 = BDDNode(var ="Y")
+        leaf_true1 = BDDNode(value=True)
+        leaf_false1 = BDDNode(value=False)
+        root1.positive_child = leaf_true1
+        root1.negative_child = child1
+        child1.positive_child = leaf_true1
+        child1.negative_child = leaf_false1
+        
+        self.assertNotEqual(root, root1)
+        
+    def test_node_equals_true(self):
+        root = BDDNode(var = "X")
+        child = BDDNode(var ="Y")
+        leaf_true = BDDNode(value=True)
+        leaf_false = BDDNode(value=False)
+        root.positive_child = child
+        root.negative_child = leaf_false
+        child.positive_child = leaf_true
+        child.negative_child = leaf_false
+        
+        root1 = BDDNode(var = "X")
+        child1 = BDDNode(var ="Y")
+        leaf_true1 = BDDNode(value=True)
+        leaf_false1 = BDDNode(value=False)
+        root1.positive_child = child1
+        root1.negative_child = leaf_false1
+        child1.positive_child = leaf_true1
+        child1.negative_child = leaf_false1
+        
+        self.assertEqual(root, root1)
+        
+        
     def test_copy_node(self):
-        node1 = BDDNode(var = "X", assignments=self.assignments1)
-        child1 = BDDNode(var = "Y")
-        child2 = BDDNode(var= "Y")
-        node1.negative_child = child1
-        node1.positive_child = child2
+        node1 = BDDNode(var = "X")
+        node1.is_alt = False
+        self.assertEqual(node1, node1.copy_node(False))
+        
+        node2 = BDDNode(var = "Y")
+        node2.is_alt = True
+        self.assertEqual(node2, node2.copy_node(False))
+        
+        node3 = BDDNode(value=False)
+        self.assertEqual(node3, node3.copy_node(False))
+        
         
     def test_build_X_and_Y(self):
         #example X and Y reduced
@@ -204,6 +255,56 @@ class TestCalculations(unittest.TestCase):
         
         bdd1._BDD__remove_equivalent_child_nodes(bdd1.root)
         self.assertEqual(bdd1, bdd2)   
+        
+    def test_reduce_remove_duplicate_subgraph(self):
+        bdd1 = BDD("", ["X", "Y", "Z"], build_new=False)
+        root1 = BDDNode(var = "X")
+        child_y1 = BDDNode(var ="Y")
+        child_y2 = BDDNode(var ="Y")
+        child_z1 = BDDNode(var="Z")
+        child_z2 = BDDNode(var="Z")
+        child_z3 = BDDNode(var="Z")
+        child_z4 = BDDNode(var="Z")
+        leaf_f = BDDNode(value=False)
+        leaf_t = BDDNode(value=True)
+        root1.negative_child = child_y1
+        root1.positive_child = child_y2
+        bdd1.root = root1
+        #duplicate 1
+        child_y1.negative_child = child_z1
+        child_y1.positive_child = child_z2
+        child_z1.negative_child = leaf_f
+        child_z1.positive_child = leaf_t
+        child_z2.negative_child = leaf_t
+        child_z2.positive_child = leaf_f
+        #duplicate 2
+        child_y2.negative_child = child_z3
+        child_y2.positive_child = child_z4
+        child_z3.negative_child = leaf_f
+        child_z3.positive_child = leaf_t
+        child_z4.negative_child = leaf_t
+        child_z4.positive_child = leaf_f
+        
+        bdd2 = BDD("", ["X", "Y", "Z"], build_new=False)
+        root2 = BDDNode(var = "X")
+        child2_y1 = BDDNode(var ="Y")
+        child2_z1 = BDDNode(var="Z")
+        child2_z2 = BDDNode(var="Z")
+        leaf2_f = BDDNode(value=False)
+        leaf2_t = BDDNode(value=True)
+        root2.negative_child = child2_y1
+        root2.positive_child = child2_y1
+        #duplicate only once
+        child2_y1.negative_child = child2_z1
+        child2_y1.positive_child = child2_z2
+        child2_z1.negative_child = leaf2_f
+        child2_z1.positive_child = leaf2_t
+        child2_z2.negative_child = leaf2_t
+        child2_z2.positive_child = leaf2_f
+        bdd2.root = root2
+        
+        bdd1._BDD__remove_duplicate_subgraph(bdd1.root, [])
+        self.assertEqual(bdd1, bdd2)
         
 if __name__ == '__main__':
     unittest.main()
