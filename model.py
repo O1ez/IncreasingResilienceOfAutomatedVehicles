@@ -37,14 +37,14 @@ class Model:
             f_united_vars.append(f_replaced_vars[i])
 
         #build fp = f_ and not f and not uo
-        first_unite = BDD.apply_operand(bdd_not_f, bdd_not_uo, "and", not_f_vars)
-        bdd_fp = BDD.apply_operand(bdd_f_replaced, first_unite,"and", f_united_vars)
+        first_unite = BDD.apply_binary_operand(bdd_not_f, bdd_not_uo, "and", not_f_vars)
+        bdd_fp = BDD.apply_binary_operand(bdd_f_replaced, first_unite,"and", f_united_vars)
         bdd_fp.set_probabilities(self.probabilities)
         bdd_fp.generateDot(f"{path}\\{step}5_bdd_fp")
         fp = bdd_fp.sum_probabilities_positive_cases()
 
         #build tp = f_ and f and not uo
-        bdd_tp = BDD.apply_operand(bdd_f_replaced, BDD.apply_operand(bdd_not_uo, self.f,"and", self.vars),"and", f_united_vars)
+        bdd_tp = BDD.apply_binary_operand(bdd_f_replaced, BDD.apply_binary_operand(bdd_not_uo, self.f,"and", self.vars),"and", f_united_vars)
         bdd_tp.set_probabilities(self.probabilities)
         bdd_tp.generateDot(f"{path}\\{step}6_bdd_tp")
         tp = bdd_tp.sum_probabilities_positive_cases()

@@ -4,6 +4,7 @@ import os
 import shutil
 import unittest
 from bdd import BDD, BDDNode
+from gmpy2 import mpq
 
 # deletes all files from the out folder 
 def delete_all_files_from_out():
@@ -28,8 +29,6 @@ def delete_all_files_from_out():
     
 
 class TestCalculations(unittest.TestCase):
-    assignments1 = ({"X" : False, "Y" :True}, {"X" : False, "Y" :False})
-    delete_all_files_from_out()
     
     #BDDNode
     def test_is_leaf(self):
@@ -120,7 +119,7 @@ class TestCalculations(unittest.TestCase):
         self.assertEqual(bdd1, bdd_XandY)
 
     def test_build_X_or_Y(self):
-        # example X and Y reduced
+        # example X or Y reduced
         expression_X_or_Y = "X or Y"
         variables_X_Y = ["X", "Y"]
         bdd_XorY = BDD(expression_X_or_Y, variables_X_Y, build_new=False)
@@ -140,20 +139,20 @@ class TestCalculations(unittest.TestCase):
         
     def test_build_X(self):
         #example X
-        expression_X = "X"
-        variables_X = ("X")
-        bdd_X = BDD(expression_X, variables_X, build_new=False)
+        expression = "X"
+        variables = ["X"]
+        bdd = BDD(expression, variables, build_new=False)
         root = BDDNode(var = "X")
         leaf_true = BDDNode(value=True)
         leaf_false = BDDNode(value=False)
         root.positive_child = leaf_true
         root.negative_child = leaf_false
-        bdd_X.root = root
+        bdd.root = root
         
-        bdd = BDD("X", ("X"))
-        bdd.reduce()
+        bdd1 = BDD("X", ["X"])
+        bdd1.reduce()
         
-        self.assertEqual(bdd, bdd_X) 
+        self.assertEqual(bdd, bdd1) 
         
     def test_reduce_merge_leafs(self):
         #example X and Y with merged leafs
@@ -257,6 +256,7 @@ class TestCalculations(unittest.TestCase):
         self.assertEqual(bdd1, bdd2)   
         
     def test_reduce_remove_duplicate_subgraph(self):
+        #see generated dot for visulization of BDD
         bdd1 = BDD("", ["X", "Y", "Z"], build_new=False)
         root1 = BDDNode(var = "X")
         child_y1 = BDDNode(var ="Y")
@@ -284,7 +284,9 @@ class TestCalculations(unittest.TestCase):
         child_z3.positive_child = leaf_t
         child_z4.negative_child = leaf_t
         child_z4.positive_child = leaf_f
+        bdd1.generateDot("example_duplicate_subtree")
         
+        #duplicate subtrees have been reduced 
         bdd2 = BDD("", ["X", "Y", "Z"], build_new=False)
         root2 = BDDNode(var = "X")
         child2_y1 = BDDNode(var ="Y")
@@ -306,5 +308,188 @@ class TestCalculations(unittest.TestCase):
         bdd1._BDD__remove_duplicate_subgraph(bdd1.root, [])
         self.assertEqual(bdd1, bdd2)
         
+    def test_negate(self):
+        #example X
+        expression1 = "X"
+        variables1 = ["X"]
+        bdd1 = BDD(expression1, variables1, build_new=False)
+        root1 = BDDNode(var = "X")
+        leaf_true1 = BDDNode(value=True)
+        leaf_false1 = BDDNode(value=False)
+        root1.positive_child = leaf_true1
+        root1.negative_child = leaf_false1
+        bdd1.root = root1
+        
+        #example not X
+        expression2 = "X"
+        variables2 = ["X"]
+        bdd2 = BDD(expression2, variables2, build_new=False)
+        root2 = BDDNode(var = "X")
+        leaf_true2 = BDDNode(value=True)
+        leaf_false2 = BDDNode(value=False)
+        root2.positive_child = leaf_false2
+        root2.negative_child = leaf_true2
+        bdd2.root = root2
+        
+        bdd1 = bdd1.negate()
+        self.assertEqual(bdd1, bdd2)
+        
+    def test_apply_or(self):
+        #example X and Y reduced
+        bdd1.root = root1        
+        expression_1 = "X and Y"
+        variables_1 =["X", "Y"]
+        bdd1 = BDD(expression_1, variables_1, build_new=False)
+        root1 = BDDNode(var = "X")
+        child1 = BDDNode(var ="Y")
+        leaf_true1 = BDDNode(value=True)
+        leaf_false1 = BDDNode(value=False)
+        root1.positive_child = child1
+        root1.negative_child = leaf_false1
+        child1.positive_child = leaf_true1
+        child1.negative_child = leaf_false1
+        bdd1.root = root1
+        
+        #example X
+        expression2 = "X"
+        variables2 = ["X"]
+        bdd2 = BDD(expression2, variables2, build_new=False)
+        root2 = BDDNode(var = "X")
+        leaf_true2 = BDDNode(value=True)
+        leaf_false2 = BDDNode(value=False)
+        root2.positive_child = leaf_true2
+        root2.negative_child = leaf_false2
+        bdd2.root = root2
+        
+        #example Y
+        expression3 = "Y"
+        variables3 = ["Y"]
+        bdd3 = BDD(expression3, variables3, build_new=False)
+        root3 = BDDNode(var = "Y")
+        leaf_true3 = BDDNode(value=True)
+        leaf_false3 = BDDNode(value=False)
+        root3.positive_child = leaf_true3
+        root3.negative_child = leaf_false3
+        bdd3.root = root3
+        
+        self.assertEqual(bdd1, BDD.apply_binary_operand(bdd2, bdd3, "and", ["X", "Y"]))
+        
+
+    def test_apply_or(self):
+        # example X or Y reduced
+        expression1 = "X or Y"
+        variables1 = ["X", "Y"]
+        bdd1 = BDD(expression1, variables1, build_new=False)
+        root1 = BDDNode(var="X")
+        child1 = BDDNode(var="Y")
+        leaf_true1 = BDDNode(value=True)
+        leaf_false1 = BDDNode(value=False)
+        root1.positive_child = leaf_true1
+        root1.negative_child = child1
+        child1.positive_child = leaf_true1
+        child1.negative_child = leaf_false1
+        bdd1.root = root1 
+        
+        #example X
+        expression2 = "X"
+        variables2 = ["X"]
+        bdd2 = BDD(expression2, variables2, build_new=False)
+        root2 = BDDNode(var = "X")
+        leaf_true2 = BDDNode(value=True)
+        leaf_false2 = BDDNode(value=False)
+        root2.positive_child = leaf_true2
+        root2.negative_child = leaf_false2
+        bdd2.root = root2
+        
+        #example Y
+        expression3 = "Y"
+        variables3 = ["Y"]
+        bdd3 = BDD(expression3, variables3, build_new=False)
+        root3 = BDDNode(var = "Y")
+        leaf_true3 = BDDNode(value=True)
+        leaf_false3 = BDDNode(value=False)
+        root3.positive_child = leaf_true3
+        root3.negative_child = leaf_false3
+        bdd3.root = root3
+        
+        self.assertEqual(bdd1, BDD.apply_binary_operand(bdd2, bdd3, "or", ["X", "Y"]))
+        
+    
+    def test_copy(self):
+        # example X or Y reduced
+        expression1 = "X or Y"
+        variables1 = ["X", "Y"]
+        bdd1 = BDD(expression1, variables1, build_new=False)
+        root1 = BDDNode(var="X")
+        child1 = BDDNode(var="Y")
+        leaf_true1 = BDDNode(value=True)
+        leaf_false1 = BDDNode(value=False)
+        root1.positive_child = leaf_true1
+        root1.negative_child = child1
+        child1.positive_child = leaf_true1
+        child1.negative_child = leaf_false1
+        bdd1.root = root1
+        
+        bdd2 = bdd1.copy_bdd()
+        self.assertEqual(bdd1, bdd2)
+
+    def test_renaming(self):
+        # example X or Y reduced
+        expression1 = "X or Y"
+        variables1 = ["X", "Y"]
+        bdd1 = BDD(expression1, variables1, build_new=False)
+        root1 = BDDNode(var="X")
+        child1 = BDDNode(var="Y")
+        leaf_true1 = BDDNode(value=True)
+        leaf_false1 = BDDNode(value=False)
+        root1.positive_child = leaf_true1
+        root1.negative_child = child1
+        child1.positive_child = leaf_true1
+        child1.negative_child = leaf_false1
+        bdd1.root = root1
+        
+        # example renamed X or Y reduced
+        expression2 = "X_ or Y_"
+        variables2= ["X_", "Y_"]
+        bdd2 = BDD(expression2, variables2, build_new=False)
+        root2 = BDDNode(var="X", is_alt=True)
+        child2 = BDDNode(var="Y", is_alt=True)
+        leaf_true2 = BDDNode(value=True, is_alt=True)
+        leaf_false2 = BDDNode(value=False, is_alt=True)
+        root2.positive_child = leaf_true2
+        root2.negative_child = child2
+        child2.positive_child = leaf_true2
+        child2.negative_child = leaf_false2
+        bdd2.root = root2
+        
+        self.assertEqual(bdd1.rename_variables(), bdd2)
+
+    def test_breadth_first_bottom_up_search(self):
+        bdd1 = BDD("((not X1 or X2) and (not X2 or X1)) and ((not X4 or X3))", ["X2", "X3", "X4", "X1"])
+        bdd1.generateDot("BFBU_search")
+        BFBU_search = []
+        for n in bdd1.breadth_first_bottom_up_search():
+            BFBU_search.append(n.variable)
+        
+        #see generated Dot for correct order
+        correct_order = ["X1", "X1", "X4", "X4", "X3", "X3", "X2"]
+        
+        self.assertEqual(BFBU_search, correct_order)
+            
+            
+    def test_probabilities(self):
+        bdd = BDD("((not X1 or X2) and (not X2 or X1)) and ((not X4 or X3))", ["X2", "X3", "X4", "X1"])
+        p = {
+        "X1": [mpq(0.2), mpq(0.3), mpq(0.4), mpq(0.1)],
+        "X2": [mpq(0.15), mpq(0.6), mpq(0.13), mpq(0.12)],
+        "X3": [mpq(0.23), mpq(0.17), mpq(0.2), mpq(0.4)],
+        "X4": [mpq(0.25), mpq(0.31), mpq(0.27), mpq(0.17)]
+        }
+        
+        bdd.set_probabilities(p)
+        sum = bdd._BDD__sum_all_probability_paths()
+        self.assertAlmostEqual(float(sum), 1)
+
 if __name__ == '__main__':
+    delete_all_files_from_out()
     unittest.main()
