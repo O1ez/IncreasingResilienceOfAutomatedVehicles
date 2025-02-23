@@ -1,4 +1,3 @@
-
 import glob
 import os
 import shutil
@@ -150,9 +149,11 @@ class TestCalculations(unittest.TestCase):
         bdd.root = root
         
         bdd1 = BDD("X", ["X"])
-        bdd1.reduce()
         
         self.assertEqual(bdd, bdd1) 
+        #leafs need to be the same object as the ones safed in BDD
+        self.assertEqual(id(bdd1.root.negative_child), id(bdd1.leafs[False]))
+        self.assertEqual(id(bdd1.root.positive_child), id(bdd1.leafs[True]))
         
     def test_reduce_merge_leafs(self):
         #example X and Y with merged leafs
@@ -188,7 +189,6 @@ class TestCalculations(unittest.TestCase):
         child_2.negative_child = child_5
         bdd2.root = root
         bdd2._BDD__merge_leafs(bdd2.root)
-        
         self.assertEqual(bdd1, bdd2)
         
     def test_reduce_remove_equivalent_child_nodes(self):
@@ -212,8 +212,10 @@ class TestCalculations(unittest.TestCase):
         root.negative_child = child_y
         child_y.positive_child = child_z
         child_y.negative_child = child_z
+        child_y.parents.append(root)
         child_z.positive_child = child_t
         child_z.negative_child = child_f2
+        child_z.parents.append(child_y)
         bdd1.root = root
         
         #removed y
@@ -228,6 +230,9 @@ class TestCalculations(unittest.TestCase):
         child_z.positive_child = child_t
         child_z.negative_child = child_f2
         bdd2.root = root
+        
+        bdd1.generateDot("test1")
+        bdd2.generateDot("test2")
 
         bdd1._BDD__remove_equivalent_child_nodes(bdd1.root)
         self.assertEqual(bdd1, bdd2)
@@ -310,18 +315,10 @@ class TestCalculations(unittest.TestCase):
         
     def test_negate(self):
         #example X
-        expression1 = "X"
-        variables1 = ["X"]
-        bdd1 = BDD(expression1, variables1, build_new=False)
-        root1 = BDDNode(var = "X")
-        leaf_true1 = BDDNode(value=True)
-        leaf_false1 = BDDNode(value=False)
-        root1.positive_child = leaf_true1
-        root1.negative_child = leaf_false1
-        bdd1.root = root1
+        bdd1 = BDD("X", ["X"])
         
         #example not X
-        expression2 = "X"
+        expression2 = "not X"
         variables2 = ["X"]
         bdd2 = BDD(expression2, variables2, build_new=False)
         root2 = BDDNode(var = "X")
@@ -331,8 +328,8 @@ class TestCalculations(unittest.TestCase):
         root2.negative_child = leaf_true2
         bdd2.root = root2
         
-        bdd1 = bdd1.negate()
-        self.assertEqual(bdd1, bdd2)
+        bdd1_n = bdd1.negate()
+        self.assertEqual(bdd1_n, bdd2)
         
     def test_apply_or(self):
         #example X and Y reduced
@@ -468,9 +465,10 @@ class TestCalculations(unittest.TestCase):
         bdd1 = BDD("((not X1 or X2) and (not X2 or X1)) and ((not X4 or X3))", ["X2", "X3", "X4", "X1"])
         bdd1.generateDot("BFBU_search")
         BFBU_search = []
-        for n in bdd1.breadth_first_bottom_up_search():
+        n = BDD.get_parents_of_pos_and_neg_leaf(bdd1)
+        while n: 
             BFBU_search.append(n.variable)
-        
+            n = BDD.get_parents_of_pos_and_neg_leaf(bdd1)
         #see generated Dot for correct order
         correct_order = ["X1", "X1", "X4", "X4", "X3", "X3", "X2"]
         

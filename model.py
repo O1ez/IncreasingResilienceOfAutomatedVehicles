@@ -1,5 +1,6 @@
 from bdd import BDD, BDDNode, delete_all_files_from_out
 from gmpy2 import mpq
+import time
 
 
 class Model:
@@ -16,15 +17,11 @@ class Model:
         self.probabilities = probabilities
 
     def calc_tp_fp(self, path: str, step=""):
-        self.f.generateDot(f"{path}\\{step}0_bdd_f_")
+        self.f.generateDot(f"{path}\\{step}0_f_")
+        self.uo.generateDot(f"{path}\\{step}3_uo")
         bdd_f_replaced = self.f.rename_variables()
-        bdd_f_replaced.generateDot(f"{path}\\{step}1_bdd_f_replaced")
-
         bdd_not_f = self.f.negate()
-        bdd_not_f.generateDot(f"{path}\\{step}2_bdd_not_f")
-
         bdd_not_uo = self.uo.negate()
-        bdd_not_uo.generateDot(f"{path}\\{step}3_bdd_not_uo")
 
         if bdd_not_f.variables != bdd_not_uo.variables:
             raise Exception("variables of f and uo don't match")
@@ -40,13 +37,13 @@ class Model:
         first_unite = BDD.apply_binary_operand(bdd_not_f, bdd_not_uo, "and", not_f_vars)
         bdd_fp = BDD.apply_binary_operand(bdd_f_replaced, first_unite,"and", f_united_vars)
         bdd_fp.set_probabilities(self.probabilities)
-        bdd_fp.generateDot(f"{path}\\{step}5_bdd_fp")
+        bdd_fp.generateDot(f"{path}\\{step}5_fp")
         fp = bdd_fp.sum_probabilities_positive_cases()
 
         #build tp = f_ and f and not uo
         bdd_tp = BDD.apply_binary_operand(bdd_f_replaced, BDD.apply_binary_operand(bdd_not_uo, self.f,"and", self.vars),"and", f_united_vars)
         bdd_tp.set_probabilities(self.probabilities)
-        bdd_tp.generateDot(f"{path}\\{step}6_bdd_tp")
+        bdd_tp.generateDot(f"{path}\\{step}6_tp")
         tp = bdd_tp.sum_probabilities_positive_cases()
         #bdd_tp.sum_all_probability_paths()
 
@@ -55,20 +52,24 @@ class Model:
     def check_acceptable(self, fp: float):
         return fp < self.acceptable_threshold
 
-    def find_node_in_uo(self, bdd_uo: BDD) -> BDDNode:
-        nodes = bdd_uo.breadth_first_bottom_up_search()
+    """     def find_node_in_uo(self, bdd_uo: BDD) -> BDDNode:
+        nodes = bdd_uo.get_parents_of_pos_leafs()
         while nodes:
             n = nodes.pop(0)
             if n.isLeaf() or n == bdd_uo.root:
                 continue
             if n.negative_child.isLeaf() and n.positive_child.isLeaf():
                 if n.negative_child.value + n.positive_child.value == 1:
-                    return n
+                    return n """
 
-    def find_node_in_f(self, node_in_uo: BDDNode) -> set[BDDNode]:
+    #return a dict of nodes matching the node in uo, with a bool value representing which child they are 
+    def find_node_in_f(self, node_in_uo: BDDNode) -> dict[BDDNode, bool]:
         #assignments = node_in_uo.assignments
+        #wenn das true leaf das positive Kind der uo Node war, dann ist value true 
+        # wenn es das negative Kind war dann value false
+        # weil das Kind das 1 war ist nicht observable 
         assignments = self.uo.find_paths(node_in_uo)
-        found_nodes = set()
+        found_nodes: list[BDDNode] = []
         for assignment in assignments:
             current_node = self.f.root
             for var in assignment:
@@ -79,8 +80,15 @@ class Model:
                 else:
                     current_node = current_node.negative_child
             if node_in_uo.variable == current_node.variable:
-                found_nodes.add(current_node)
-        return found_nodes
+                found_nodes.append(current_node)
+            
+        return_dict: dict[BDDNode, bool] = {}    
+        for node in found_nodes:
+            if node.negative_child.isLeaf() and node.negative_child.value == 1:
+                return_dict[node] = 0
+            elif node.positive_child.isLeaf() and node.positive_child.value == 1:
+                return_dict[node] = 1
+        return return_dict
 
     #TODO: rename this
     def algorithm(self, path: str):
@@ -91,24 +99,27 @@ class Model:
             f"\033[96m\n\033[1m{path}:\033[0m\nInitial values: \ntp: " + f"{float(tp_old):.2f}" + "\nfp: " +
             f"{float(fp_old):.2f}")
         #2
-        child_uo = self.find_node_in_uo(bdd_uo_copy)
+        node_uo = bdd_uo_copy.get_parents_of_pos_and_neg_leaf()
         i = 1
-        while child_uo:
+        while node_uo:
             #a
-            children_f = self.find_node_in_f(child_uo)
+            nodes_f = self.find_node_in_f(node_uo)
             #b
-            for child in children_f:
-                child.positive_child = child.negative_child
+            for node in nodes_f:
+                #one child gets redirected to other depending on which child it was in the uo BDD
+                if nodes_f[node] == True:
+                    node.positive_child = node.negative_child
+                else: node.negative_child = node.positive_child
             #c
-            child_uo.positive_child = child_uo.negative_child
+            #always redirect the positive in uo, because it is the one that is unobservable
+            node_uo.positive_child = node_uo.negative_child
             #d
-            self.f.generateDot(f"{path}\\bdd_f_" + str(i) + "unreduced")
             self.f.reduce()
-            self.f.generateDot(f"{path}\\bdd_f_" + str(i))
+            self.f.generateDot(f"{path}\\_step_{str(i)}_f_")
             bdd_uo_copy.reduce()
-            bdd_uo_copy.generateDot(f"{path}\\bdd_uo_" + str(i))
+            bdd_uo_copy.generateDot(f"{path}\\_step_{str(i)}_uo_")
             i += 1
-            child_uo = self.find_node_in_uo(bdd_uo_copy)
+            node_uo = bdd_uo_copy.get_parents_of_pos_and_neg_leaf()
         #3
         tp_new, fp_new = self.calc_tp_fp(path, "end_")
         print("New values: \ntp: " + f"{float(tp_new):.2f}" + "\nfp: " + f"{float(fp_new):.2f}")
@@ -147,6 +158,8 @@ if __name__ == "__main__":
     # 0    0.23  0.17
     # 1    0.2   0.4
     #
+    
+    
     p = {
         "x": [mpq(0.2), mpq(0.3), mpq(0.4), mpq(0.1)],
         "y": [mpq(0.15), mpq(0.6), mpq(0.13), mpq(0.12)],
@@ -154,6 +167,7 @@ if __name__ == "__main__":
     }
     f = "((x and y) or ((x and not y) and not z)) or (((not x and y) and not z) or ((not x and not y) and z))"
     uo = "(x and z) or (not x and y)"
+    
 
     p2 = {
         "a": [mpq(0.05), mpq(0.65), mpq(0.05), mpq(0.25)],
@@ -171,10 +185,40 @@ if __name__ == "__main__":
     f3 = "((m or l) and (not m and n)) or (m and n)"
     uo3 = "(not m and not n) or (n and l)"
 
+
+    f4 = "(((not X1 or X2) and (not X2 or X1)) and ((not X4 or X3))) or (((not X5 or X6) and (not X6 or X5)) and ((not X8 or X7)))"
+    uo4 = "(((not X3 and X2) or (not X2 and X4)) and ((not X4 and X1) or (not X1 and X3))) and (((not X7 and X6) or (not X6 and X8)) and ((not X8 and X5) or (not X5 and X7)))"
+    p4 = {
+        "X1": [mpq(0.2), mpq(0.3), mpq(0.4), mpq(0.1)],
+        "X2": [mpq(0.15), mpq(0.6), mpq(0.13), mpq(0.12)],
+        "X3": [mpq(0.23), mpq(0.17), mpq(0.2), mpq(0.4)],
+        "X4": [mpq(0.25), mpq(0.31), mpq(0.27), mpq(0.17)],
+        "X8": [mpq(0.05), mpq(0.65), mpq(0.05), mpq(0.25)],
+        "X5": [mpq(0.2), mpq(0.4), mpq(0.1), mpq(0.3)],
+        "X7": [mpq(0.13), mpq(0.62), mpq(0.1), mpq(0.15)],
+        "X6": [mpq(0.08), mpq(0.53), mpq(0.03), mpq(0.36)]
+        }
+    
+    
+    
     delete_all_files_from_out()
+    
+    start_time_1 = time.time()
     model = Model(0.05, uo, f, p)
     model.algorithm("test1")
+    print(f"Test 1 took {float(time.time()-start_time_1):.5f} milliseconds.")
+    
+    start_time_2 = time.time()
     model2 = Model(0.05, uo2, f2, p2)
     model2.algorithm("test2")
+    print(f"Test 2 took {float(time.time()-start_time_2):.5f} milliseconds.")
+    
+    start_time_3 = time.time()
     model3 = Model(0.05, uo3, f3, p3)
     model3.algorithm("test3")
+    print(f"Test 3 took {float(time.time()-start_time_3):.5f} milliseconds.")
+    
+    start_time_4 = time.time()
+    model4 = Model(0.05, uo4, f4, p4)
+    model4.algorithm("test4")
+    print(f"Test 4 took {float(time.time()-start_time_4):.5f} milliseconds.")

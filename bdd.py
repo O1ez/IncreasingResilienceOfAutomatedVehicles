@@ -36,6 +36,7 @@ def delete_all_files_from_out():
 
 class BDDNode:
     def __init__(self, var: str = None, value: bool = None, is_alt=False,
+                parents: list[BDDNode] = None,
                 negative_child: Optional[BDDNode] = None,
                 negative_probability: dict[BDDNode, mpq] = None,
                 positive_child: Optional[BDDNode] = None,
@@ -44,6 +45,7 @@ class BDDNode:
         self.variable = var  #None for leaf nodes
         self.is_alt = is_alt #used to differentiate variables and their renamed counterpart
         self.value = value  #None for nodes with children
+        self.parents = [] if parents is None else parents
         self.negative_child = negative_child
         self.negative_probability = {} if negative_probability is None else negative_probability
         self.positive_child = positive_child
@@ -124,8 +126,10 @@ class BDD:
         #case only variable
         if (isinstance(ops, str)):
             root = BDDNode(var = ops)
-            root.negative_child = BDDNode(value = False)
-            root.positive_child = BDDNode(value = True)
+            root.negative_child = self.leafs[False]
+            root.positive_child = self.leafs[True]
+            self.leafs[False].parents.append(root)
+            self.leafs[True].parents.append(root)
             return root
         #not case
         elif len(ops) == 2:
@@ -166,7 +170,9 @@ class BDD:
         if node.isLeaf():
             return node
         elif node in mem:
-            return mem[mem.index(node)]
+            other_node = mem[mem.index(node)]
+            other_node.parents.extend(node.parents)
+            return other_node
         else:
             mem.append(node)
             node.negative_child = self.__remove_duplicate_subgraph(node.negative_child, mem)
@@ -176,35 +182,59 @@ class BDD:
     def __merge_leafs(self, node: BDDNode) -> Optional[BDDNode]:
         if node is None:
             raise Exception("unexpected Node is None")
-
+        #if node is leaf return it 
         if node.isLeaf():
             return node
 
-        child_node_negative_child = self.__merge_leafs(node.negative_child)
-        if child_node_negative_child is not None:
-            leaf = self.leafs[child_node_negative_child.value]
+        negative_child = self.__merge_leafs(node.negative_child)
+        # if not None, child is a leaf and needs to be replaced with prebuild leaf
+        if negative_child is not None and id(negative_child) != id(self.leafs[negative_child.value]):
+            leaf = self.leafs[negative_child.value]
+            leaf.parents.extend(node.negative_child.parents)
             node.negative_child = leaf
 
-        child_node_positive_child = self.__merge_leafs(node.positive_child)
-        if child_node_positive_child is not None and child_node_positive_child not in self.leafs:
-            leaf = self.leafs[child_node_positive_child.value]
+        positive_child = self.__merge_leafs(node.positive_child)
+        if positive_child is not None and id(positive_child) != id(self.leafs[positive_child.value]):
+            leaf = self.leafs[positive_child.value]
+            leaf.parents.extend(node.positive_child.parents)
             node.positive_child = leaf
             
         return None
-
+    
     def __remove_equivalent_child_nodes(self, node: BDDNode) -> Optional[BDDNode]:
-        #if root is reducable reduce it and set new root
+        if node.isLeaf():
+            return
+        if id(node.negative_child) == id(node.positive_child):
+            #child represents both pos and neg child
+            child = node.negative_child
+            if node == self.root:
+                self.root = child
+            #for every parent node delete old child, add new
+            for parent in node.parents:
+                if parent.negative_child == node:
+                    parent.negative_child = child
+                else:
+                    parent.positive_child = child
+            self.__remove_equivalent_child_nodes(child)
+        else: 
+            self.__remove_equivalent_child_nodes(node.negative_child)
+            self.__remove_equivalent_child_nodes(node.positive_child)
+
+    """ 
+    def __remove_equivalent_child_nodes(self, node: BDDNode) -> Optional[BDDNode]:
+        #if and while root is reducable reduce it and set new root
         if node == self.root:
             while self.root.negative_child == self.root.positive_child:
+                #both leafs of root have the same value --> formular always false or true
                 if self.root.negative_child.isLeaf() and self.root.positive_child.isLeaf():
-                    #both leafs of root have the same value --> formular always false or true
                     return self.root
+                
                 self.root = self.root.negative_child
                 node = self.root
         
         if node.negative_child is not None:
             child_of_neg_child = self.__remove_equivalent_child_nodes(node.negative_child)
-            #if not None, the children of the neg child node are identical -> original negative child gets skipped over
+            #if not None, the children of the neg child node are identical -> original negative child needs to get skipped over
             if child_of_neg_child is not None:
                 node.negative_child = child_of_neg_child
 
@@ -219,7 +249,8 @@ class BDD:
                 node.positive_child):
             return node.negative_child
         
-        return None
+        return None 
+        """
 
     def find_paths(self, target: BDDNode,
                     current_node: BDDNode = None,
@@ -279,34 +310,37 @@ class BDD:
     def __make_lookup_table_corr_nodes(self, bdd_from: BDD, bdd_to: BDD) -> dict[BDDNode, list[BDDNode]]:
         if bdd_from.variables != bdd_to.variables:
             raise Exception("Both BDDs have to have the same variable priorization!")
-        
         #automatically creates empty list in every object
         result = defaultdict(list)
         self.__make_lookup_table_corr_nodes_recursive(bdd_from.variables, bdd_from.root, bdd_to.root, result)
+        return result
         
         
 
     #needs roots of bdd_from and bdd_to as first node inputs
     def __make_lookup_table_corr_nodes_recursive(self, variables: list[str], node_from: BDDNode = None, node_to: BDDNode = None, result : dict[BDDNode, list[BDDNode]] = None) -> dict[BDDNode, list[BDDNode]]:
+        #leafs are not relevant, don't need to be safed
         if node_from.isLeaf() or node_to.isLeaf():
-            return
-                
-        #both nodes have the same variable
-        if node_from.variable == node_to.variable:
+            return     
+        #adds the renaming to variable if it's present
+        node_from_var = node_from.variable + "_" if node_from.is_alt else node_from.variable
+        node_to_var = node_to.variable + "_" if node_to.is_alt else node_to.variable
+        
+        #both nodes have the same variable, can be mapped together
+        if node_from_var == node_to_var:
             result[node_from].append(node_to)
             self.make_lookup_table_corr_nodes(node_from.negative_child, node_to.negative_child, result)
             self.make_lookup_table_corr_nodes(node_from.positive_child, node_to.positive_child, result)
-        #variables don't match -> one graph is skipping at least one node 
-        #node from has higher priority
-        elif variables.index(node_from.variable) < variables.index(node_to.variable):
-            print("None")
+        #variables don't match, one graph is skipping at least one node 
+        #node from has higher priority, node to skipped a node 
+        elif variables.index(node_from_var) < variables.index(node_to_var):
+            self.make_lookup_table_corr_nodes(node_from.negative_child, node_to, result)
+            self.make_lookup_table_corr_nodes(node_from.positive_child, node_to, result)
         #node from has lower priority, higher index in variables
-        # -> bdd_from skipped a variable
-        # -> also skip variable in bdd_to 
-        else:
+        #cannot map node_from to any node, try mapping node_from to both child of node_to
+        elif variables.index(node_from_var) > variables.index(node_to_var):
             self.make_lookup_table_corr_nodes(node_from, node_to.negative_child, result)
             self.make_lookup_table_corr_nodes(node_from, node_to.positive_child, result)
-        
 
     #makes a copy of BDD and negates it
     def negate(self):
@@ -314,6 +348,7 @@ class BDD:
         #negate leaf values
         false_leaf = negated_BDD.leafs[False]
         false_leaf.value = True
+        
         true_leaf = negated_BDD.leafs[True]
         true_leaf.value = False
 
@@ -324,7 +359,6 @@ class BDD:
         negated_BDD.expression = "not (" + negated_BDD.expression + ")"
         return negated_BDD
 
-    #TODO: assignment not set properly
     @staticmethod
     def apply_binary_operand(BDD1: BDD, BDD2: BDD, operand: str, variable_order: list) -> BDD:
         for var in BDD1.variables:
@@ -371,7 +405,9 @@ class BDD:
         elif node1_var == node2_var:
             solution = BDDNode(var=node1_var, is_alt=node1.is_alt)
             solution.negative_child = BDD.__apply_binary_operand_recursion(node1.negative_child, node2.negative_child, operand, variable_order, united_bdd)
+            solution.negative_child.parents.append(solution)
             solution.positive_child = BDD.__apply_binary_operand_recursion(node1.positive_child, node2.positive_child, operand, variable_order, united_bdd)
+            solution.positive_child.parents.append(solution)
             if solution.negative_child is None or solution.positive_child is None:
                 raise Exception("Children are None")
             #solution.reduce(united_bdd)
@@ -392,9 +428,9 @@ class BDD:
 
             solution = BDDNode(var=higher_prio.variable, is_alt=higher_prio.is_alt)
             solution.negative_child = BDD.__apply_binary_operand_recursion(higher_prio.negative_child, lower_prio, operand, variable_order, united_bdd)
+            solution.negative_child.parents.append(solution)
             solution.positive_child = BDD.__apply_binary_operand_recursion(higher_prio.positive_child, lower_prio, operand, variable_order, united_bdd)
-            if (solution.negative_child is None) or (solution.positive_child is None):
-                raise Exception("Children are None")
+            solution.positive_child.parents.append(solution)
             #TODO: doesn't work with reduced bdd's 
             #in example child node C without neg or pos child??
             return solution
@@ -423,23 +459,28 @@ class BDD:
 
         
         bdd_copy = BDD(expression_copy, var_copy, build_new=False)
-        bdd_copy.root = self.__replace_children_nodes(self.root, {}, rename or self.renamed)
+        bdd_copy.root = self.__replace_children_nodes(self.root, {}, rename or self.renamed, bdd_copy.leafs)
         bdd_copy.__merge_leafs(bdd_copy.root)
         return bdd_copy
 
-    def __replace_children_nodes(self, original_node: BDDNode, visited_nodes: dict[BDDNode, BDDNode], is_alt: bool):
-        #if original node is already copied use the copy
+    def __replace_children_nodes(self, original_node: BDDNode, visited_nodes: dict[BDDNode, BDDNode], is_alt: bool, new_leafs: dict[bool: BDDNode]):      
+        #if original node is already copied return copy
         if original_node in visited_nodes:
             node_copy = visited_nodes[original_node]
             return node_copy
-
+        
+        #if original node is a leaf use the leafs of new tree as node
         if original_node.isLeaf():
-            node_copy = original_node.copy_node(is_alt)
+            node_copy = new_leafs[original_node.value]
+            visited_nodes[original_node] = node_copy
             return node_copy
 
+        #node has not been copied yet -> copy it, set children and set itself as parent of children
         node_copy = original_node.copy_node(is_alt)
-        node_copy.negative_child = self.__replace_children_nodes(original_node.negative_child, visited_nodes, is_alt)
-        node_copy.positive_child = self.__replace_children_nodes(original_node.positive_child, visited_nodes, is_alt)
+        node_copy.negative_child = self.__replace_children_nodes(original_node.negative_child, visited_nodes, is_alt, new_leafs)
+        node_copy.negative_child.parents.append(node_copy)
+        node_copy.positive_child = self.__replace_children_nodes(original_node.positive_child, visited_nodes, is_alt,  new_leafs)
+        node_copy.positive_child.parents.append(node_copy)
         #map copy of Node to the original node
         visited_nodes[original_node] = node_copy
         return node_copy
@@ -594,26 +635,13 @@ class BDD:
 
             return mul_negative_path + mul_positive_path
 
-    # returns list of all nodes in breadth first bottom up order
-    # only works with reduced BDDs
-    #does not add leafs to list
-    def breadth_first_bottom_up_search(self) -> list[BDDNode]:
-        stack = []
-        queue = deque([self.root])
-
-        while queue:
-            node = queue.popleft()
-            if node in stack:
-                stack.remove(node)
-            stack.append(node)
-
-            if node.negative_child and not node.negative_child.isLeaf():
-                queue.append(node.negative_child)
-            if node.positive_child and not node.positive_child.isLeaf():
-                queue.append(node.positive_child)
-
-        stack.reverse()
-        return stack
+    # returns first node of all nodes with a positive and negative leaf as child
+    def get_parents_of_pos_and_neg_leaf(self) -> BDDNode:
+        for node in self.leafs[True].parents:
+            if node.negative_child.isLeaf() and node.positive_child.isLeaf():
+                if node.negative_child.value + node.positive_child.value == 1:
+                    return node
+        return None
 
     # Visualization
     def generateDot(self, path="output"):
@@ -705,41 +733,3 @@ class BDD:
             self.root == other.root
         )
 
-
-
-def main():
-
-    delete_all_files_from_out()
-    expression1 = "A or B"
-    expression2 = "(B or C) and (A and C)"
-    variables = ['A', 'B', 'C']
-
-    p = {
-        "A": [mpq(0.2), mpq(0.3), mpq(0.4), mpq(0.1)],
-        "B": [mpq(0.15), mpq(0.6), mpq(0.13), mpq(0.12)],
-        "C": [mpq(0.23), mpq(0.17), mpq(0.2), mpq(0.4)]
-    }
-
-    bdd1 = BDD(expression1, variables)
-    bdd1.reduce()
-    bdd1.generateDot("1_bdd1")
-
-    bdd2 = BDD(expression2, variables)
-    bdd2.reduce()
-    bdd2.generateDot("2_bdd2")
-
-    bdd2_replaced = bdd2.rename_variables()
-    bdd2_replaced.generateDot("3_bdd2_replaced")
-    bdd2_replaced = bdd2_replaced.negate()
-    bdd2_replaced.generateDot("4_bdd_2_negate")
-
-    united = BDD.apply_binary_operand(bdd1, bdd2_replaced,"and", ["A", "A_", "B", "B_", "C", "C_"])
-    united.generateDot(path="5_united")
-    united.set_probabilities(p)
-    united.generateDot(path="6_united_w_prob")
-    print(f"Sum of all positive paths is: {float(united.sum_probabilities_positive_cases()):.2f}\n")
-    united.__sum_all_probability_paths()
-
-
-if __name__ == "__main__":
-    main()

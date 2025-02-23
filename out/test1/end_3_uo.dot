@@ -1,0 +1,15 @@
+digraph{
+label="(x and z) or (not x and y)\n\n"
+1697950679600[label=x]1697950681680[label="y"]
+1697950679600 -> 1697950681680[style=dashed label="" fontcolor = gray]
+1697950484528[label="False"]
+1697950681680 -> 1697950484528[style=dashed label="" fontcolor = gray]
+1697886867280[label="True"]
+1697950681680 -> 1697886867280 [label="" fontcolor = gray]
+1697950680560[label="z"]
+1697950679600 -> 1697950680560 [label="" fontcolor = gray]
+1697950484528[label="False"]
+1697950680560 -> 1697950484528[style=dashed label="" fontcolor = gray]
+1697886867280[label="True"]
+1697950680560 -> 1697886867280 [label="" fontcolor = gray]
+}

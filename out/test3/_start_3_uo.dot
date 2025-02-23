@@ -1,0 +1,19 @@
+digraph{
+label="(not m and not n) or (n and l)\n\n"
+1697950684720[label=m]1697950687920[label="n"]
+1697950684720 -> 1697950687920[style=dashed label="" fontcolor = gray]
+1697950693360[label="True"]
+1697950687920 -> 1697950693360[style=dashed label="" fontcolor = gray]
+1697950679760[label="l"]
+1697950687920 -> 1697950679760 [label="" fontcolor = gray]
+1697950685840[label="False"]
+1697950679760 -> 1697950685840[style=dashed label="" fontcolor = gray]
+1697950693360[label="True"]
+1697950679760 -> 1697950693360 [label="" fontcolor = gray]
+1697950684080[label="n"]
+1697950684720 -> 1697950684080 [label="" fontcolor = gray]
+1697950685840[label="False"]
+1697950684080 -> 1697950685840[style=dashed label="" fontcolor = gray]
+1697950679760[label="l"]
+1697950684080 -> 1697950679760 [label="" fontcolor = gray]
+}
