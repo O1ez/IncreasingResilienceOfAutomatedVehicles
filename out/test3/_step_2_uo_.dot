@@ -1,7 +1,0 @@
-digraph{
-label="(not m and not n) or (n and l)\n\n"
-1697950685680[label=m]1697950680880[label="True"]
-1697950685680 -> 1697950680880[style=dashed label="" fontcolor = gray]
-1697950679920[label="False"]
-1697950685680 -> 1697950679920 [label="" fontcolor = gray]
-}

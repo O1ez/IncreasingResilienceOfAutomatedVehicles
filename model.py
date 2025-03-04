@@ -51,16 +51,16 @@ class Model:
 
     def check_acceptable(self, fp: float):
         return fp < self.acceptable_threshold
-
-    """     def find_node_in_uo(self, bdd_uo: BDD) -> BDDNode:
-        nodes = bdd_uo.get_parents_of_pos_leafs()
-        while nodes:
-            n = nodes.pop(0)
-            if n.isLeaf() or n == bdd_uo.root:
-                continue
-            if n.negative_child.isLeaf() and n.positive_child.isLeaf():
-                if n.negative_child.value + n.positive_child.value == 1:
-                    return n """
+    
+    def find_node_in_f_with_table(self, node_uo: BDDNode, lookup_table :dict[BDDNode, list[BDDNode]]):
+        nodes_f = lookup_table[node_uo]
+        return_dict: dict[BDDNode, bool] = {}    
+        for node in nodes_f:
+            if node.negative_child.isLeaf() and node.negative_child.value == 1:
+                return_dict[node] = 0
+            elif node.positive_child.isLeaf() and node.positive_child.value == 1:
+                return_dict[node] = 1
+        return return_dict
 
     #return a dict of nodes matching the node in uo, with a bool value representing which child they are 
     def find_node_in_f(self, node_in_uo: BDDNode) -> dict[BDDNode, bool]:
@@ -92,7 +92,9 @@ class Model:
 
     #TODO: rename this
     def algorithm(self, path: str):
+        #needs to remain to calc BDDtp and BDDfp
         bdd_uo_copy = self.uo.copy_bdd()
+        lookup_table = bdd_uo_copy.make_lookup_table_corr_nodes(bdd_uo_copy, self.f)
         #1
         tp_old, fp_old = self.calc_tp_fp(path, "_start_")
         print(
@@ -103,18 +105,23 @@ class Model:
         i = 1
         while node_uo:
             #a
-            nodes_f = self.find_node_in_f(node_uo)
+            nodes_f = self.find_node_in_f_with_table(node_uo, lookup_table)
             #b
+            changed = False
             for node in nodes_f:
-                #one child gets redirected to other depending on which child it was in the uo BDD
-                if nodes_f[node] == True:
-                    node.positive_child = node.negative_child
-                else: node.negative_child = node.positive_child
+                #only change if parents are not empty -> node is still in BDD
+                if node.parents:
+                    changed = True
+                    #one child gets redirected to other depending on which child it was in the uo BDD
+                    if nodes_f[node] == True:
+                        node.positive_child = node.negative_child
+                    else: node.negative_child = node.positive_child
             #c
             #always redirect the positive in uo, because it is the one that is unobservable
             node_uo.positive_child = node_uo.negative_child
             #d
-            self.f.reduce()
+            if changed:
+                self.f.reduce()
             self.f.generateDot(f"{path}\\_step_{str(i)}_f_")
             bdd_uo_copy.reduce()
             bdd_uo_copy.generateDot(f"{path}\\_step_{str(i)}_uo_")

@@ -1,7 +1,0 @@
-digraph{
-label="not a and (b or (not b and c))\n\n"
-1697950696144[label=a]1697950702224[label="False"]
-1697950696144 -> 1697950702224[style=dashed label="" fontcolor = gray]
-1697950702224[label="False"]
-1697950696144 -> 1697950702224 [label="" fontcolor = gray]
-}

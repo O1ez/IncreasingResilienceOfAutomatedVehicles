@@ -1,11 +1,11 @@
 digraph{
 label="(x and z) or (not x and y)\n\n"
-1697950687280[label=x]1697950580112[label="False"]
-1697950687280 -> 1697950580112[style=dashed label="" fontcolor = gray]
-1697950679760[label="z"]
-1697950687280 -> 1697950679760 [label="" fontcolor = gray]
-1697950580112[label="False"]
-1697950679760 -> 1697950580112[style=dashed label="" fontcolor = gray]
-1697950680400[label="True"]
-1697950679760 -> 1697950680400 [label="" fontcolor = gray]
+2179575573040[label=x]2179575572720[label="False"]
+2179575573040 -> 2179575572720[style=dashed label="" fontcolor = gray]
+2179575571440[label="z"]
+2179575573040 -> 2179575571440 [label="" fontcolor = gray]
+2179575572720[label="False"]
+2179575571440 -> 2179575572720[style=dashed label="" fontcolor = gray]
+2179575563440[label="True"]
+2179575571440 -> 2179575563440 [label="" fontcolor = gray]
 }

@@ -307,7 +307,7 @@ class BDD:
 
     #creates a lookup table mapping nodes of bdd1 to corresponding nodes of bdd2 for all non-leaf nodes
     #bdds have to have same variables 
-    def __make_lookup_table_corr_nodes(self, bdd_from: BDD, bdd_to: BDD) -> dict[BDDNode, list[BDDNode]]:
+    def make_lookup_table_corr_nodes(self, bdd_from: BDD, bdd_to: BDD) -> dict[BDDNode, list[BDDNode]]:
         if bdd_from.variables != bdd_to.variables:
             raise Exception("Both BDDs have to have the same variable priorization!")
         #automatically creates empty list in every object
@@ -329,18 +329,18 @@ class BDD:
         #both nodes have the same variable, can be mapped together
         if node_from_var == node_to_var:
             result[node_from].append(node_to)
-            self.make_lookup_table_corr_nodes(node_from.negative_child, node_to.negative_child, result)
-            self.make_lookup_table_corr_nodes(node_from.positive_child, node_to.positive_child, result)
+            self.__make_lookup_table_corr_nodes_recursive(variables, node_from.negative_child, node_to.negative_child, result)
+            self.__make_lookup_table_corr_nodes_recursive(variables, node_from.positive_child, node_to.positive_child, result)
         #variables don't match, one graph is skipping at least one node 
         #node from has higher priority, node to skipped a node 
         elif variables.index(node_from_var) < variables.index(node_to_var):
-            self.make_lookup_table_corr_nodes(node_from.negative_child, node_to, result)
-            self.make_lookup_table_corr_nodes(node_from.positive_child, node_to, result)
+            self.__make_lookup_table_corr_nodes_recursive(variables, node_from.negative_child, node_to, result)
+            self.__make_lookup_table_corr_nodes_recursive(variables, node_from.positive_child, node_to, result)
         #node from has lower priority, higher index in variables
         #cannot map node_from to any node, try mapping node_from to both child of node_to
         elif variables.index(node_from_var) > variables.index(node_to_var):
-            self.make_lookup_table_corr_nodes(node_from, node_to.negative_child, result)
-            self.make_lookup_table_corr_nodes(node_from, node_to.positive_child, result)
+            self.__make_lookup_table_corr_nodes_recursive(variables, node_from, node_to.negative_child, result)
+            self.__make_lookup_table_corr_nodes_recursive(variables, node_from, node_to.positive_child, result)
 
     #makes a copy of BDD and negates it
     def negate(self):
