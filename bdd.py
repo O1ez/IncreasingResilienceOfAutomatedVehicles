@@ -13,14 +13,24 @@ from sqlalchemy.sql.operators import is_associative
 from collections import defaultdict
 
 variable = pp.Word(pp.alphas + pp.nums)
+
+def left_associative_parse(tokens):
+    result = tokens[0]
+    for op, next_expr in zip(tokens[1::2], tokens[2::2]):
+        result = [result, op, next_expr]
+    return result
+
+
 expr = pp.infix_notation(
     variable,
     [
         ("not", 1, pp.opAssoc.RIGHT),
-        ("and", 2, pp.opAssoc.LEFT),
-        ("or", 2, pp.opAssoc.LEFT),
+        ("and", 2, pp.opAssoc.LEFT, left_associative_parse),
+        ("or", 3, pp.opAssoc.LEFT, left_associative_parse),
     ],
 )
+
+
 
 ops_lookup = {"and": operator.and_, "or": operator.or_}
 

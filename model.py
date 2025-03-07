@@ -182,7 +182,8 @@ if __name__ == "__main__":
         "y": [mpq(0.15), mpq(0.6), mpq(0.13), mpq(0.12)],
         "z": [mpq(0.23), mpq(0.17), mpq(0.2), mpq(0.4)]
     }
-    f = "((x and y) or ((x and not y) and not z)) or (((not x and y) and not z) or ((not x and not y) and z))"
+    #f = "((x and y) or ((x and not y) and not z)) or (((not x and y) and not z) or ((not x and not y) and z))"
+    f = "x and not z and y"
     uo = "(x and z) or (not x and y)"
     
 

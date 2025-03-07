@@ -1,0 +1,1 @@
+class TestCalculations(unittest.TestCase):
