@@ -4,6 +4,7 @@ import shutil
 import unittest
 from bdd import BDD, BDDNode
 from gmpy2 import mpq
+from collections import defaultdict, Counter
 
 # deletes all files from the out folder 
 def delete_all_files_from_out():
@@ -114,7 +115,6 @@ class TestCalculations(unittest.TestCase):
         bdd_XandY.root = root
         
         bdd1 = BDD("X and Y", ["X", "Y"])
-        bdd1.generateDot("0")
         self.assertEqual(bdd1, bdd_XandY)
 
     def test_build_X_or_Y(self):
@@ -134,7 +134,6 @@ class TestCalculations(unittest.TestCase):
 
         bdd1 = BDD("X or Y", ["X", "Y"])
         bdd1.reduce()
-        bdd1.generateDot("1")
         self.assertEqual(bdd1, bdd_XorY)
         
     def test_build_X(self):
@@ -150,7 +149,6 @@ class TestCalculations(unittest.TestCase):
         bdd.root = root
         
         bdd1 = BDD("X", ["X"])
-        bdd1.generateDot("2")
         
         self.assertEqual(bdd, bdd1) 
         #leafs need to be the same object as the ones safed in BDD
@@ -242,9 +240,6 @@ class TestCalculations(unittest.TestCase):
         child_z.positive_child = child_t
         child_z.negative_child = child_f2
         bdd2.root = root
-        
-        bdd1.generateDot("test1")
-        bdd2.generateDot("test2")
 
         bdd1._BDD__remove_equivalent_child_nodes(bdd1.root)
         self.assertEqual(bdd1, bdd2)
@@ -499,6 +494,84 @@ class TestCalculations(unittest.TestCase):
         bdd.set_probabilities(p)
         sum = bdd._BDD__sum_all_probability_paths()
         self.assertAlmostEqual(float(sum), 1)
+        
+    def test_parents(self):
+        #e1 = "(((not X3 and X2) or (not X2 and X4)) and ((not X4 and X1) or (not X1 and X3))) and (((not X7 and X6) or (not X6 and X8)) and ((not X8 and X5) or (not X5 and X7)))"
+        #e2 = "(((not X1 or X2) and (not X2 or X1)) and ((not X4 or X3))) or (((not X5 or X6) and (not X6 or X5)) and ((not X8 or X7)))"
+        v = ["X1", "X2", "X3", "X4","X8", "X5", "X7", "X6"]
+        e2 = "(((not X3 and X2) or (not X2 and X4)))"
+        e1= " (((not X4 and X1) or (not X1 and X3)))"
+        #e1 = "((x and y) or ((x and not y) and not z))"
+        #e2 = "(((not x and y) and not z) or ((not x and not y) and z))"
+        #v = ["x", "y", "z"]
+        bdd1 = BDD(expression=e1, variables=v)
+        bdd2 = BDD(expression=e2, variables=v)
+        p = defaultdict(list)
+        bdd1.generateDot("Test")
+        self.check_parents(bdd1.root, p)
+        p = defaultdict(list)
+        self.check_parents(bdd2.root, p)
+        p = defaultdict(list)
+        self.check_parents(bdd1.negate().root, p)
+        p = defaultdict(list)
+        bdd1.generateDot("Test1")
+        bdd2.generateDot("Test2")
+        united_bdd = BDD.apply_binary_operand(bdd1, bdd2, "and", v)
+        united_bdd.generateDot("united_test")
+        self.check_parents(united_bdd.root, p)
+        p = defaultdict(list)
+        bdd_or = BDD.apply_binary_operand(bdd1, bdd2, "or", v)
+        self.check_parents(bdd_or.root, p)
+        p = defaultdict(list)
+        bdd1.root.negative_child.negative_child.positive_child = bdd1.root.negative_child.negative_child.negative_child
+        bdd1.reduce()
+        self.check_parents(bdd1.root, p)
+        
+    def check_parents(self, node: BDDNode, parents: dict[BDDNode, list[BDDNode]]):
+        self.collect_parents(node, parents, [])
+        #readable_parents = {}
+        #for key, node_list in parents.items():
+        #    key_readable = key.variable if key.variable else key.value
+        #    values_readable = [n.variable if n.variable else n.value for n in node_list]
+        #    readable_parents[key_readable] = values_readable
+        #for k, v in readable_parents.items():
+        #    print(f"\n{k}: {v}")
+        self.compare_parents(node, parents, [])
+    
+    def collect_parents(self, node: BDDNode, parents: dict[BDDNode, list[BDDNode]], mem: list[BDDNode]):
+        if node.isLeaf():
+            return
+        found = next((n for n in mem if id(n) == id(node)), None)
+        if not found:
+            parents[node.negative_child].append(node)
+            parents[node.positive_child].append(node)
+            mem.append(node)
+            
+        self.collect_parents(node.negative_child, parents, mem)
+        self.collect_parents(node.positive_child, parents, mem)
+    
+    def compare_parents(self, node: BDDNode, parents: dict[BDDNode, list[BDDNode]], mem: list[BDDNode]):
+        if node.isLeaf():
+            return
+        found = next((n for n in mem if id(n) == id(node)), None)
+        if not found:
+            node_nc_name = node.negative_child.variable if node.negative_child.variable else node.negative_child.value
+            node_nc_parents = [f"{n.variable if n.variable else n.value} ({id(n)})" for n in node.negative_child.parents]
+            expected_parents_nc = [f"{n.variable if n.variable else n.value} ({id(n)})" for n in parents[node.negative_child]]
+            #if Counter(node_nc_parents) != Counter(expected_parents_nc):
+            #print(f"\n is {node_nc_name}     : {node_nc_parents} \n should be : {expected_parents_nc}")
+            self.assertCountEqual(node.negative_child.parents, parents[node.negative_child], f"node is {node.negative_child.variable if node.negative_child.variable else node.negative_child.value}")
+            
+            node_pc_name = node.positive_child.variable if node.positive_child.variable else node.positive_child.value
+            node_pc_parents = [f"{n.variable if n.variable else n.value} ({id(n)})" for n in node.positive_child.parents]
+            expected_parents = [f"{n.variable if n.variable else n.value} ({id(n)})" for n in parents[node.positive_child]]
+            #if Counter(node_pc_parents) != Counter(expected_parents):
+            #print(f"\n is {node_pc_name}     : {node_pc_parents} \n should be : {expected_parents}")
+            self.assertCountEqual(node.positive_child.parents, parents[node.positive_child], f"node is {node.positive_child.variable if node.positive_child.variable else node.positive_child.value}")
+            
+            mem.append(node)
+        self.compare_parents(node.negative_child, parents, mem)
+        self.compare_parents(node.positive_child, parents, mem)
 
 if __name__ == '__main__':
     delete_all_files_from_out()

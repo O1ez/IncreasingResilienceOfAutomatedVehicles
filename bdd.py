@@ -84,12 +84,15 @@ class BDDNode:
     
     def remove_parent_link_leafs(self):
         if self.negative_child.isLeaf():
-            if self in self.negative_child.parents:
-                self.negative_child.parents.remove(self)
+            found_parent = next((parent for parent in self.negative_child.parents if id(parent) == id(self)), None)
+            if found_parent:
+                self.negative_child.parents.remove(found_parent)
         else: self.negative_child.remove_parent_link_leafs()
+        
         if self.positive_child.isLeaf():
-            if self in self.positive_child.parents:
-                self.positive_child.parents.remove(self)
+            found_parent = next((parent for parent in self.positive_child.parents if id(parent) == id(self)), None)
+            if found_parent:
+                self.positive_child.parents.remove(found_parent)
         else: self.positive_child.remove_parent_link_leafs()
         
 
@@ -141,6 +144,10 @@ class BDD:
             root.positive_child = self.leafs[True]
             self.leafs[False].parents.append(root)
             self.leafs[True].parents.append(root)
+            #root.negative_child = BDDNode(value=False)
+            #root.negative_child.parents.append(root)
+            #root.positive_child = BDDNode(value=True)
+            #root.positive_child.parents.append(root)
             return root
         #not case
         elif len(ops) == 2:
@@ -161,7 +168,7 @@ class BDD:
             root2 = self.build(ops[2])
             bdd2 = BDD("", self.variables, False)
             bdd2.root = root2
-            #also reduces BDD
+            
             bdd_sol = self.apply_binary_operand(bdd1, bdd2, op, self.variables)
             self.leafs = bdd_sol.leafs
             return bdd_sol.root
@@ -175,6 +182,11 @@ class BDD:
         self.__merge_leafs(self.root)
         self.__remove_duplicate_subgraph(self.root, mem=[])
         self.__remove_equivalent_child_nodes(self.root)
+        #hotfix for multiple parents not connected to tree
+        self.__clear_parents(self.root)
+        self.generateDot("cleared parents")
+        self.__set_parents(self.root, [])
+        self.generateDot("set parents")
 
         #print("Reduction done.")
         return True
@@ -209,7 +221,7 @@ class BDD:
                 raise Exception("unexpected")
             negative_child.parents.remove(node)
             leaf = self.leafs[negative_child.value]
-            leaf.parents.extend(node.negative_child.parents)
+            #leaf.parents.extend(node.negative_child.parents)
             node.negative_child = leaf
 
         positive_child = self.__merge_leafs(node.positive_child)
@@ -218,7 +230,7 @@ class BDD:
                 raise Exception("unexpected")
             positive_child.parents.remove(node)
             leaf = self.leafs[positive_child.value]
-            leaf.parents.extend(node.positive_child.parents)
+            #leaf.parents.extend(node.positive_child.parents)
             node.positive_child = leaf
             
         return None
@@ -249,11 +261,30 @@ class BDD:
                 child.parents.append(parent)
             node.parents.clear()
             #remove twice because node is parent twice
-            while node in child.parents:
+            while next((parent for parent in child.parents if id(parent) == id(node)), None):
                 child.parents.remove(node)
         return
             
-
+    def __clear_parents(self, node: BDDNode):
+        node.parents.clear()
+        if node.isLeaf():
+            return
+        self.__clear_parents(node.negative_child)
+        self.__clear_parents(node.positive_child)
+    
+    def __set_parents(self, node: BDDNode, mem: list[BDDNode]):
+        if node.isLeaf():
+            return
+        found = next((n for n in mem if id(n) == id(node)), None)
+        if not found:
+        #if node not in mem:    
+            node.negative_child.parents.append(node)
+            node.positive_child.parents.append(node)
+            mem.append(node)
+            
+        self.__set_parents(node.negative_child, mem)
+        self.__set_parents(node.positive_child, mem)
+        
     """ 
     def __remove_equivalent_child_nodes(self, node: BDDNode) -> Optional[BDDNode]:
         #if and while root is reducable reduce it and set new root
@@ -409,8 +440,9 @@ class BDD:
         united_bdd = BDD(expression="(" + BDD1.expression + ")and(" + BDD2.expression + ")", variables=variable_order,
                         build_new=False)
         united_bdd.root = BDD.__apply_binary_operand_recursion(BDD1.root, BDD2.root, operand, variable_order, united_bdd)
+        united_bdd.generateDot("united_unreduced")
         united_bdd.reduce()
-        
+        united_bdd.generateDot("united_reduced")
         if BDD1.renamed or BDD2.renamed:
             united_bdd.renamed = True
             
@@ -466,8 +498,6 @@ class BDD:
             solution.negative_child.parents.append(solution)
             solution.positive_child = BDD.__apply_binary_operand_recursion(higher_prio.positive_child, lower_prio, operand, variable_order, united_bdd)
             solution.positive_child.parents.append(solution)
-            #TODO: doesn't work with reduced bdd's 
-            #in example child node C without neg or pos child??
             return solution
 
     #creates a copy of BDD gives it is_alt attribute
@@ -717,14 +747,14 @@ class BDD:
                 if child_node.variable is not None:
                     #draw child node
                     parents = " ".join(p.variable for p in child_node.parents)
-                    out.write(f"{id(child_node)}[label=\"{child_node.variable + alt_str}\"]\n")
+                    out.write(f"{id(child_node)}[label=\"{child_node.variable + alt_str} ({id(child_node)}) \\nparents={parents}\"]\n")
                     #draw edge node -> child_node
                     out.write(f"{id(node)} -> {id(child_node)}[style=dashed label=\"{prob_str}\" fontcolor = gray]\n")
                     self.__generate_dot_recursive(child_node, out)
                 elif node.negative_child.value is not None:
                     #draw leaf node
                     parents = " ".join(p.variable for p in child_node.parents)
-                    out.write(f"{id(child_node)}[label=\"{child_node.value}\"]\n")
+                    out.write(f"{id(child_node)}[label=\"{child_node.value} ({id(child_node)}) \\nparents= {parents}\"]\n")
                     #draw edge node -> leaf node
                     out.write(f"{id(node)} -> {id(child_node)}[style=dashed label=\"{prob_str}\" fontcolor = gray]\n")
             #draw positive childnode
@@ -742,14 +772,14 @@ class BDD:
                 if child_node.variable is not None:
                     #draw child node
                     parents = " ".join(p.variable for p in child_node.parents)
-                    out.write(f"{id(child_node)}[label=\"{child_node.variable + alt_str}\"]\n")
+                    out.write(f"{id(child_node)}[label=\"{child_node.variable + alt_str} ({id(child_node)})\\nparents={parents}\"]\n")
                     #draw edge node -> child node
                     out.write(f"{id(node)} -> {id(child_node)} [label=\"{prob_str}\" fontcolor = gray]\n")
                     self.__generate_dot_recursive(child_node, out)
                 elif child_node.value is not None:
                     #draw leaf node 
                     parents = " ".join(p.variable for p in child_node.parents)
-                    out.write(f"{id(child_node)}[label=\"{child_node.value}\"]\n")
+                    out.write(f"{id(child_node)}[label=\"{child_node.value} ({id(child_node)})\\nparents={parents}\"]\n")
                     #draw edge node -> leaf node
                     out.write(f"{id(node)} -> {id(child_node)} [label=\"{prob_str}\" fontcolor = gray]\n")
             node.drawn = True

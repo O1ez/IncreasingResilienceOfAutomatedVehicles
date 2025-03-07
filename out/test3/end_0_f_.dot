@@ -1,5 +1,0 @@
-digraph{2202465132304[label=n]2202465137232[label="False"]
-2202465132304 -> 2202465137232[style=dashed label="" fontcolor = gray]
-2202465132112[label="True"]
-2202465132304 -> 2202465132112 [label="" fontcolor = gray]
-}

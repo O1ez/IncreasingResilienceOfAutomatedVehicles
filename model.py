@@ -20,6 +20,7 @@ class Model:
         self.f.generateDot(f"{path}\\{step}0_f_")
         self.uo.generateDot(f"{path}\\{step}3_uo")
         bdd_f_replaced = self.f.rename_variables()
+        bdd_not_f_replaced = bdd_f_replaced.negate()
         bdd_not_f = self.f.negate()
         bdd_not_uo = self.uo.negate()
 
@@ -33,9 +34,9 @@ class Model:
             f_united_vars.append(not_f_vars[i])
             f_united_vars.append(f_replaced_vars[i])
 
-        #build fp = f_ and not f and not uo
-        first_unite = BDD.apply_binary_operand(bdd_not_f, bdd_not_uo, "and", not_f_vars)
-        bdd_fp = BDD.apply_binary_operand(bdd_f_replaced, first_unite,"and", f_united_vars)
+        #build fp = not f_ and f and not uo
+        first_unite = BDD.apply_binary_operand(self.f, bdd_not_uo, "and", not_f_vars)
+        bdd_fp = BDD.apply_binary_operand(bdd_not_f_replaced, first_unite,"and", f_united_vars)
         bdd_fp.set_probabilities(self.probabilities)
         bdd_fp.generateDot(f"{path}\\{step}5_fp")
         fp = bdd_fp.sum_probabilities_positive_cases()
@@ -238,3 +239,5 @@ if __name__ == "__main__":
     model4 = Model(0.05, uo4, f4, p4)
     model4.algorithm("test4")
     print(f"Test 4 took {float(time.time()-start_time_4):.5f} milliseconds.")
+    
+    BDD("X and Y",["X","Y"]).generateDot("X and Y")

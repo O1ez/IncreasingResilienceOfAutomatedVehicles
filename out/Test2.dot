@@ -1,0 +1,13 @@
+digraph{2195861399472[label=X2]2195861402832[label="X4 (2195861402832) \nparents=X2"]
+2195861399472 -> 2195861402832[style=dashed label="" fontcolor = gray]
+2195861398032[label="False (2195861398032) \nparents= X4 X3"]
+2195861402832 -> 2195861398032[style=dashed label="" fontcolor = gray]
+2195861399792[label="True (2195861399792)\nparents=X4 X3"]
+2195861402832 -> 2195861399792 [label="" fontcolor = gray]
+2195861400912[label="X3 (2195861400912)\nparents=X2"]
+2195861399472 -> 2195861400912 [label="" fontcolor = gray]
+2195861399792[label="True (2195861399792) \nparents= X4 X3"]
+2195861400912 -> 2195861399792[style=dashed label="" fontcolor = gray]
+2195861398032[label="False (2195861398032)\nparents=X4 X3"]
+2195861400912 -> 2195861398032 [label="" fontcolor = gray]
+}
