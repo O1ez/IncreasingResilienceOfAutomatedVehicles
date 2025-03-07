@@ -14,20 +14,6 @@ def delete_all_files_from_out():
             os.remove(obj)
         elif os.path.isdir(obj):
             shutil.rmtree(obj)
-            
-    #tests made:
-    # Node:
-    # isLeaf()
-    # copyNode()
-    # build() in various ways
-    # 
-    # BDD:
-    # reduce Leafs
-    # reduce common children
-
-    
-    
-
 class TestCalculations(unittest.TestCase):
     
     #BDDNode
@@ -467,19 +453,6 @@ class TestCalculations(unittest.TestCase):
         bdd2.root = root2
         
         self.assertEqual(bdd1.rename_variables(), bdd2)
-#
-#    def test_breadth_first_bottom_up_search(self):
-#        bdd1 = BDD("((not X1 or X2) and (not X2 or X1)) and ((not X4 or X3))", ["X2", "X3", "X4", "X1"])
-#        bdd1.generateDot("BFBU_search")
-#        BFBU_search = []
-#        n = BDD.get_parents_of_pos_and_neg_leaf(bdd1)
-#        while n: 
-#            BFBU_search.append(n.variable)
-#            n = BDD.get_parents_of_pos_and_neg_leaf(bdd1)
-#        #see generated Dot for correct order
-#        correct_order = ["X1", "X1", "X4", "X4", "X3", "X3", "X2"]
-#        
-#        self.assertEqual(BFBU_search, correct_order)
 #            
             
     def test_probabilities(self):
@@ -555,16 +528,16 @@ class TestCalculations(unittest.TestCase):
             return
         found = next((n for n in mem if id(n) == id(node)), None)
         if not found:
-            node_nc_name = node.negative_child.variable if node.negative_child.variable else node.negative_child.value
-            node_nc_parents = [f"{n.variable if n.variable else n.value} ({id(n)})" for n in node.negative_child.parents]
-            expected_parents_nc = [f"{n.variable if n.variable else n.value} ({id(n)})" for n in parents[node.negative_child]]
+            #node_nc_name = node.negative_child.variable if node.negative_child.variable else node.negative_child.value
+            #node_nc_parents = [f"{n.variable if n.variable else n.value} ({id(n)})" for n in node.negative_child.parents]
+            #expected_parents_nc = [f"{n.variable if n.variable else n.value} ({id(n)})" for n in parents[node.negative_child]]
             #if Counter(node_nc_parents) != Counter(expected_parents_nc):
             #print(f"\n is {node_nc_name}     : {node_nc_parents} \n should be : {expected_parents_nc}")
             self.assertCountEqual(node.negative_child.parents, parents[node.negative_child], f"node is {node.negative_child.variable if node.negative_child.variable else node.negative_child.value}")
             
-            node_pc_name = node.positive_child.variable if node.positive_child.variable else node.positive_child.value
-            node_pc_parents = [f"{n.variable if n.variable else n.value} ({id(n)})" for n in node.positive_child.parents]
-            expected_parents = [f"{n.variable if n.variable else n.value} ({id(n)})" for n in parents[node.positive_child]]
+            #node_pc_name = node.positive_child.variable if node.positive_child.variable else node.positive_child.value
+            #node_pc_parents = [f"{n.variable if n.variable else n.value} ({id(n)})" for n in node.positive_child.parents]
+            #expected_parents = [f"{n.variable if n.variable else n.value} ({id(n)})" for n in parents[node.positive_child]]
             #if Counter(node_pc_parents) != Counter(expected_parents):
             #print(f"\n is {node_pc_name}     : {node_pc_parents} \n should be : {expected_parents}")
             self.assertCountEqual(node.positive_child.parents, parents[node.positive_child], f"node is {node.positive_child.variable if node.positive_child.variable else node.positive_child.value}")
