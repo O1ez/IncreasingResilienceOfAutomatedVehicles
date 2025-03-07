@@ -11,25 +11,7 @@ from gmpy2 import mpq
 import pyparsing as pp
 from sqlalchemy.sql.operators import is_associative
 from collections import defaultdict
-
-variable = pp.Word(pp.alphas + pp.nums)
-
-def left_associative_parse(tokens):
-    result = tokens[0]
-    for op, next_expr in zip(tokens[1::2], tokens[2::2]):
-        result = [result, op, next_expr]
-    return result
-
-
-expr = pp.infix_notation(
-    variable,
-    [
-        ("not", 1, pp.opAssoc.RIGHT),
-        ("and", 2, pp.opAssoc.LEFT, left_associative_parse),
-        ("or", 3, pp.opAssoc.LEFT, left_associative_parse),
-    ],
-)
-
+import parser
 
 
 ops_lookup = {"and": operator.and_, "or": operator.or_}
@@ -137,7 +119,7 @@ class BDD:
             self.build_new()
 
     def build_new(self):
-        ops = expr.parse_string(self.expression).as_list()
+        ops = parser.parse_line(self.expression)
         #expressions sometimes get parsed as a single list in a list
         #--> extract inner list
         #if a bdd is build from only one variable, the variable needs to be extracted from list
