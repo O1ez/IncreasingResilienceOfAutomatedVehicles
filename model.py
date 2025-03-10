@@ -16,9 +16,9 @@ class Model:
         self.vars = list(probabilities.keys())
         self.probabilities = probabilities
 
-    def calc_tp_fp(self, path: str, step=""):
-        self.f.generateDot(f"{path}\\{step}0_f_")
-        self.uo.generateDot(f"{path}\\{step}3_uo")
+    def calc_tp_fp(self, test_num: str, step=""):
+        self.f.generateDot(f"test{test_num}\\{step}0_f_")
+        self.uo.generateDot(f"test{test_num}\\{step}3_uo")
         bdd_f_replaced = self.f.rename_variables()
         bdd_not_f_replaced = bdd_f_replaced.negate()
         bdd_not_f = self.f.negate()
@@ -38,13 +38,13 @@ class Model:
         first_unite = BDD.apply_binary_operand(self.f, bdd_not_uo, "and", not_f_vars)
         bdd_fp = BDD.apply_binary_operand(bdd_not_f_replaced, first_unite,"and", f_united_vars)
         bdd_fp.set_probabilities(self.probabilities)
-        bdd_fp.generateDot(f"{path}\\{step}5_fp")
+        bdd_fp.generateDot(f"test{test_num}\\{step}5_fp")
         fp = bdd_fp.sum_probabilities_positive_cases()
 
         #build tp = f_ and f and not uo
         bdd_tp = BDD.apply_binary_operand(bdd_f_replaced, BDD.apply_binary_operand(bdd_not_uo, self.f,"and", self.vars),"and", f_united_vars)
         bdd_tp.set_probabilities(self.probabilities)
-        bdd_tp.generateDot(f"{path}\\{step}6_tp")
+        bdd_tp.generateDot(f"test{test_num}\\{step}6_tp")
         tp = bdd_tp.sum_probabilities_positive_cases()
         #bdd_tp.sum_all_probability_paths()
 
@@ -95,15 +95,16 @@ class Model:
         return return_dict
 
     #TODO: rename this
-    def algorithm(self, path: str):
+    def algorithm(self, test_num: int):
+        start = time.time()
         #needs to remain to calc BDDtp and BDDfp
         bdd_uo_copy = self.uo.copy_bdd()
         lookup_table = bdd_uo_copy.make_lookup_table_corr_nodes(bdd_uo_copy, self.f)
         #1
-        tp_old, fp_old = self.calc_tp_fp(path, "_start_")
+        tp_old, fp_old = self.calc_tp_fp(test_num, "_start_")
         print(
-            f"\033[96m\n\033[1m{path}:\033[0m\nInitial values: \ntp: " + f"{float(tp_old):.2f}" + "\nfp: " +
-            f"{float(fp_old):.2f}")
+            f"\033[96m\n\033[1mTest {test_num}:\033[0m\nInitial values: \ntp: " + f"{float(tp_old):.4f}" + "\nfp: " +
+            f"{float(fp_old):.4f}")
         #2
         node_uo = bdd_uo_copy.get_parents_of_pos_and_neg_leaf()
         i = 1
@@ -130,22 +131,25 @@ class Model:
             node_uo.positive_child = node_uo.negative_child
             #d
             if changed:
-                self.f.generateDot(f"{path}\\_step_{str(i)}_f_unreduced")
+                self.f.generateDot(f"test{test_num}\\_step_{str(i)}_f_unreduced")
                 self.f.reduce()
-            self.f.generateDot(f"{path}\\_step_{str(i)}_f_")
+            self.f.generateDot(f"test{test_num}\\_step_{str(i)}_f_")
             bdd_uo_copy.reduce()
-            bdd_uo_copy.generateDot(f"{path}\\_step_{str(i)}_uo_")
+            bdd_uo_copy.generateDot(f"test{test_num}\\_step_{str(i)}_uo_")
             i += 1
             node_uo = bdd_uo_copy.get_parents_of_pos_and_neg_leaf()
         #3
-        tp_new, fp_new = self.calc_tp_fp(path, "end_")
-        print("New values: \ntp: " + f"{float(tp_new):.2f}" + "\nfp: " + f"{float(fp_new):.2f}")
+        tp_new, fp_new = self.calc_tp_fp(test_num, "end_")
+        print("\nNew values: \ntp: " + f"{float(tp_new):.4f}" + "\nfp: " + f"{float(fp_new):.4f}")
         #4
         is_acceptable = self.check_acceptable(fp_new)
         print(
-            f"The fp Value ({float(fp_new):.2f}) is {'not ' if not is_acceptable else ''}acceptable. "
-            f"-> {float(fp_new):.2f} "f"{'>' if not is_acceptable else '<='} {self.acceptable_threshold}"
-            "\n---------------------------------\n")
+            f"\nThe fp Value ({float(fp_new):.4f}) is {'not ' if not is_acceptable else ''}acceptable. "
+            f"-> {float(fp_new):.4f} "f"{'>' if not is_acceptable else '<='} {self.acceptable_threshold}")
+        duration = time.time() - start
+        print(f"\nTest {test_num} took {duration:.5f} milliseconds")
+        print("---------------------------------\n")
+        
 
 
 if __name__ == "__main__":
@@ -223,22 +227,22 @@ if __name__ == "__main__":
     
     start_time_1 = time.time()
     model = Model(0.05, uo, f, p)
-    model.algorithm("test1")
-    print(f"Test 1 took {float(time.time()-start_time_1):.5f} milliseconds.")
+    model.algorithm("1")
+    #print(f"Test 1 took {float(time.time()-start_time_1):.5f} milliseconds.")
     
     start_time_2 = time.time()
     model2 = Model(0.05, uo2, f2, p2)
-    model2.algorithm("test2")
-    print(f"Test 2 took {float(time.time()-start_time_2):.5f} milliseconds.")
+    model2.algorithm("2")
+    #print(f"Test 2 took {float(time.time()-start_time_2):.5f} milliseconds.")
     
     start_time_3 = time.time()
     model3 = Model(0.05, uo3, f3, p3)
-    model3.algorithm("test3")
-    print(f"Test 3 took {float(time.time()-start_time_3):.5f} milliseconds.")
+    model3.algorithm("3")
+    #print(f"Test 3 took {float(time.time()-start_time_3):.5f} milliseconds.")
     
     start_time_4 = time.time()
     model4 = Model(0.05, uo4, f4, p4)
-    model4.algorithm("test4")
-    print(f"Test 4 took {float(time.time()-start_time_4):.5f} milliseconds.")
+    model4.algorithm("4")
+    #print(f"Test 4 took {float(time.time()-start_time_4):.5f} milliseconds.")
     
     BDD("X and Y",["X","Y"]).generateDot("X and Y")

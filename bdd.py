@@ -175,10 +175,10 @@ class BDD:
         self.__remove_duplicate_subgraph(self.root, mem=[])
         self.__remove_equivalent_child_nodes(self.root)
         #hotfix for multiple parents not connected to tree
-        self.__clear_parents(self.root)
-        self.generateDot("cleared parents")
-        self.__set_parents(self.root, [])
-        self.generateDot("set parents")
+        #self.__clear_parents(self.root)
+        #self.generateDot("cleared parents")
+        #self.__set_parents(self.root, [])
+        #self.generateDot("set parents")
 
         #print("Reduction done.")
         return True
