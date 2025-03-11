@@ -712,7 +712,7 @@ class BDD:
 
         #make file
         #test comment
-        path = f"out\{path}.dot"
+        path = f"out/{path}.dot"
         directory = os.path.dirname(path)
 
         os.makedirs(directory, exist_ok=True)
