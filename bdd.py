@@ -711,6 +711,7 @@ class BDD:
         label = node.value if node.isLeaf() else node.variable + alt_str
 
         #make file
+        #test comment
         path = f"out\{path}.dot"
         directory = os.path.dirname(path)
 
