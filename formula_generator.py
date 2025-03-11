@@ -1,12 +1,19 @@
 import random
 from scipy.stats import random_table
 from gmpy2 import mpq
+import os
+from bdd import BDD, BDDNode
+import math
+
 class formula_generator:
     @staticmethod
     def generate_formulas(num_variables: int, ratio_variable_clauses: float, num_formulas: int, num_literals: int = 3) -> tuple[list[str], dict[str, list[mpq]]]:
+        contingency_tables = formula_generator.generate_contingency_tables(num_variables)
+        variables = list(contingency_tables.keys())
         formulas = []
         #generate formula
-        for i in range(1, num_formulas+1):
+        i = 1
+        while i <= num_formulas:
             #print(f"{i}: \n")
             formula = ""
             #generate clause
@@ -23,27 +30,30 @@ class formula_generator:
                     
                     if bool(random.getrandbits(1)):
                         formula = formula + "not "
-                    formula = formula + f"X{variable} and "
+                    formula = formula + f"X{variable} or "
                     
-                #delete last and
-                formula = formula [:-5]
-                formula = formula + ") or "
+                #delete last or
+                formula = formula [:-4]
+                formula = formula + ") and "
                 
-            #delete last or
-            formula = formula[:-3]
-            ##print(formula + "\n\n")
-            formulas.append(formula)
-        contingency_tables = formula_generator.generate_contingency_tables(num_variables)
+            #delete last and
+            formula = formula[:-5]
+            
+            satisfiable = formula_generator.check_formula(formula, variables)
+            if not satisfiable:
+                i = i - 1
+            i+=1
+            #formulas.append(formulas)
         return formulas, contingency_tables
     
     @staticmethod
     def generate_contingency_tables(num_variables: int):
         contingency_tables = {}
         for i in range(1, num_variables + 1):
-            first_row_sum = random.randint(1, 100)
+            first_row_sum = random.randint(1, 99)
             second_row_sum = 100 - first_row_sum
             
-            first_col_sum = random.randint(1, 100)
+            first_col_sum = random.randint(1, 99)
             second_col_sum = 100 - first_col_sum
             
             row = [first_row_sum, second_row_sum]
@@ -58,6 +68,19 @@ class formula_generator:
             
             contingency_tables[f"X{i}"] = [mpq(first,100), mpq(second,100), mpq(third,100), mpq(fourth,100)]
         return contingency_tables
+    
+    @staticmethod
+    def check_formula(formula: str, variables: list[str]):
+        bdd = BDD(formula, variables)
+        path = f"formulas.txt"
+        out = open(path, "a")
+        if bdd.satisfiable:
+            out.write(formula + "\n")
+            print("new satisfiable formula found.")
+        else: print("formula not satisfiable.")
+        out.close()
+        return bdd.satisfiable
         
 if __name__ == "__main__":
-    formulas = formula_generator.generate_formulas(50, 4.1, 50)
+    formulas = formula_generator.generate_formulas(10, 2.5, 10)
+    

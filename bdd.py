@@ -116,8 +116,9 @@ class BDD:
         self.probabilities_set = False
         self.renamed = False
         if build_new:
-            self.build_new()
-
+            self.satisfiable = self.build_new()
+        
+        
     def build_new(self):
         ops = parser.parse_line(self.expression)
         #expressions sometimes get parsed as a single list in a list
@@ -127,6 +128,8 @@ class BDD:
             ops = ops[0]
         root = self.build(ops)
         self.root = root
+        satisfiable = not (self.root.isLeaf() and self.root.value == False)
+        return satisfiable
 
     def build(self, ops) -> BDDNode:
         #case only variable
@@ -174,14 +177,14 @@ class BDD:
         self.__merge_leafs(self.root)
         self.__remove_duplicate_subgraph(self.root, mem=[])
         self.__remove_equivalent_child_nodes(self.root)
+        
         #hotfix for multiple parents not connected to tree
-        #self.__clear_parents(self.root)
-        #self.generateDot("cleared parents")
-        #self.__set_parents(self.root, [])
-        #self.generateDot("set parents")
+        self.__clear_parents(self.root)
+        self.generateDot("cleared parents")
+        self.__set_parents(self.root, [])
+        self.generateDot("set parents")
 
         #print("Reduction done.")
-        return True
 
     def __remove_duplicate_subgraph(self, node: BDDNode, mem: list[BDDNode]):
         if node.isLeaf():
@@ -432,12 +435,12 @@ class BDD:
         united_bdd = BDD(expression="(" + BDD1.expression + ")and(" + BDD2.expression + ")", variables=variable_order,
                         build_new=False)
         united_bdd.root = BDD.__apply_binary_operand_recursion(BDD1.root, BDD2.root, operand, variable_order, united_bdd)
-        united_bdd.generateDot("united_unreduced")
+        #united_bdd.generateDot("united_unreduced")
         united_bdd.reduce()
-        united_bdd.generateDot("united_reduced")
+        #united_bdd.generateDot("united_reduced")
         if BDD1.renamed or BDD2.renamed:
             united_bdd.renamed = True
-            
+        united_bdd.satisfiable = not (united_bdd.root.isLeaf() and united_bdd.root.value == False)
         return united_bdd
 
     @staticmethod
@@ -739,14 +742,14 @@ class BDD:
                 if child_node.variable is not None:
                     #draw child node
                     parents = " ".join(p.variable for p in child_node.parents)
-                    out.write(f"{id(child_node)}[label=\"{child_node.variable + alt_str} ({id(child_node)}) \\nparents={parents}\"]\n")
+                    out.write(f"{id(child_node)}[label=\"{child_node.variable + alt_str}\"]\n")
                     #draw edge node -> child_node
                     out.write(f"{id(node)} -> {id(child_node)}[style=dashed label=\"{prob_str}\" fontcolor = gray]\n")
                     self.__generate_dot_recursive(child_node, out)
                 elif node.negative_child.value is not None:
                     #draw leaf node
                     parents = " ".join(p.variable for p in child_node.parents)
-                    out.write(f"{id(child_node)}[label=\"{child_node.value} ({id(child_node)}) \\nparents= {parents}\"]\n")
+                    out.write(f"{id(child_node)}[label=\"{child_node.value}\"]\n")
                     #draw edge node -> leaf node
                     out.write(f"{id(node)} -> {id(child_node)}[style=dashed label=\"{prob_str}\" fontcolor = gray]\n")
             #draw positive childnode
@@ -764,14 +767,14 @@ class BDD:
                 if child_node.variable is not None:
                     #draw child node
                     parents = " ".join(p.variable for p in child_node.parents)
-                    out.write(f"{id(child_node)}[label=\"{child_node.variable + alt_str} ({id(child_node)})\\nparents={parents}\"]\n")
+                    out.write(f"{id(child_node)}[label=\"{child_node.variable + alt_str} \"]\n")
                     #draw edge node -> child node
                     out.write(f"{id(node)} -> {id(child_node)} [label=\"{prob_str}\" fontcolor = gray]\n")
                     self.__generate_dot_recursive(child_node, out)
                 elif child_node.value is not None:
                     #draw leaf node 
                     parents = " ".join(p.variable for p in child_node.parents)
-                    out.write(f"{id(child_node)}[label=\"{child_node.value} ({id(child_node)})\\nparents={parents}\"]\n")
+                    out.write(f"{id(child_node)}[label=\"{child_node.value} \"]\n")
                     #draw edge node -> leaf node
                     out.write(f"{id(node)} -> {id(child_node)} [label=\"{prob_str}\" fontcolor = gray]\n")
             node.drawn = True

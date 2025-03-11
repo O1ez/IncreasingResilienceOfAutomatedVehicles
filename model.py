@@ -47,6 +47,9 @@ class Model:
         bdd_tp.generateDot(f"test{test_num}\\{step}6_tp")
         tp = bdd_tp.sum_probabilities_positive_cases()
         #bdd_tp.sum_all_probability_paths()
+        
+        if not bdd_fp.satisfiable or not bdd_tp.satisfiable:
+            print("WARNING: BDDf and BDDuo not satisfiable!")
 
         return tp, fp
 
@@ -96,15 +99,14 @@ class Model:
 
     #TODO: rename this
     def algorithm(self, test_num: int):
-        start = time.time()
         #needs to remain to calc BDDtp and BDDfp
         bdd_uo_copy = self.uo.copy_bdd()
         lookup_table = bdd_uo_copy.make_lookup_table_corr_nodes(bdd_uo_copy, self.f)
         #1
         tp_old, fp_old = self.calc_tp_fp(test_num, "_start_")
         print(
-            f"\033[96m\n\033[1mTest {test_num}:\033[0m\nInitial values: \ntp: " + f"{float(tp_old):.4f}" + "\nfp: " +
-            f"{float(fp_old):.4f}")
+            f"Initial values: \ntp: " + f"{float(tp_old):.8f}" + "\nfp: " +
+            f"{float(fp_old):.8f}")
         #2
         node_uo = bdd_uo_copy.get_parents_of_pos_and_neg_leaf()
         i = 1
@@ -140,15 +142,12 @@ class Model:
             node_uo = bdd_uo_copy.get_parents_of_pos_and_neg_leaf()
         #3
         tp_new, fp_new = self.calc_tp_fp(test_num, "end_")
-        print("\nNew values: \ntp: " + f"{float(tp_new):.4f}" + "\nfp: " + f"{float(fp_new):.4f}")
+        print("\nNew values: \ntp: " + f"{float(tp_new):.8f}" + "\nfp: " + f"{float(fp_new):.8f}")
         #4
         is_acceptable = self.check_acceptable(fp_new)
         print(
-            f"\nThe fp Value ({float(fp_new):.4f}) is {'not ' if not is_acceptable else ''}acceptable. "
+            f"\nThe fp Value ({float(fp_new):.8f}) is {'not ' if not is_acceptable else ''}acceptable. "
             f"-> {float(fp_new):.4f} "f"{'>' if not is_acceptable else '<='} {self.acceptable_threshold}")
-        duration = time.time() - start
-        print(f"\nTest {test_num} took {duration:.5f} milliseconds")
-        print("---------------------------------\n")
         
 
 

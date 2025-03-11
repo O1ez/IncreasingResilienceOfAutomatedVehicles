@@ -5,6 +5,7 @@ import unittest
 from bdd import BDD, BDDNode
 from gmpy2 import mpq
 from collections import defaultdict, Counter
+from functools import partial
 
 # deletes all files from the out folder 
 def delete_all_files_from_out():
@@ -140,6 +141,17 @@ class TestCalculations(unittest.TestCase):
         #leafs need to be the same object as the ones safed in BDD
         self.assertEqual(id(bdd1.root.negative_child), id(bdd1.leafs[False]))
         self.assertEqual(id(bdd1.root.positive_child), id(bdd1.leafs[True]))
+        
+    def test_unsatisfiable(self):
+        bdd = BDD("X and not X", ["X"])
+        self.assertFalse(bdd.satisfiable)
+        
+        bdd2 = BDD("(X or Y or Z) and (X or Y or not Z) and (X or not Y or Z) and (not X or Y or Z) and (not X or Y or not Z) and (not X or not Y or Z) and (X or not Y or not Z) and (not X or not Y or not Z)" , ["X", "Y", "Z"])
+        self.assertFalse(bdd2.satisfiable)
+        
+        bdd3 = BDD.apply_binary_operand(bdd, BDD("X and Y", ["X", "Y"]), "and", ["X", "Y"])
+        self.assertFalse(bdd3.satisfiable)
+        
         
     def test_reduce_merge_leafs(self):
         #example X and Y with merged leafs
