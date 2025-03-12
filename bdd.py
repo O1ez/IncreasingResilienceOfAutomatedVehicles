@@ -180,9 +180,9 @@ class BDD:
         
         #hotfix for multiple parents not connected to tree
         self.__clear_parents(self.root)
-        self.generateDot("cleared parents")
+        #self.generateDot("cleared parents")
         self.__set_parents(self.root, [])
-        self.generateDot("set parents")
+        #self.generateDot("set parents")
 
         #print("Reduction done.")
 

@@ -129,8 +129,11 @@ class Model:
                     node.positive_child.parents.append(node)
                     node.negative_child = node.positive_child
             #c
-            #always redirect the positive in uo, because it is the one that is unobservable
-            node_uo.positive_child = node_uo.negative_child
+            #always redirect the child ending in positive leaf in uo, because it is the one that is unobservable
+            if node_uo.positive_child.isLeaf() and node_uo.positive_child.value == 1:
+                node_uo.positive_child = node_uo.negative_child
+            else: node_uo.negative_child = node_uo.positive_child
+            
             #d
             if changed:
                 self.f.generateDot(f"test{test_num}\\_step_{str(i)}_f_unreduced")
@@ -166,24 +169,25 @@ if __name__ == "__main__":
     #v = ["x", "y", "z"]
 
     # x'\x  0     1
-    # 0    0.2   0.3
-    # 1    0.4   0.1
+    # 0    0.54   0.04 0.58
+    # 1    0.06   0.36 0.42
+    #      0.6    0.4
     #
     # y'\y  0     1
-    # 0    0.15  0.6  0.75
-    # 1    0.13  0.12 0.25
+    # 0    0.18  0.06 0.24
+    # 1    0.1   0.66 0.76
     #      0.28  0.72
 
     # z'\z  0     1
-    # 0    0.23  0.17
-    # 1    0.2   0.4
-    #
+    # 0    0.35  0.02 0.37
+    # 1    0.04  0.59 0.63
+    #      0.39  0.61  
     
     
     p = {
-        "x": [mpq(0.2), mpq(0.3), mpq(0.4), mpq(0.1)],
-        "y": [mpq(0.15), mpq(0.6), mpq(0.13), mpq(0.12)],
-        "z": [mpq(0.23), mpq(0.17), mpq(0.2), mpq(0.4)]
+        "x": [mpq(0.54), mpq(0.04), mpq(0.06), mpq(0.36)],
+        "y": [mpq(0.18), mpq(0.06), mpq(0.1), mpq(0.66)],
+        "z": [mpq(0.35), mpq(0.02), mpq(0.04), mpq(0.59)]
     }
     #f = "((x and y) or ((x and not y) and not z)) or (((not x and y) and not z) or ((not x and not y) and z))"
     f = "x and not z and y"
@@ -199,7 +203,7 @@ if __name__ == "__main__":
     uo2 = "not a and (b or (not b and c))"
 
     p3 ={
-        "m": [mpq(0.7), mpq(0.0,), mpq(0.17), mpq(0.1)],
+        "m": [mpq(0.7), mpq(0.03), mpq(0.17), mpq(0.1)],
         "n": [mpq(0.08), mpq(0.53), mpq(0.03), mpq(0.36)],
         "l": [mpq(0.25), mpq(0.31), mpq(0.27), mpq(0.17)]
     }
