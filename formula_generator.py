@@ -85,8 +85,8 @@ class formula_generator:
         return bdd.satisfiable
         
 if __name__ == "__main__":
-    num_variables = sys.argv[1]
-    num_formulae = sys.argv[2]
+    num_variables = int(sys.argv[1])
+    num_formulae = int(sys.argv[2])
     dest_path = sys.argv[3]
     formulas = formula_generator.generate_formulas(num_variables, 4.1, num_formulae, dest_path)
     

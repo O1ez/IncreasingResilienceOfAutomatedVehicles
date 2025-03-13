@@ -11,7 +11,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "args": ["formulas.txt"]
+            "args": ["5", "10", "./formulae/formulas_5_10.txt"]
         }
     ]
 }
