@@ -4,10 +4,11 @@ from gmpy2 import mpq
 import os
 from bdd import BDD, BDDNode
 import math
+import sys
 
 class formula_generator:
     @staticmethod
-    def generate_formulas(num_variables: int, ratio_variable_clauses: float, num_formulas: int, num_literals: int = 3) -> tuple[list[str], dict[str, list[mpq]]]:
+    def generate_formulas(num_variables: int, ratio_variable_clauses: float, num_formulas: int, dest_path: str , num_literals: int = 3) -> tuple[list[str], dict[str, list[mpq]]]:
         contingency_tables = formula_generator.generate_contingency_tables(num_variables)
         variables = list(contingency_tables.keys())
         formulas = []
@@ -39,7 +40,7 @@ class formula_generator:
             #delete last and
             formula = formula[:-5]
             
-            satisfiable = formula_generator.check_formula(formula, variables)
+            satisfiable = formula_generator.check_formula(formula, variables, dest_path)
             if not satisfiable:
                 i = i - 1
             i+=1
@@ -71,9 +72,9 @@ class formula_generator:
         return contingency_tables
     
     @staticmethod
-    def check_formula(formula: str, variables: list[str]):
+    def check_formula(formula: str, variables: list[str], dest_path: str):
         bdd = BDD(formula, variables)
-        path = f"formulas.txt"
+        path = dest_path
         out = open(path, "a")
         i = 0
         if bdd.satisfiable:
@@ -84,5 +85,8 @@ class formula_generator:
         return bdd.satisfiable
         
 if __name__ == "__main__":
-    formulas = formula_generator.generate_formulas(20, 4.1, 200)
+    num_variables = sys.argv[1]
+    num_formulae = sys.argv[2]
+    dest_path = sys.argv[3]
+    formulas = formula_generator.generate_formulas(num_variables, 4.1, num_formulae, dest_path)
     
