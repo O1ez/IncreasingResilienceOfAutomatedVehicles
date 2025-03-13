@@ -25,7 +25,7 @@ def make_infix(fn_object):
 
 def parse_line(line: str):
     parser = make_infix(LeftAssociativeParsing)
-    parsed_list = parser.parse_string(line)
+    parsed_list = parser.parseString(line)
     return parsed_list.as_list()[0]
 
 class LeftAssociativeParsing:
