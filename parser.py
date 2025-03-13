@@ -16,9 +16,9 @@ def make_infix(fn_object):
     expr = pp.infixNotation(
         variable,
         [
-        ("not", 1,  pp.OpAssoc.RIGHT, fn_object.not_),
-        ("and", 2,  pp.OpAssoc.LEFT, fn_object.and_),
-        ("or", 2,  pp.OpAssoc.LEFT, fn_object.or_),
+        ("not", 1,  pp.opAssoc.RIGHT, fn_object.not_),
+        ("and", 2,  pp.opAssoc.LEFT, fn_object.and_),
+        ("or", 2,  pp.opAssoc.LEFT, fn_object.or_),
         ],
     )
     return expr
