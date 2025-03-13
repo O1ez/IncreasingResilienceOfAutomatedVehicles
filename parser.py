@@ -13,7 +13,7 @@ formular :: clause ["and" clause]*
 
 def make_infix(fn_object):
     variable = pp.Word(pp.alphas + pp.nums)
-    expr = pp.infix_notation(
+    expr = pp.infixNotation(
         variable,
         [
         ("not", 1,  pp.OpAssoc.RIGHT, fn_object.not_),

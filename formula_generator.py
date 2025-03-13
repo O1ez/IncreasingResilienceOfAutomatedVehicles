@@ -82,5 +82,5 @@ class formula_generator:
         return bdd.satisfiable
         
 if __name__ == "__main__":
-    formulas = formula_generator.generate_formulas(20, 4.1, 20)
+    formulas = formula_generator.generate_formulas(5, 4.1, 20)
     
