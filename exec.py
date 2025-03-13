@@ -1,33 +1,41 @@
 from formula_generator import formula_generator
 from model import Model
+import concurrent.futures
 from bdd import BDD, BDDNode, delete_all_files_from_out
 import time
 import math
+import sys
+
+def calculate_example(formulae):
+        #print(f"\033[96m\n\033[1mTest:\033[0m\n")
+        start = time.time()
+
+        uo = formulae[0]
+        f = formulae[1]
+        contingency_tables = formula_generator.generate_contingency_tables(20)
+        model = Model(0.05, uo, f, contingency_tables)
+        solution = model.algorithm("")
+        
+        duration = time.time() - start
+        #print(f"\nTest took {duration:.5f} milliseconds and {duration/1000} seconds and {(duration/1000)/60} minutes")
+        #print("---------------------------------\n")
+        return solution, duration
 
 class exec:
-    
     if __name__ == "__main__":
-        with open('formulas.txt', 'r') as file:
-            formulas = file.readlines()
-        contingency_tables = formula_generator.generate_contingency_tables(20)
-        print(contingency_tables)
+        
+        path = sys.argv[1]
+        with open(path, 'r') as file:
+            lines = file.readlines()
+        formulae = list(zip(lines[::2], lines[1::2]))
         delete_all_files_from_out()
         
+        with concurrent.futures.ProcessPoolExecutor(max_workers=6) as executor:
+            solutions = list(executor.map(calculate_example, formulae))
+            
+        for s in solutions:
+            print(f"{s}\n\n-----------------------------------")
         
-        for i in range(0, len(formulas), 2):
-            test_num= math.ceil((i+1)/2)
-            print(f"\033[96m\n\033[1mTest {test_num}:\033[0m\n")
-            start = time.time()
-
-            uo = formulas[i]
-            f = formulas[i+1]
-            p = contingency_tables
-            model = Model(0.05, uo, f, p)
-            model.algorithm(f"{test_num}")
-            
-            duration = time.time() - start
-            print(f"\nTest {test_num} took {duration:.5f} milliseconds and {duration/1000} seconds and {(duration/1000)/60} minutes")
-            print("---------------------------------\n")
-            
+        
         print("All tests done")
 

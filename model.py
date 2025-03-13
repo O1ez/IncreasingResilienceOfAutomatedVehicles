@@ -7,7 +7,8 @@ class Model:
     def __init__(self, acceptable_threshold: float,
                 unobservable: str,
                 f_guard: str,
-                probabilities: dict[str, list[mpq]]):
+                probabilities: dict[str, list[mpq]],
+                generate_BDDs = False):
         self.acceptable_threshold = acceptable_threshold
         self.uo = BDD(unobservable, list(probabilities.keys()))
         #self.uo.reduce()
@@ -15,10 +16,12 @@ class Model:
         #self.f.reduce()
         self.vars = list(probabilities.keys())
         self.probabilities = probabilities
+        self.generate_bdds = generate_BDDs
 
     def calc_tp_fp(self, test_num: str, step=""):
-        self.f.generateDot(f"test{test_num}\\{step}0_f_")
-        self.uo.generateDot(f"test{test_num}\\{step}3_uo")
+        if self.generate_bdds:
+            self.f.generateDot(f"test{test_num}\\{step}0_f_")
+            self.uo.generateDot(f"test{test_num}\\{step}3_uo")
         bdd_f_replaced = self.f.rename_variables()
         bdd_not_f_replaced = bdd_f_replaced.negate()
         bdd_not_f = self.f.negate()
@@ -38,13 +41,13 @@ class Model:
         first_unite = BDD.apply_binary_operand(self.f, bdd_not_uo, "and", not_f_vars)
         bdd_fp = BDD.apply_binary_operand(bdd_not_f_replaced, first_unite,"and", f_united_vars)
         bdd_fp.set_probabilities(self.probabilities)
-        bdd_fp.generateDot(f"test{test_num}\\{step}5_fp")
+        if self.generate_bdds: bdd_fp.generateDot(f"test{test_num}\\{step}5_fp")
         fp = bdd_fp.sum_probabilities_positive_cases()
 
         #build tp = f_ and f and not uo
         bdd_tp = BDD.apply_binary_operand(bdd_f_replaced, BDD.apply_binary_operand(bdd_not_uo, self.f,"and", self.vars),"and", f_united_vars)
         bdd_tp.set_probabilities(self.probabilities)
-        bdd_tp.generateDot(f"test{test_num}\\{step}6_tp")
+        if self.generate_bdds: bdd_tp.generateDot(f"test{test_num}\\{step}6_tp")
         tp = bdd_tp.sum_probabilities_positive_cases()
         #bdd_tp.sum_all_probability_paths()
         
@@ -136,11 +139,12 @@ class Model:
             
             #d
             if changed:
-                self.f.generateDot(f"test{test_num}\\_step_{str(i)}_f_unreduced")
+                if self.generate_bdds: self.f.generateDot(f"test{test_num}\\_step_{str(i)}_f_unreduced")
                 self.f.reduce()
-            self.f.generateDot(f"test{test_num}\\_step_{str(i)}_f_")
+            
+            if self.generate_bdds: self.f.generateDot(f"test{test_num}\\_step_{str(i)}_f_")
             bdd_uo_copy.reduce()
-            bdd_uo_copy.generateDot(f"test{test_num}\\_step_{str(i)}_uo_")
+            if self.generate_bdds: bdd_uo_copy.generateDot(f"test{test_num}\\_step_{str(i)}_uo_")
             i += 1
             node_uo = bdd_uo_copy.get_parents_of_pos_and_neg_leaf()
         #3
@@ -151,6 +155,7 @@ class Model:
         print(
             f"\nThe fp Value ({float(fp_new):.8f}) is {'not ' if not is_acceptable else ''}acceptable. "
             f"-> {float(fp_new):.4f} "f"{'>' if not is_acceptable else '<='} {self.acceptable_threshold}")
+        return (tp_old, fp_old), (tp_new, fp_new)
         
 
 
@@ -229,7 +234,7 @@ if __name__ == "__main__":
     delete_all_files_from_out()
     
     start_time_1 = time.time()
-    model = Model(0.05, uo, f, p)
+    model = Model(0.05, uo, f, p, True)
     model.algorithm("1")
     #print(f"Test 1 took {float(time.time()-start_time_1):.5f} milliseconds.")
     

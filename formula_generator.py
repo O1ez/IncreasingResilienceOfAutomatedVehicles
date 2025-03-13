@@ -43,6 +43,7 @@ class formula_generator:
             if not satisfiable:
                 i = i - 1
             i+=1
+            print(f"{num_formulas - i} left")
             #formulas.append(formulas)
         return formulas, contingency_tables
     
@@ -74,9 +75,10 @@ class formula_generator:
         bdd = BDD(formula, variables)
         path = f"formulas.txt"
         out = open(path, "a")
+        i = 0
         if bdd.satisfiable:
             out.write(formula + "\n")
-            print("new satisfiable formula found.")
+            print(f"new satisfiable formula found.")
         else: print("formula not satisfiable.")
         out.close()
         return bdd.satisfiable
