@@ -59,8 +59,8 @@ class exec:
             
             writer = csv.writer(out)
             
-            if(tp_old > 0): tp_change = float(tp_new / tp_old)
-            if(fp_old > 0): fp_change = float(fp_new / fp_old)
+            if(tp_old > 0): tp_change = float((tp_new -tp_old) / tp_old)
+            if(fp_old > 0): fp_change = float((fp_new - fp_old) / fp_old)
             
             calc_time = s[1]
             
