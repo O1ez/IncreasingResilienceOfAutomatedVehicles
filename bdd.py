@@ -440,7 +440,7 @@ class BDD:
         #united_bdd.generateDot("united_reduced")
         if BDD1.renamed or BDD2.renamed:
             united_bdd.renamed = True
-        united_bdd.satisfiable = not (united_bdd.root.isLeaf() and united_bdd.root.value == False)
+        united_bdd.satisfiable = not (united_bdd.root.isLeaf())
         return united_bdd
 
     @staticmethod
@@ -738,7 +738,7 @@ class BDD:
                     for prob in node.negative_probability:
                         if prob.variable is not None:
                             prob_str = " " + prob_str + (prob.variable if not prob.is_alt else prob.variable + "_") + " "
-                        prob_str = prob_str + f"{float(node.negative_probability[prob]):.2f}"
+                        prob_str = prob_str + f"{float(node.negative_probability[prob]):.5f}"
                         prob_str = prob_str + "\\n"
                 if child_node.variable is not None:
                     #draw child node
@@ -763,7 +763,7 @@ class BDD:
                     for prob in node.positive_probability:
                         if prob.variable is not None:
                             prob_str = " " + prob_str + (prob.variable if not prob.is_alt else prob.variable + "_") + " "
-                        prob_str = prob_str + f"{float(node.positive_probability[prob]):.2f}"
+                        prob_str = prob_str + f"{float(node.positive_probability[prob]):.5f}"
                         prob_str = prob_str + "\\n"
                 if child_node.variable is not None:
                     #draw child node

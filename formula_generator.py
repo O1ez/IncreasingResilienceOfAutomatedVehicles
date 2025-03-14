@@ -52,10 +52,11 @@ class formula_generator:
     def generate_contingency_tables(num_variables: int):
         contingency_tables = {}
         for i in range(1, num_variables + 1):
-            first_row_sum = random.randint(1, 99)
+            #avoid too little numbers as they can lead to paths having a probability of 0%
+            first_row_sum = random.randint(5, 95)
             second_row_sum = 100 - first_row_sum
             
-            first_col_sum = random.randint(1, 99)
+            first_col_sum = random.randint(5, 95)
             second_col_sum = 100 - first_col_sum
             
             row = [first_row_sum, second_row_sum]
@@ -87,6 +88,16 @@ class formula_generator:
 if __name__ == "__main__":
     num_variables = int(sys.argv[1])
     num_formulae = int(sys.argv[2])
-    dest_path = sys.argv[3]
-    formulas = formula_generator.generate_formulas(num_variables, 4.1, num_formulae, dest_path)
+    ratio = float(sys.argv[3])
+    dest_path = sys.argv[4]
+    formulas = formula_generator.generate_formulas(num_variables, ratio, num_formulae, dest_path)
     
+    
+    #for i in range(0, 100):
+    #    c = formula_generator.generate_contingency_tables(5)
+    #    for x in c:
+    #        sum = c[x][0]+  c[x][1]+  c[x][2]+  c[x][3]
+    #        print(c[x])
+    #        print("\n")
+    #        print(sum)
+    #    print("\n\n-----------")

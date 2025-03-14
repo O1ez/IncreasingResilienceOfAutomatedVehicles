@@ -40,15 +40,19 @@ class Model:
         #build fp = not f_ and f and not uo
         first_unite = BDD.apply_binary_operand(self.f, bdd_not_uo, "and", not_f_vars)
         bdd_fp = BDD.apply_binary_operand(bdd_not_f_replaced, first_unite,"and", f_united_vars)
-        bdd_fp.set_probabilities(self.probabilities)
-        if self.generate_bdds: bdd_fp.generateDot(f"test{test_num}\\{step}5_fp")
-        fp = bdd_fp.sum_probabilities_positive_cases()
+        fp = 0
+        if(bdd_fp.satisfiable):
+            bdd_fp.set_probabilities(self.probabilities)
+            if self.generate_bdds: bdd_fp.generateDot(f"test{test_num}\\{step}5_fp")
+            fp = bdd_fp.sum_probabilities_positive_cases()
 
         #build tp = f_ and f and not uo
         bdd_tp = BDD.apply_binary_operand(bdd_f_replaced, BDD.apply_binary_operand(bdd_not_uo, self.f,"and", self.vars),"and", f_united_vars)
-        bdd_tp.set_probabilities(self.probabilities)
-        if self.generate_bdds: bdd_tp.generateDot(f"test{test_num}\\{step}6_tp")
-        tp = bdd_tp.sum_probabilities_positive_cases()
+        tp = 0
+        if(bdd_fp.satisfiable):
+            bdd_tp.set_probabilities(self.probabilities)
+            if self.generate_bdds: bdd_tp.generateDot(f"test{test_num}\\{step}6_tp")
+            tp = bdd_tp.sum_probabilities_positive_cases()
         #bdd_tp.sum_all_probability_paths()
         
         if not bdd_fp.satisfiable or not bdd_tp.satisfiable:
@@ -155,7 +159,7 @@ class Model:
         print(
             f"\nThe fp Value ({float(fp_new):.8f}) is {'not ' if not is_acceptable else ''}acceptable. "
             f"-> {float(fp_new):.4f} "f"{'>' if not is_acceptable else '<='} {self.acceptable_threshold}")
-        return (tp_old, fp_old), (tp_new, fp_new)
+        return tp_old, fp_old, tp_new, fp_new
         
 
 
@@ -216,8 +220,8 @@ if __name__ == "__main__":
     uo3 = "(not m and not n) or (n and l)"
 
 
-    f4 = "(((not X1 or X2) and (not X2 or X1)) and ((not X4 or X3))) or (((not X5 or X6) and (not X6 or X5)) and ((not X8 or X7)))"
-    uo4 = "(((not X3 and X2) or (not X2 and X4)) and ((not X4 and X1) or (not X1 and X3))) and (((not X7 and X6) or (not X6 and X8)) and ((not X8 and X5) or (not X5 and X7)))"
+    f4 = "(not X5 or X2 or X1) and (not X1 or not X4 or not X3) and (not X4 or X5 or not X1) and (X5 or not X3 or not X4) and (X5 or X3 or X4) and (not X4 or X3 or not X1) and (X4 or X5 or X2) and (not X4 or not X2 or X3) and (not X5 or X2 or X1) and (X3 or not X5 or not X2) and (not X4 or not X3 or X5) and (X1 or X3 or not X2) and (not X5 or X2 or X3) and (X2 or X4 or X3) and (not X1 or X2 or X3) and (not X2 or not X1 or X3) and (X1 or X2 or X4) and (not X2 or not X3 or X1) and (X3 or X1 or X2) and (X2 or X4 or X1)"
+    uo4 = "(not X4 or not X2 or X3) and (not X5 or not X2 or X4) and (not X4 or not X2 or X1) and (X1 or not X3 or not X2) and (X1 or X5 or X3) and (X3 or not X1 or X5) and (not X2 or not X1 or X4) and (not X3 or not X1 or X4) and (X5 or X4 or not X3) and (not X1 or not X4 or X2) and (X1 or X5 or not X3) and (not X1 or X4 or not X5) and (not X2 or not X3 or not X1) and (X4 or X2 or not X3) and (X2 or X3 or X5) and (X1 or not X3 or not X5) and (X2 or X3 or not X1) and (not X1 or X5 or X4) and (not X2 or not X5 or not X1) and (X2 or X5 or X3)"
     p4 = {
         "X1": [mpq(0.2), mpq(0.3), mpq(0.4), mpq(0.1)],
         "X2": [mpq(0.15), mpq(0.6), mpq(0.13), mpq(0.12)],
@@ -249,7 +253,7 @@ if __name__ == "__main__":
     #print(f"Test 3 took {float(time.time()-start_time_3):.5f} milliseconds.")
     
     start_time_4 = time.time()
-    model4 = Model(0.05, uo4, f4, p4)
+    model4 = Model(0.05, uo4, f4,p4,  True)
     model4.algorithm("4")
     #print(f"Test 4 took {float(time.time()-start_time_4):.5f} milliseconds.")
     
