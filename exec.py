@@ -77,7 +77,6 @@ class exec:
                     writer.writerow([tp_change, fp_change, calc_time])
                 else:
                     print("Error in the generation of probabilities. Case cannot be used")
-                out.flush()
                     
         
         
