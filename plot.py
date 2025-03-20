@@ -7,7 +7,8 @@ class exec:
         plt.xlabel("tp change")
         plt.ylabel("fp change")
         
-        solution_paths = ["solutions/10/solutions_10_50_2.0.txt",
+        solution_paths = ["solutions/10/solutions_10_50_1.0.txt",
+                            "solutions/10/solutions_10_50_2.0.txt",
                             "solutions/10/solutions_10_50_2.5.txt",
                             "solutions/10/solutions_10_50_3.0.txt",
                             "solutions/10/solutions_10_50_4.1.txt"]
@@ -27,7 +28,7 @@ class exec:
             plt.scatter(tp, fp)
         
         major_ticks = np.arange(0, 5, 1)
-        plt.xlim(-2, 4)  
-        plt.ylim(-2, 4)
+        plt.xlim(-2, 5)  
+        plt.ylim(-2, 5)
         plt.grid()
         plt.show()

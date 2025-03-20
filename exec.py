@@ -45,46 +45,40 @@ class exec:
 
         print("Tests start now")
         i = 0
-        with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
-            calculate = partial(calculate_example, variables = num_variables)
-            futures = []
-            for f in formulae:
-                future = executor.submit(calculate, f)
-                futures.append(future)
         
-            for future in concurrent.futures.as_completed(futures):
-                try:
-                    s = future.result() 
+        with concurrent.futures.ProcessPoolExecutor(max_workers=6) as executor:
+            calculate = partial(calculate_example, variables = num_variables)
+            solutions = list(executor.map(calculate, formulae))
+    
+        for s in solutions:
+            
+            tp_old = s[0][0]
+            fp_old = s[0][1]
+            
+            tp_new = s[0][2]
+            fp_new = s[0][3]
+            
+            #tp or fp unsatisfiable
+            if(tp_old == 0 or tp_new == 0 or fp_old==0 or fp_new == 0):
+                continue
+            
+            i += 1
+            print(f"Test {i} done:")
+            print(f"{s}\n\n-----------------------------------")
+            
+            if(tp_old > 0): tp_change = float((tp_new -tp_old) / tp_old)
+            if(fp_old > 0): fp_change = float((fp_new - fp_old) / fp_old)
+            
+            calc_time = s[1]
+            
+            with open(dest_path, "a", newline="") as out:
+                writer = csv.writer(out)
+                if(tp_old > 0 and fp_old > 0):
+                    writer.writerow([tp_change, fp_change, calc_time])
+                else:
+                    print("Error in the generation of probabilities. Case cannot be used")
+                out.flush()
                     
-                    tp_old = s[0][0]
-                    fp_old = s[0][1]
-                    
-                    tp_new = s[0][2]
-                    fp_new = s[0][3]
-                    
-                    #tp or fp unsatisfiable
-                    if(tp_old == 0 or tp_new == 0 or fp_old==0 or fp_new == 0):
-                        continue
-                    
-                    i += 1
-                    print(f"Test {i} done:")
-                    print(f"{s}\n\n-----------------------------------")
-                    
-                    if(tp_old > 0): tp_change = float((tp_new -tp_old) / tp_old)
-                    if(fp_old > 0): fp_change = float((fp_new - fp_old) / fp_old)
-                    
-                    calc_time = s[1]
-                    
-                    with open(dest_path, "a", newline="") as out:
-                        writer = csv.writer(out)
-                        if(tp_old > 0 and fp_old > 0):
-                            writer.writerow([tp_change, fp_change, calc_time])
-                        else:
-                            print("Error in the generation of probabilities. Case cannot be used")
-                        out.flush()
-                        
-                except Exception as e:
-                    print(f"Error in process: {e}")
         
         
         print("All tests done")

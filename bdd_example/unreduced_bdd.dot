@@ -1,0 +1,10 @@
+digraph{
+    l1 [label = 1]
+    l2 [label = 0]
+    y1 [label = y]
+    
+    x -> y1
+    x -> l2 [style = dashed]
+    y1 -> l1
+    y1 -> l2[style = dashed]
+}
