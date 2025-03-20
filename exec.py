@@ -50,7 +50,7 @@ class exec:
             futures = []
             for f in formulae:
                 future = executor.submit(calculate, f)
-                futures.append(futures)
+                futures.append(future)
         
             for future in concurrent.futures.as_completed(futures):
                 try:
