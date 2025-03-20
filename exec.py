@@ -43,6 +43,7 @@ class exec:
         formulae = list(zip(lines[::2], lines[1::2]))
         delete_all_files_from_out()
 
+        print("Tests start now")
         i = 0
         with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
             calculate = partial(calculate_example, variables = num_variables)
