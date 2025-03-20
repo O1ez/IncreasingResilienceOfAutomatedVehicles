@@ -1,0 +1,13 @@
+digraph{2323693578480[label=X1]2323693569360[label="X3"]
+2323693578480 -> 2323693569360[style=dashed label="" fontcolor = gray]
+2323693579440[label="False"]
+2323693569360 -> 2323693579440[style=dashed label="" fontcolor = gray]
+2323693578800[label="True "]
+2323693569360 -> 2323693578800 [label="" fontcolor = gray]
+2323693569200[label="X4 "]
+2323693578480 -> 2323693569200 [label="" fontcolor = gray]
+2323693578800[label="True"]
+2323693569200 -> 2323693578800[style=dashed label="" fontcolor = gray]
+2323693579440[label="False "]
+2323693569200 -> 2323693579440 [label="" fontcolor = gray]
+}

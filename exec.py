@@ -46,10 +46,11 @@ class exec:
         print("Tests start now")
         i = 0
         
-        with concurrent.futures.ProcessPoolExecutor(max_workers=6) as executor:
+        with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
             calculate = partial(calculate_example, variables = num_variables)
             solutions = list(executor.map(calculate, formulae))
     
+        out = open(dest_path, "a", newline="")
         for s in solutions:
             
             tp_old = s[0][0]
@@ -71,14 +72,13 @@ class exec:
             
             calc_time = s[1]
             
-            with open(dest_path, "a", newline="") as out:
-                writer = csv.writer(out)
-                if(tp_old > 0 and fp_old > 0):
-                    writer.writerow([tp_change, fp_change, calc_time])
-                else:
-                    print("Error in the generation of probabilities. Case cannot be used")
+            writer = csv.writer(out)
+            if(tp_old > 0 and fp_old > 0):
+                writer.writerow([tp_change, fp_change, calc_time])
+            else:
+                print("Error in the generation of probabilities. Case cannot be used")
                     
-        
+        out.close()
         
         print("All tests done")
 

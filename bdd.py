@@ -179,9 +179,10 @@ class BDD:
         self.__remove_equivalent_child_nodes(self.root)
         
         #hotfix for multiple parents not connected to tree
+        root_parents = self.root.parents
         self.__clear_parents(self.root)
         #self.generateDot("cleared parents")
-        self.__set_parents(self.root, [])
+        self.__set_parents(self.root, [root_parents])
         #self.generateDot("set parents")
 
         #print("Reduction done.")
@@ -493,6 +494,7 @@ class BDD:
             solution.negative_child.parents.append(solution)
             solution.positive_child = BDD.__apply_binary_operand_recursion(higher_prio.positive_child, lower_prio, operand, variable_order, united_bdd)
             solution.positive_child.parents.append(solution)
+            #solution.reduce()
             return solution
 
     #creates a copy of BDD gives it is_alt attribute
