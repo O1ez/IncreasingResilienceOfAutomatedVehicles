@@ -26,7 +26,7 @@ def calculate_example(formulae, variables ,i = ""):
         #print("---------------------------------\n")
         return solution, duration
     except Exception as e:
-        print(f"Error at formula {formulae[0]} and {formulae[1]}: {e}")
+        print(f"Error at calculation: {e}")
         return [0, 0, 0, 0], 0
 
 class exec:
