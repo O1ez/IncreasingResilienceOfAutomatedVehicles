@@ -17,7 +17,7 @@ def calculate_example(formulae, variables ,i = ""):
         f = formulae[1]
         contingency_tables = formula_generator.generate_contingency_tables(variables)
         
-        model = Model(0.05, uo, f, contingency_tables, True)
+        model = Model(0.05, uo, f, contingency_tables)
         solution = model.algorithm(i)
         
         duration = time.time() - start
