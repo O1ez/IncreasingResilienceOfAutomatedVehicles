@@ -86,7 +86,6 @@ class exec:
                 except Exception as e:
                     print(f"Error in process: {e}")
         
-        out.close()
         
         print("All tests done")
 
