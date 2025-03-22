@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 import csv
 from functools import partial
 
+j = 0
+
 def calculate_example(formulae, variables ,i = ""):
     try:
         #print(f"\033[96m\n\033[1mTest:\033[0m\n")
@@ -24,6 +26,8 @@ def calculate_example(formulae, variables ,i = ""):
         duration = time.time() - start
         #print(f"\nTest took {duration:.5f} milliseconds and {duration/1000} seconds and {(duration/1000)/60} minutes")
         #print("---------------------------------\n")
+        j+=1
+        print(f"Test {j} done!")
         return solution, duration
     except Exception as e:
         print(f"Error at calculation: {e}")
