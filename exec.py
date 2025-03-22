@@ -1,6 +1,7 @@
 from formula_generator import formula_generator
 from model import Model
 import concurrent.futures
+from multiprocessing import Value, Lock
 from bdd import BDD, BDDNode, delete_all_files_from_out
 import time
 import math
@@ -8,10 +9,10 @@ import sys
 import matplotlib.pyplot as plt
 import csv
 from functools import partial
+import itertools
 
-j = 0
-
-def calculate_example(formulae, variables ,i = ""):
+def calculate_example(index, formulae, variables ,i = ""):
+    global j
     try:
         #print(f"\033[96m\n\033[1mTest:\033[0m\n")
         start = time.time()
@@ -26,8 +27,10 @@ def calculate_example(formulae, variables ,i = ""):
         duration = time.time() - start
         #print(f"\nTest took {duration:.5f} milliseconds and {duration/1000} seconds and {(duration/1000)/60} minutes")
         #print("---------------------------------\n")
-        j+=1
-        print(f"Test {j} done!")
+
+        print(f"Test {index} done!")
+
+            
         return solution, duration
     except Exception as e:
         print(f"Error at calculation: {e}")
@@ -52,7 +55,7 @@ class exec:
         
         with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
             calculate = partial(calculate_example, variables = num_variables)
-            solutions = list(executor.map(calculate, formulae))
+            solutions = list(executor.map(calculate, itertools.count(), formulae))
     
         out = open(dest_path, "a", newline="")
         for s in solutions:
@@ -71,14 +74,14 @@ class exec:
             print(f"Test {i} done:")
             print(f"{s}\n\n-----------------------------------")
             
-            if(tp_old > 0): tp_change = float((tp_new -tp_old) / tp_old)
-            if(fp_old > 0): fp_change = float((fp_new - fp_old) / fp_old)
+            #if(tp_old > 0): tp_change = float((tp_new -tp_old) / tp_old)
+            #if(fp_old > 0): fp_change = float((fp_new - fp_old) / fp_old)
             
             calc_time = s[1]
             
             writer = csv.writer(out)
             if(tp_old > 0 and fp_old > 0):
-                writer.writerow([tp_change, fp_change, calc_time])
+                writer.writerow([tp_old, tp_new, fp_old, fp_new, calc_time])
             else:
                 print("Error in the generation of probabilities. Case cannot be used")
                     
