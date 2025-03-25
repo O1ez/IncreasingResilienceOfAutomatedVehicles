@@ -41,6 +41,22 @@ class plot:
                     t.append(time)
                     
             plt.scatter(tp, fp)
+    
+    def get_time(solution_paths):
+        for s in solution_paths:
+            print(s)
+            times = []
+            unchanged = 0
+            
+            with open(s, "r") as file:
+                for line in file:
+                    vals = line.split(",")
+                    if vals[0] == vals[1] and vals[2] == vals[3]:
+                        unchanged += 1
+                    else:
+                        times.append(float(vals[4]))
+            mean = sum(times) / len(times)
+            print (f"The mean time is {mean} s and {mean / 60 } m and {(mean/60)/24} d")
         
         
         
@@ -65,4 +81,8 @@ class plot:
         solution_paths = ["solutions/15/solutions_15_100_1.5.txt"]
         scatterplot_change(solution_paths)
         
+        get_time([
+            "solutions/15/solutions_15_100_1.0.txt",
+            "solutions/15/solutions_15_100_2.0.txt"
+        ])
         plt.show()
