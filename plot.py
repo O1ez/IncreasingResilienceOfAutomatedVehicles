@@ -4,7 +4,7 @@ import numpy as np
 from gmpy2 import mpq
 class plot:
     
-    def scatterplot_change(self, solution_paths):
+    def scatterplot_change(solution_paths):
         for s in solution_paths:
             tp = []
             fp = []
@@ -19,13 +19,7 @@ class plot:
                     
             plt.scatter(tp, fp)
         
-        major_ticks = np.arange(0, 5, 1)
-        plt.xlim(-2, 5)  
-        plt.ylim(-2, 5)
-        plt.grid()
-        plt.show()
-        
-    def scatterplot_calc_change( solution_paths):
+    def scatterplot_calc_change(solution_paths):
         for s in solution_paths:
             tp = []
             fp = []
@@ -48,12 +42,8 @@ class plot:
                     
             plt.scatter(tp, fp)
         
-        major_ticks = np.arange(0, 5, 1)
-        plt.xlim(-2, 5)  
-        plt.ylim(-2, 5)
-        plt.grid()
-        plt.show()
-    
+        
+        
     if __name__ == "__main__":
         plt.xlabel("tp change")
         plt.ylabel("fp change")
@@ -64,8 +54,15 @@ class plot:
         #                    "solutions/10/solutions_10_50_3.0.txt",
         #                    "solutions/10/solutions_10_50_4.1.txt"]
         
-        solution_paths = ["solutions/10/test.txt"]
+        np.arange(0, 5, 1)
+        plt.xlim(-2, 5)  
+        plt.ylim(-2, 5)
+        plt.grid()
         
+        solution_paths = ["solutions/15/solutions_15_100_2.0.txt"]
         scatterplot_calc_change(solution_paths)
         
+        solution_paths = ["solutions/15/solutions_15_100_1.5.txt"]
+        scatterplot_change(solution_paths)
         
+        plt.show()
