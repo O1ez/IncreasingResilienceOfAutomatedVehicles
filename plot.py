@@ -14,6 +14,7 @@ class plot:
             t = []
             points_under_0 = 0
             points = 0
+            tp_positive_change = 0
             with open(s, "r") as file:
                 for line in file:
                     vals = line.split(",")
@@ -24,15 +25,18 @@ class plot:
                         points += 1
                     if float(vals[0]) < 0 and float(vals[1]) < 0:
                         points_under_0 += 1
+                    if float(vals[0]) > 0:
+                        tp_positive_change += 1
                     
             plt.scatter(tp, fp, label = ratios[i])
             i+=1
-        return points_under_0, points
+        return points_under_0, points, tp_positive_change
         
     def scatterplot_calc_change(ratios, solution_paths):
         i = 0
         points_under_0 = 0
         points = 0
+        tp_positive_change = 0
         for s in solution_paths:
             tp = []
             fp = []
@@ -55,15 +59,18 @@ class plot:
                         
                     if tp_change < 0 and fp_change < 0:
                         points_under_0 += 1
+                        
+                    if tp_change > 0:
+                        tp_positive_change +=1
                     
             plt.scatter(tp, fp, label = ratios[i])
             i+=1
-        return points_under_0, points
+        return points_under_0, points, tp_positive_change
     
     def get_time(solution_paths):
         
         plt.style.use('_mpl-gallery')
-        x = [1.0, 2.0, 3.0, 3.5, 4.0, 4.2]
+        x = [1.0, 1.25, 2.0, 2.5, 3.0, 3.5, 4.0, 4.2]
         mean_list = []
         median_list = []
         for s in solution_paths:
@@ -92,22 +99,22 @@ class plot:
             print(f"{unchanged} examples have led to no change. {changed} examples have changed.")
             print(f"Calculations have lasted {sum(times_all)} seconds {((sum(times_all) /60)/60)/24} days")
             print("____________________________________________________________________________________________________________________________________")
-        plt.figure(figsize=(8, 6))
+        plt.figure(figsize=(4, 3))
         plt.plot(x, mean_list, marker='o', linestyle='-', color='b')  
-        plt.xlabel("l/c ratio")
+        plt.xlabel("r= c/v")
         plt.ylabel("Mean time in seconds")
         plt.tight_layout()
-        plt.xlim(0.75, 5)  
-        plt.ylim(-0.25, 25000)
+        plt.xlim(left = 0.9)  
+        plt.ylim(bottom = 0)
         plt.show()
         
-        plt.figure(figsize=(8, 6))
+        plt.figure(figsize=(4, 3))
         plt.plot(x, median_list, marker='o', linestyle='-', color='g')  
-        plt.xlabel("l/c ratio")
+        plt.xlabel("r = c/v")
         plt.ylabel("Median time in seconds")
         plt.tight_layout()
-        plt.xlim(0.75, 5)  
-        plt.ylim(-0.25, 11000)
+        plt.xlim(left = 0.9)  
+        plt.ylim(bottom = 0)
         plt.show()
         
     def get_number_changes(ratios, solution_paths):
@@ -152,14 +159,14 @@ class plot:
             "solutions/15/solutions_15_100_2.5.txt"
         ]
         ratios = [1.0, 2.0, 2.5]
-        points_under_0, points = scatterplot_calc_change(ratios, solution_paths)
+        points_under_0, points, tp_pos = scatterplot_calc_change(ratios, solution_paths)
         
         solution_paths = ["solutions/15/solutions_15_100_1.5.txt"]
         ratios = [1.5]
-        points_under_0_2, points_2 = scatterplot_change(ratios, solution_paths)
-        ax.legend(title = "r = v/c")
+        points_under_0_2, points_2 , tp_pos_2= scatterplot_change(ratios, solution_paths)
+        ax.legend(title = "r = c/v")
         
-        print(f"There are {points + points_2} with {points_under_0+points_under_0_2} under 0")
+        print(f"There are {points + points_2} with {points_under_0+points_under_0_2} under 0. \n {tp_pos_2+tp_pos} had positive changes in true pos")
         plt.show()
         #__________________________________________________________________________________
         fig, ax = plt.subplots()
@@ -174,20 +181,22 @@ class plot:
             "solutions/15/solutions_15_100_4.2.txt"
         ]
         ratios = [3.0, 3.5, 4.0, 4.2]
-        points_under_0, points = scatterplot_calc_change(ratios, solution_paths)
+        points_under_0, points, tp = scatterplot_calc_change(ratios, solution_paths)
         
-        ax.legend(title = "r = v/c")
+        ax.legend(title = "r = c/v")
         print(f"There are {points} with {points_under_0} under 0")
         plt.show()
         
-        #get_time([
-        #    "solutions/15/solutions_15_100_1.0.txt",
-        #    "solutions/15/solutions_15_100_2.0.txt",
-        #    "solutions/15/solutions_15_100_3.0.txt",
-        #    "solutions/15/solutions_15_100_3.5.txt",
-        #    "solutions/15/solutions_15_100_4.0.txt",
-        #    "solutions/15/solutions_15_100_4.2.txt"
-        #])
+        get_time([
+            "solutions/15/solutions_15_100_1.0.txt",
+            "solutions/15/solutions_15_100_1.25.txt",
+            "solutions/15/solutions_15_100_2.0.txt",
+            "solutions/15/solutions_15_100_2.5.txt",
+            "solutions/15/solutions_15_100_3.0.txt",
+            "solutions/15/solutions_15_100_3.5.txt",
+            "solutions/15/solutions_15_100_4.0.txt",
+            "solutions/15/solutions_15_100_4.2.txt"
+        ])
         
         solution_paths= ["solutions/15/solutions_15_100_1.0.txt",
             "solutions/15/solutions_15_100_1.25.txt",
