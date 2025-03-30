@@ -67,10 +67,10 @@ class plot:
             i+=1
         return points_under_0, points, tp_positive_change
     
-    def get_time(solution_paths):
+    def get_time(ratios, solution_paths):
         
         plt.style.use('_mpl-gallery')
-        x = [1.0, 1.25, 2.0, 2.5, 3.0, 3.5, 4.0, 4.2]
+        x = ratios
         mean_list = []
         median_list = []
         for s in solution_paths:
@@ -187,9 +187,12 @@ class plot:
         print(f"There are {points} with {points_under_0} under 0")
         plt.show()
         
-        get_time([
-            "solutions/15/solutions_15_100_1.0.txt",
-            "solutions/15/solutions_15_100_1.25.txt",
+        ratios = [
+            #1.0, 1.25, 
+            2.0, 2.5, 3.0, 3.5, 4.0, 4.2]
+        get_time(ratios, [
+            #"solutions/15/solutions_15_100_1.0.txt",
+            #"solutions/15/solutions_15_100_1.25.txt",
             "solutions/15/solutions_15_100_2.0.txt",
             "solutions/15/solutions_15_100_2.5.txt",
             "solutions/15/solutions_15_100_3.0.txt",
