@@ -42,10 +42,10 @@ class exec:
         
         max_workers = int(sys.argv[1])
         num_variables = int(sys.argv[2])
-        path = sys.argv[3]
+        source_path = sys.argv[3]
         dest_path = sys.argv[4]
         
-        with open(path, 'r') as file:
+        with open(source_path, 'r') as file:
             lines = file.readlines()
         formulae = list(zip(lines[::2], lines[1::2]))
         delete_all_files_from_out()

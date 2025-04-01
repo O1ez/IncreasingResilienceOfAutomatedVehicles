@@ -8,7 +8,7 @@ import sys
 
 class formula_generator:
     @staticmethod
-    def generate_formulas(num_variables: int, ratio_variable_clauses: float, num_formulas: int, dest_path: str , num_literals: int = 3) -> tuple[list[str], dict[str, list[mpq]]]:
+    def generate_formulas(num_variables: int, ratio_variable_clauses: float, num_formulas: int, dest_path: str , num_literals: int = 3) -> list[str]:
         contingency_tables = formula_generator.generate_contingency_tables(num_variables)
         variables = list(contingency_tables.keys())
         formulas = []
@@ -46,7 +46,7 @@ class formula_generator:
             i+=1
             print(f"{num_formulas - i} left")
             #formulas.append(formulas)
-        return formulas, contingency_tables
+        return formulas
     
     @staticmethod
     def generate_contingency_tables(num_variables: int):

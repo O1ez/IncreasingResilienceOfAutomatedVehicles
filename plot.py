@@ -147,67 +147,105 @@ class plot:
         plt.tight_layout()
         
         plt.show()
+        
+    def plot_time_exp_change(v_num, solution_paths):
+        plt.style.use('_mpl-gallery')
+        x = v_num
+        time = []
+        for s in solution_paths:
+            print(s)
+            t = 0
+            
+            with open(s, "r") as file:
+                for line in file:
+                    vals = line.split(",")
+                    t += (float(vals[4]))
+            time.append((t / 60)/ 60)
+            
+        fig, ax = plt.subplots(figsize=(4, 3))
+        plt.plot(x, time, marker='o', linestyle='-', color='orange')  
+        
+        plt.xlim(left = 9, right = 21)  
+        plt.ylim(bottom = 0)
+        plt.xlabel("variable count")
+        ax.set_xticks([10, 15, 20])
+        ax.grid(True)
+        ax.set_xticklabels([10, 15, 20])
+        plt.ylabel("computation time in h")
+        plt.tight_layout()
+        #plt.show()
+        plt.savefig("./test_plot.pdf")
+        
+        
     if __name__ == "__main__":
-        fig, ax = plt.subplots()
-        plt.xlabel("tp change")
-        plt.ylabel("fp change")
-        plt.grid()
-        
-        solution_paths = [
-            "solutions/15/solutions_15_100_1.0.txt",
-            "solutions/15/solutions_15_100_2.0.txt",
-            "solutions/15/solutions_15_100_2.5.txt"
-        ]
-        ratios = [1.0, 2.0, 2.5]
-        points_under_0, points, tp_pos = scatterplot_calc_change(ratios, solution_paths)
-        
-        solution_paths = ["solutions/15/solutions_15_100_1.5.txt"]
-        ratios = [1.5]
-        points_under_0_2, points_2 , tp_pos_2= scatterplot_change(ratios, solution_paths)
-        ax.legend(title = "r = c/v")
-        
-        print(f"There are {points + points_2} with {points_under_0+points_under_0_2} under 0. \n {tp_pos_2+tp_pos} had positive changes in true pos")
-        plt.show()
-        #__________________________________________________________________________________
-        fig, ax = plt.subplots()
-        plt.xlabel("tp change")
-        plt.ylabel("fp change")
-        plt.grid()
-        
-        solution_paths = [
-            "solutions/15/solutions_15_100_3.0.txt",
-            "solutions/15/solutions_15_100_3.5.txt",
-            "solutions/15/solutions_15_100_4.0.txt",
-            "solutions/15/solutions_15_100_4.2.txt"
-        ]
-        ratios = [3.0, 3.5, 4.0, 4.2]
-        points_under_0, points, tp = scatterplot_calc_change(ratios, solution_paths)
-        
-        ax.legend(title = "r = c/v")
-        print(f"There are {points} with {points_under_0} under 0")
-        plt.show()
-        
-        ratios = [
-            #1.0, 1.25, 
-            2.0, 2.5, 3.0, 3.5, 4.0, 4.2]
-        get_time(ratios, [
-            #"solutions/15/solutions_15_100_1.0.txt",
-            #"solutions/15/solutions_15_100_1.25.txt",
-            "solutions/15/solutions_15_100_2.0.txt",
-            "solutions/15/solutions_15_100_2.5.txt",
-            "solutions/15/solutions_15_100_3.0.txt",
-            "solutions/15/solutions_15_100_3.5.txt",
-            "solutions/15/solutions_15_100_4.0.txt",
-            "solutions/15/solutions_15_100_4.2.txt"
-        ])
-        
-        solution_paths= ["solutions/15/solutions_15_100_1.0.txt",
-            "solutions/15/solutions_15_100_1.25.txt",
-            "solutions/15/solutions_15_100_2.0.txt",
-            "solutions/15/solutions_15_100_2.5.txt",
-            "solutions/15/solutions_15_100_3.0.txt",
-            "solutions/15/solutions_15_100_3.5.txt",
-            "solutions/15/solutions_15_100_4.0.txt",
-            "solutions/15/solutions_15_100_4.2.txt"]
-        ratios = [1.0, 1.25, 2.0, 2.5, 3.0, 3.5, 4.0, 4.2]
-        get_number_changes(ratios, solution_paths)
+        #increase of tp rate in percent 
+        #fig, ax = plt.subplots()
+        #plt.xlabel("tp change")
+        #plt.ylabel("fp change")
+        #plt.grid()
+        #
+        #solution_paths = [
+        #    "solutions/15/solutions_15_100_1.0.txt",
+        #    "solutions/15/solutions_15_100_1.25.txt",
+        #    "solutions/15/solutions_15_100_1.5.txt",
+        #    "solutions/15/solutions_15_100_2.0.txt",
+        #    "solutions/15/solutions_15_100_2.5.txt"
+        #]
+        #ratios = [1.0, 1.25, 1.5, 2.0, 2.5]
+        #points_under_0, points, tp_pos = scatterplot_calc_change(ratios, solution_paths)
+    #
+        #ax.legend(title = "r = c/v")
+        #
+        #print(f"There are {points} with {points_under_0} under 0. \n {tp_pos} had positive changes in true pos")
+        #plt.show()
+        ##__________________________________________________________________________________
+        #fig, ax = plt.subplots()
+        #plt.xlabel("tp change")
+        #plt.ylabel("fp change")
+        #plt.grid()
+        #
+        #solution_paths = [
+        #    "solutions/15/solutions_15_100_3.0.txt",
+        #    "solutions/15/solutions_15_100_3.5.txt",
+        #    "solutions/15/solutions_15_100_4.0.txt",
+        #    "solutions/15/solutions_15_100_4.2.txt"
+        #]
+        #ratios = [3.0, 3.5, 4.0, 4.2]
+        #points_under_0, points, tp = scatterplot_calc_change(ratios, solution_paths)
+        #
+        #ax.legend(title = "r = c/v")
+        #print(f"There are {points} with {points_under_0} under 0")
+        #plt.show()
+        #
+        #ratios = [
+        #    1.0, 1.25, 1.5,
+        #    2.0, 2.5, 3.0, 3.5, 4.0, 4.2]
+        #get_time(ratios, [
+        #    "solutions/15/solutions_15_100_1.0.txt",
+        #    "solutions/15/solutions_15_100_1.25.txt",
+        #    "solutions/15/solutions_15_100_1.5.txt",
+        #    "solutions/15/solutions_15_100_2.0.txt",
+        #    "solutions/15/solutions_15_100_2.5.txt",
+        #    "solutions/15/solutions_15_100_3.0.txt",
+        #    "solutions/15/solutions_15_100_3.5.txt",
+        #    "solutions/15/solutions_15_100_4.0.txt",
+        #    "solutions/15/solutions_15_100_4.2.txt"
+        #])
+        #
+        #solution_paths= ["solutions/15/solutions_15_100_1.0.txt",
+        #    "solutions/15/solutions_15_100_1.25.txt",
+        #    "solutions/15/solutions_15_100_1.5.txt",
+        #    "solutions/15/solutions_15_100_2.0.txt",
+        #    "solutions/15/solutions_15_100_2.5.txt",
+        #    "solutions/15/solutions_15_100_3.0.txt",
+        #    "solutions/15/solutions_15_100_3.5.txt",
+        #    "solutions/15/solutions_15_100_4.0.txt",
+        #    "solutions/15/solutions_15_100_4.2.txt"]
+        #ratios = [1.0, 1.25, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.2]
+        #get_number_changes(ratios, solution_paths)
+        #
+        solution_paths= ["solutions/10/solutions_10_100_1.5.txt",
+            "solutions/15/solutions_15_100_1.5.txt"
+            ]
+        v_num = [10, 15]
+        plot_time_exp_change(v_num, solution_paths)
