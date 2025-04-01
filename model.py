@@ -202,6 +202,14 @@ if __name__ == "__main__":
     f = "x and not z and y"
     uo = "(x and z) or (not x and y)"
     
+    p1 = {
+        "x": [mpq(0.54), mpq(0.04), mpq(0.06), mpq(0.36)],
+        "y": [mpq(0.18), mpq(0.06), mpq(0.1), mpq(0.66)],
+        "z": [mpq(0.35), mpq(0.02), mpq(0.04), mpq(0.59)]
+    }
+    f1 = "(not x and y and z) or (x and not y and z) or (x and y and not z)"
+    uo1 = "(not x and not y and z) or (not x and y and not z) or (x and not y and not z)"
+    
 
     p2 = {
         "a": [mpq(0.05), mpq(0.65), mpq(0.05), mpq(0.25)],
@@ -238,23 +246,23 @@ if __name__ == "__main__":
     delete_all_files_from_out()
     
     start_time_1 = time.time()
-    model = Model(0.05, uo, f, p, True)
-    model.algorithm("1")
+    model = Model(0.05, uo1, f1, p1, True)
+    tp_old, fp_old, tp_new, fp_new = model.algorithm("1")
     #print(f"Test 1 took {float(time.time()-start_time_1):.5f} milliseconds.")
     
-    start_time_2 = time.time()
-    model2 = Model(0.05, uo2, f2, p2)
-    model2.algorithm("2")
+    #start_time_2 = time.time()
+    #model2 = Model(0.05, uo2, f2, p2)
+    #model2.algorithm("2")
     #print(f"Test 2 took {float(time.time()-start_time_2):.5f} milliseconds.")
     
-    start_time_3 = time.time()
-    model3 = Model(0.05, uo3, f3, p3)
-    model3.algorithm("3")
+    #start_time_3 = time.time()
+    #model3 = Model(0.05, uo3, f3, p3)
+    #model3.algorithm("3")
     #print(f"Test 3 took {float(time.time()-start_time_3):.5f} milliseconds.")
     
-    start_time_4 = time.time()
-    model4 = Model(0.05, uo4, f4,p4,  True)
-    model4.algorithm("4")
+    #start_time_4 = time.time()
+    #model4 = Model(0.05, uo4, f4,p4,  True)
+    #model4.algorithm("4")
     #print(f"Test 4 took {float(time.time()-start_time_4):.5f} milliseconds.")
     
     BDD("X and Y",["X","Y"]).generateDot("X and Y")
