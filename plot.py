@@ -6,37 +6,47 @@ import statistics
 
 class plot:
     
-    def scatterplot_change(ratios, solution_paths):
-        i=0
-        for s in solution_paths:
-            tp = []
-            fp = []
-            t = []
-            points_under_0 = 0
-            points = 0
-            tp_positive_change = 0
-            with open(s, "r") as file:
-                for line in file:
-                    vals = line.split(",")
-                    
-                    if float(vals[0]) != 0 and float(vals[1]) != 0:
-                        tp.append(float(vals[0]))
-                        fp.append(float(vals[1]))
-                        points += 1
-                    if float(vals[0]) < 0 and float(vals[1]) < 0:
-                        points_under_0 += 1
-                    if float(vals[0]) > 0:
-                        tp_positive_change += 1
-                    
-            plt.scatter(tp, fp, label = ratios[i])
-            i+=1
-        return points_under_0, points, tp_positive_change
+    #def scatterplot_change(ratios, solution_paths):
+    #    i=0
+    #    for s in solution_paths:
+    #        tp = []
+    #        fp = []
+    #        t = []
+    #        points_under_0 = 0
+    #        points = 0
+    #        tp_positive_change = 0
+    #        with open(s, "r") as file:
+    #            for line in file:
+    #                vals = line.split(",")
+    #                
+    #                if float(vals[0]) != 0 and float(vals[1]) != 0:
+    #                    tp.append(float(vals[0]))
+    #                    fp.append(float(vals[1]))
+    #                    points += 1
+    #                if float(vals[0]) < 0 and float(vals[1]) < 0:
+    #                    points_under_0 += 1
+    #                if float(vals[0]) > 0:
+    #                    tp_positive_change += 1
+    #                
+    #        plt.scatter(tp, fp, label = ratios[i])
+    #        i+=1
+    #    return points_under_0, points, tp_positive_change
         
-    def scatterplot_calc_change(ratios, solution_paths):
+    def scatterplot_calc_change(ratios, solution_paths, print_line, path):
+        #increase of tp rate in percent 
+        fig, ax = plt.subplots()
+        plt.xlabel("tp change in %")
+        plt.ylabel("fp change in %")
+        plt.grid()
+        
         i = 0
         points_under_0 = 0
         points = 0
         tp_positive_change = 0
+        
+        tp_all = []
+        fp_all = []
+        
         for s in solution_paths:
             tp = []
             fp = []
@@ -53,8 +63,10 @@ class plot:
                     if(tp_old > 0): tp_change = float((tp_new -tp_old) / tp_old)
                     if(fp_old > 0): fp_change = float((fp_new - fp_old) / fp_old)
                     if tp_change != 0 and fp_change != 0:
-                        tp.append(tp_change)
-                        fp.append(fp_change)
+                        tp.append(tp_change*100)
+                        tp_all.append(tp_change*100)
+                        fp.append(fp_change*100)
+                        fp_all.append(fp_change*100)
                         points += 1
                         
                     if tp_change < 0 and fp_change < 0:
@@ -65,7 +77,16 @@ class plot:
                     
             plt.scatter(tp, fp, label = ratios[i])
             i+=1
-        return points_under_0, points, tp_positive_change
+        
+        ax.legend(title = "r = c/v")
+        if print_line:
+            x_lin = np.linspace(min(tp_all), max(fp_all), 100) 
+            plt.plot(x_lin, x_lin, color = "black", label="Lineare Funktion: y = 2x + 1")
+
+        print(f"There are {points} with {points_under_0} under 0. \n {tp_positive_change} had positive changes in true pos")
+        #plt.show()
+        plt.savefig(f"./plots/{path}.pdf")
+        return 
     
     def get_time(ratios, solution_paths):
         
@@ -106,7 +127,7 @@ class plot:
         plt.tight_layout()
         plt.xlim(left = 0.9)  
         plt.ylim(bottom = 0)
-        plt.show()
+        plt.savefig("./plots/mean_high.pdf")
         
         plt.figure(figsize=(4, 3))
         plt.plot(x, median_list, marker='o', linestyle='-', color='g')  
@@ -115,7 +136,7 @@ class plot:
         plt.tight_layout()
         plt.xlim(left = 0.9)  
         plt.ylim(bottom = 0)
-        plt.show()
+        plt.savefig("./plots/median_high.pdf")
         
     def get_number_changes(ratios, solution_paths):
         plt.style.use('_mpl-gallery')
@@ -145,8 +166,7 @@ class plot:
         ax.minorticks_on()
         
         plt.tight_layout()
-        
-        plt.show()
+        plt.savefig("./plots/changes.pdf")
         
     def plot_time_exp_change(v_num, solution_paths):
         plt.style.use('_mpl-gallery')
@@ -174,76 +194,70 @@ class plot:
         plt.ylabel("computation time in h")
         plt.tight_layout()
         #plt.show()
-        plt.savefig("./test_plot.pdf")
+        plt.savefig("./plots/calc_time.pdf")
         
         
     if __name__ == "__main__":
-        #increase of tp rate in percent 
-        #fig, ax = plt.subplots()
-        #plt.xlabel("tp change")
-        #plt.ylabel("fp change")
-        #plt.grid()
-        #
-        #solution_paths = [
-        #    "solutions/15/solutions_15_100_1.0.txt",
-        #    "solutions/15/solutions_15_100_1.25.txt",
-        #    "solutions/15/solutions_15_100_1.5.txt",
-        #    "solutions/15/solutions_15_100_2.0.txt",
-        #    "solutions/15/solutions_15_100_2.5.txt"
-        #]
-        #ratios = [1.0, 1.25, 1.5, 2.0, 2.5]
-        #points_under_0, points, tp_pos = scatterplot_calc_change(ratios, solution_paths)
-    #
-        #ax.legend(title = "r = c/v")
-        #
-        #print(f"There are {points} with {points_under_0} under 0. \n {tp_pos} had positive changes in true pos")
-        #plt.show()
-        ##__________________________________________________________________________________
-        #fig, ax = plt.subplots()
-        #plt.xlabel("tp change")
-        #plt.ylabel("fp change")
-        #plt.grid()
-        #
-        #solution_paths = [
-        #    "solutions/15/solutions_15_100_3.0.txt",
-        #    "solutions/15/solutions_15_100_3.5.txt",
-        #    "solutions/15/solutions_15_100_4.0.txt",
-        #    "solutions/15/solutions_15_100_4.2.txt"
-        #]
-        #ratios = [3.0, 3.5, 4.0, 4.2]
-        #points_under_0, points, tp = scatterplot_calc_change(ratios, solution_paths)
-        #
-        #ax.legend(title = "r = c/v")
-        #print(f"There are {points} with {points_under_0} under 0")
-        #plt.show()
-        #
-        #ratios = [
-        #    1.0, 1.25, 1.5,
-        #    2.0, 2.5, 3.0, 3.5, 4.0, 4.2]
-        #get_time(ratios, [
-        #    "solutions/15/solutions_15_100_1.0.txt",
-        #    "solutions/15/solutions_15_100_1.25.txt",
-        #    "solutions/15/solutions_15_100_1.5.txt",
-        #    "solutions/15/solutions_15_100_2.0.txt",
-        #    "solutions/15/solutions_15_100_2.5.txt",
-        #    "solutions/15/solutions_15_100_3.0.txt",
-        #    "solutions/15/solutions_15_100_3.5.txt",
-        #    "solutions/15/solutions_15_100_4.0.txt",
-        #    "solutions/15/solutions_15_100_4.2.txt"
-        #])
-        #
-        #solution_paths= ["solutions/15/solutions_15_100_1.0.txt",
-        #    "solutions/15/solutions_15_100_1.25.txt",
-        #    "solutions/15/solutions_15_100_1.5.txt",
-        #    "solutions/15/solutions_15_100_2.0.txt",
-        #    "solutions/15/solutions_15_100_2.5.txt",
-        #    "solutions/15/solutions_15_100_3.0.txt",
-        #    "solutions/15/solutions_15_100_3.5.txt",
-        #    "solutions/15/solutions_15_100_4.0.txt",
-        #    "solutions/15/solutions_15_100_4.2.txt"]
-        #ratios = [1.0, 1.25, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.2]
-        #get_number_changes(ratios, solution_paths)
-        #
+        
+        
+        
+
+        
+        solution_paths = [
+            "solutions/15/solutions_15_100_1.0.txt",
+            #"solutions/15/solutions_15_100_1.25.txt",
+            "solutions/15/solutions_15_100_1.5.txt",
+            "solutions/15/solutions_15_100_2.0.txt",
+            "solutions/15/solutions_15_100_2.5.txt"
+        ]
+        ratios = [1.0,  1.5, 2.0, 2.5]
+        scatterplot_calc_change(ratios, solution_paths, True, "results")
+    
+        
+        #__________________________________________________________________________________
+        
+        solution_paths = [
+            "solutions/15/solutions_15_100_3.0.txt",
+            "solutions/15/solutions_15_100_3.5.txt",
+            "solutions/15/solutions_15_100_4.0.txt",
+            "solutions/15/solutions_15_100_4.2.txt"
+        ]
+        ratios = [3.0, 3.5, 4.0, 4.2]
+        scatterplot_calc_change(ratios, solution_paths, True, "results_high_ratio")
+        
+        #__________________________________________________________________________________
+        
+        ratios = [
+            #1.0, 1.25, 1.5,
+            2.0, 2.5, 3.0, 3.5, 4.0, 4.2]
+        get_time(ratios, [
+            #"solutions/15/solutions_15_100_1.0.txt",
+            #"solutions/15/solutions_15_100_1.25.txt",
+            #"solutions/15/solutions_15_100_1.5.txt",
+            "solutions/15/solutions_15_100_2.0.txt",
+            "solutions/15/solutions_15_100_2.5.txt",
+            "solutions/15/solutions_15_100_3.0.txt",
+            "solutions/15/solutions_15_100_3.5.txt",
+            "solutions/15/solutions_15_100_4.0.txt",
+            "solutions/15/solutions_15_100_4.2.txt"
+        ])
+        
+        #__________________________________________________________________________________
+        
+        solution_paths= ["solutions/15/solutions_15_100_1.0.txt",
+            "solutions/15/solutions_15_100_1.25.txt",
+            "solutions/15/solutions_15_100_1.5.txt",
+            "solutions/15/solutions_15_100_2.0.txt",
+            "solutions/15/solutions_15_100_2.5.txt",
+            "solutions/15/solutions_15_100_3.0.txt",
+            "solutions/15/solutions_15_100_3.5.txt",
+            "solutions/15/solutions_15_100_4.0.txt",
+            "solutions/15/solutions_15_100_4.2.txt"]
+        ratios = [1.0, 1.25, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.2]
+        get_number_changes(ratios, solution_paths)
+        
+        #__________________________________________________________________________________
+        
         solution_paths= ["solutions/10/solutions_10_100_1.5.txt",
             "solutions/15/solutions_15_100_1.5.txt"
             ]
