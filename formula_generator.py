@@ -44,7 +44,7 @@ class formula_generator:
             if not satisfiable:
                 i = i - 1
             i+=1
-            print(f"{num_formulas - i} left")
+            print(f"{num_formulas - i + 1} left")
             #formulas.append(formulas)
         return formulas
     
