@@ -203,12 +203,12 @@ if __name__ == "__main__":
     uo = "(x and z) or (not x and y)"
     
     p1 = {
-        "x": [mpq(0.54), mpq(0.04), mpq(0.06), mpq(0.36)],
-        "y": [mpq(0.18), mpq(0.06), mpq(0.1), mpq(0.66)],
-        "z": [mpq(0.35), mpq(0.02), mpq(0.04), mpq(0.59)]
+        "A1": [mpq(0.54), mpq(0.04), mpq(0.06), mpq(0.36)],
+        "A2": [mpq(0.18), mpq(0.06), mpq(0.1), mpq(0.66)],
+        "A3": [mpq(0.35), mpq(0.02), mpq(0.04), mpq(0.59)]
     }
-    f1 = "(not x and y and z) or (x and not y and z) or (x and y and not z)"
-    uo1 = "(not x and not y and z) or (not x and y and not z) or (x and not y and not z)"
+    f1 = "(not A1 and A2 and A3) or (A1 and not A2 and A3) or (A1 and A2 and not A3)"
+    uo1 = "(not A1 and not A2 and A3) or (not A1 and A2 and not A3) or (A1 and not A2 and not A3)"
     
 
     p2 = {
@@ -248,6 +248,10 @@ if __name__ == "__main__":
     start_time_1 = time.time()
     model = Model(0.05, uo1, f1, p1, True)
     tp_old, fp_old, tp_new, fp_new = model.algorithm("1")
+    if(tp_old > 0): tp_change = float((tp_new -tp_old) / tp_old)
+    if(fp_old > 0): fp_change = float((fp_new - fp_old) / fp_old)
+    print (tp_change*100)
+    print(fp_change*100)
     #print(f"Test 1 took {float(time.time()-start_time_1):.5f} milliseconds.")
     
     #start_time_2 = time.time()
