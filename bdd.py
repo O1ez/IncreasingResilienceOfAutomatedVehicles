@@ -54,6 +54,7 @@ class BDDNode:
         return self.variable is None and self.value is None
 
     #creates new BDD with this node as root and reduces it
+    #not used
     def reduce(self, overarching_tree: BDD):
         temp_bdd = BDD(overarching_tree.expression, overarching_tree.variables, False)
         temp_bdd.root = self
@@ -747,14 +748,16 @@ class BDD:
                     parents = " ".join(p.variable for p in child_node.parents)
                     out.write(f"{id(child_node)}[label=\"{child_node.variable + alt_str}\"]\n")
                     #draw edge node -> child_node
-                    out.write(f"{id(node)} -> {id(child_node)}[style=dashed label=\"{prob_str}\" fontcolor = gray]\n")
+                    #out.write(f"{id(node)} -> {id(child_node)}[style=dashed label=\"{prob_str}\" fontcolor = gray]\n")
+                    out.write(f"{id(node)} -> {id(child_node)}  [style=dashed]\n")
                     self.__generate_dot_recursive(child_node, out)
                 elif node.negative_child.value is not None:
                     #draw leaf node
                     parents = " ".join(p.variable for p in child_node.parents)
                     out.write(f"{id(child_node)}[label=\"{child_node.value}\"]\n")
                     #draw edge node -> leaf node
-                    out.write(f"{id(node)} -> {id(child_node)}[style=dashed label=\"{prob_str}\" fontcolor = gray]\n")
+                    #out.write(f"{id(node)} -> {id(child_node)}[style=dashed label=\"{prob_str}\" fontcolor = gray]\n")
+                    out.write(f"{id(node)} -> {id(child_node)} [style=dashed]\n")
             #draw positive childnode
             if node.positive_child is not None:
                 child_node = node.positive_child
@@ -772,14 +775,16 @@ class BDD:
                     parents = " ".join(p.variable for p in child_node.parents)
                     out.write(f"{id(child_node)}[label=\"{child_node.variable + alt_str} \"]\n")
                     #draw edge node -> child node
-                    out.write(f"{id(node)} -> {id(child_node)} [label=\"{prob_str}\" fontcolor = gray]\n")
+                    #out.write(f"{id(node)} -> {id(child_node)} [label=\"{prob_str}\" fontcolor = gray]\n")
+                    out.write(f"{id(node)} -> {id(child_node)} \n")
                     self.__generate_dot_recursive(child_node, out)
                 elif child_node.value is not None:
                     #draw leaf node 
                     parents = " ".join(p.variable for p in child_node.parents)
                     out.write(f"{id(child_node)}[label=\"{child_node.value} \"]\n")
                     #draw edge node -> leaf node
-                    out.write(f"{id(node)} -> {id(child_node)} [label=\"{prob_str}\" fontcolor = gray]\n")
+                    #out.write(f"{id(node)} -> {id(child_node)} [label=\"{prob_str}\" fontcolor = gray]\n")
+                    out.write(f"{id(node)} -> {id(child_node)}\n")
             node.drawn = True
 
     def __reset_draw(self, node):

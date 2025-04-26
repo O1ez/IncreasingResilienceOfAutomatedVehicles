@@ -1,0 +1,23 @@
+digraph{
+    graph [margin=0];
+    z1 [label = "z",style=filled, fillcolor = "#dac4f7"]
+    z2 [label = "z",style=filled, fillcolor = "#dac4f7"]
+    #z3 [label = "z"]
+    #z4 [label = "z"]
+    y1 [label = "y"]
+    #y2 [label = "y"]
+    x [label = x]
+    l0 [label = "0"]
+    l1 [label = "1"]
+
+
+    x -> l0[style = dashed]
+    x -> y1
+    y1 -> z1[style = dashed]
+    y1 -> z2 
+    z1 -> l0[style = dashed]
+    z1 -> l1  
+    z2 -> l1[style = dashed]
+    z2 -> l0  
+    
+}

@@ -4,7 +4,7 @@ import numpy as np
 from gmpy2 import mpq
 import statistics
 
-class plot:
+class plotter:
     
     #def scatterplot_change(ratios, solution_paths):
     #    i=0
@@ -32,7 +32,7 @@ class plot:
     #        i+=1
     #    return points_under_0, points, tp_positive_change
         
-    def scatterplot_calc_change(ratios, solution_paths, print_line, path):
+    def scatterplot_calc_change(ratios, solution_paths, print_line, path, x, y):
         #increase of tp rate in percent 
         fig, ax = plt.subplots()
         plt.xlabel("tp change in %")
@@ -79,6 +79,7 @@ class plot:
             i+=1
         
         ax.legend(title = "r = c/v")
+        ax.text(x, y, "f(x) = x")
         if print_line:
             x_lin = np.linspace(min(tp_all), max(fp_all), 100) 
             plt.plot(x_lin, x_lin, color = "black", label="Lineare Funktion: y = 2x + 1")
@@ -138,7 +139,7 @@ class plot:
         plt.ylim(bottom = 0)
         plt.savefig("./plots/median_high.pdf")
         
-    def get_number_changes(ratios, solution_paths):
+    def plot_number_of_changes(ratios, solution_paths):
         plt.style.use('_mpl-gallery')
         nochanges = []
         
@@ -187,7 +188,7 @@ class plot:
         
         plt.xlim(left = 9, right = 21)  
         plt.ylim(bottom = 0)
-        plt.xlabel("variable count")
+        plt.xlabel("number of variables")
         ax.set_xticks([10, 15, 20])
         ax.grid(True)
         ax.set_xticklabels([10, 15, 20])
@@ -211,7 +212,7 @@ class plot:
             "solutions/15/solutions_15_100_2.5.txt"
         ]
         ratios = [1.0,  1.5, 2.0, 2.5]
-        scatterplot_calc_change(ratios, solution_paths, True, "results")
+        scatterplot_calc_change(ratios, solution_paths, True, "results", 550, 510)
     
         
         #__________________________________________________________________________________
@@ -223,7 +224,7 @@ class plot:
             "solutions/15/solutions_15_100_4.2.txt"
         ]
         ratios = [3.0, 3.5, 4.0, 4.2]
-        scatterplot_calc_change(ratios, solution_paths, True, "results_high_ratio")
+        scatterplot_calc_change(ratios, solution_paths, True, "results_high_ratio", 40, 25)
         
         #__________________________________________________________________________________
         
@@ -254,12 +255,13 @@ class plot:
             "solutions/15/solutions_15_100_4.0.txt",
             "solutions/15/solutions_15_100_4.2.txt"]
         ratios = [1.0, 1.25, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.2]
-        get_number_changes(ratios, solution_paths)
+        plot_number_of_changes(ratios, solution_paths)
         
         #__________________________________________________________________________________
         
-        solution_paths= ["solutions/10/solutions_10_100_1.5.txt",
-            "solutions/15/solutions_15_100_1.5.txt"
+        solution_paths= ["solutions/10/solutions_10_2_1.5.txt",
+            "solutions/15/solutions_15_2_1.5.txt",
+            "solutions/20/solutions_20_2_1.5.txt",
             ]
-        v_num = [10, 15]
+        v_num = [10, 15, 20]
         plot_time_exp_change(v_num, solution_paths)

@@ -10,7 +10,7 @@ formular :: clause ["and" clause]*
 '''
 
 
-
+# Parser that parses boolean formulae
 def make_infix(fn_object):
     variable = pp.Word(pp.alphas + pp.nums)
     expr = pp.infixNotation(
@@ -28,6 +28,7 @@ def parse_line(line: str):
     parsed_list = parser.parseString(line)
     return parsed_list.as_list()[0]
 
+#methods to make the lists in the right way
 class LeftAssociativeParsing:
     @staticmethod
     def not_(tokens):

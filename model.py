@@ -2,7 +2,7 @@ from bdd import BDD, BDDNode, delete_all_files_from_out
 from gmpy2 import mpq
 import time
 
-
+'Class that implements the algorithm to rewrite guard conditions and calculate false-positive as well as true-positive rates'
 class Model:
     def __init__(self, acceptable_threshold: float,
                 unobservable: str,
@@ -26,6 +26,9 @@ class Model:
         bdd_not_f_replaced = bdd_f_replaced.negate()
         bdd_not_f = self.f.negate()
         bdd_not_uo = self.uo.negate()
+        bdd_not_uo.generateDot(f"test{test_num}\\{step}2_not_uo")
+        bdd_not_f_replaced.generateDot(f"test{test_num}\\{step}2-1_not_f_replaced")
+        bdd_f_replaced.generateDot(f"test{test_num}\\{step}2-2_f_replaced")
 
         if bdd_not_f.variables != bdd_not_uo.variables:
             raise Exception("variables of f and uo don't match")
@@ -147,6 +150,7 @@ class Model:
                 self.f.reduce()
             
             if self.generate_bdds: self.f.generateDot(f"test{test_num}\\_step_{str(i)}_f_")
+            if self.generate_bdds: bdd_uo_copy.generateDot(f"test{test_num}\\_step_{str(i)}_uo_unreduced")
             bdd_uo_copy.reduce()
             if self.generate_bdds: bdd_uo_copy.generateDot(f"test{test_num}\\_step_{str(i)}_uo_")
             i += 1
@@ -192,16 +196,17 @@ if __name__ == "__main__":
     # 1    0.04  0.59 0.63
     #      0.39  0.61  
     
-    
+    #Beispiel notes Paul
     p = {
         "x": [mpq(0.54), mpq(0.04), mpq(0.06), mpq(0.36)],
         "y": [mpq(0.18), mpq(0.06), mpq(0.1), mpq(0.66)],
         "z": [mpq(0.35), mpq(0.02), mpq(0.04), mpq(0.59)]
     }
-    #f = "((x and y) or ((x and not y) and not z)) or (((not x and y) and not z) or ((not x and not y) and z))"
-    f = "x and not z and y"
+    f = "((x and y) or ((x and not y) and not z)) or (((not x and y) and not z) or ((not x and not y) and z))"
+    #f = "x and not z and y"
     uo = "(x and z) or (not x and y)"
     
+    #Beispiel Paper Martin
     p1 = {
         "A1": [mpq(0.54), mpq(0.04), mpq(0.06), mpq(0.36)],
         "A2": [mpq(0.18), mpq(0.06), mpq(0.1), mpq(0.66)],
@@ -244,6 +249,14 @@ if __name__ == "__main__":
     
     
     delete_all_files_from_out()
+    
+    start_time_1 = time.time()
+    model = Model(0.05, uo, f, p, True)
+    tp_old, fp_old, tp_new, fp_new = model.algorithm("0")
+    if(tp_old > 0): tp_change = float((tp_new -tp_old) / tp_old)
+    if(fp_old > 0): fp_change = float((fp_new - fp_old) / fp_old)
+    print (tp_change*100)
+    print(fp_change*100)
     
     start_time_1 = time.time()
     model = Model(0.05, uo1, f1, p1, True)
