@@ -6,6 +6,15 @@ from bdd import BDD, BDDNode
 import math
 import sys
 
+"""
+Generates random formulae with a given number of variables and clauses.
+Arguments for execution are:
+1. num_variables: Number of variables in the formulae
+2. ratio_variable_clauses: Ratio of variables to clauses in the formulae
+3. num_formulas: Number of formulae to generate
+4. dest_path: Path to the file where results will be saved
+"""
+
 class formula_generator:
     @staticmethod
     def generate_formulas(num_variables: int, ratio_variable_clauses: float, num_formulas: int, dest_path: str , num_literals: int = 3) -> list[str]:

@@ -11,6 +11,13 @@ import csv
 from functools import partial
 import itertools
 
+"""Executes algorithm for a given list of formulae
+Arguments for execution are:
+1. max_workers: Number of parallel processes to use 
+2. num_variables: Number of variables in the formulae
+3. source_path: Path to the file with formulae
+4. dest_path: Path to the file where results will be saved"""
+
 def calculate_example(index, formulae, variables ,i = ""):
     global j
     try:
