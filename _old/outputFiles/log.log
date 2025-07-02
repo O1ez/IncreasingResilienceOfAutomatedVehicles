@@ -1,7 +1,0 @@
-Use test cases?(y/n)
-Traceback (most recent call last):
-  File "C:\Users\annan\PycharmProjects\SaferThanPerception\main.py", line 17, in <module>
-    if input() == "y":
-  File "C:\Users\annan\AppData\Local\Programs\Python\Python310\lib\codecs.py", line 319, in decode
-    def decode(self, input, final=False):
-KeyboardInterrupt
