@@ -27,13 +27,13 @@ def calculate_example(index, formulae, variables ,i = ""):
         uo = formulae[0]
         f = formulae[1]
         contingency_tables = formula_generator.generate_contingency_tables(variables)
-        
         model = Model(0.05, uo, f, contingency_tables)
+
         solution = model.algorithm(i)
-        
+        print("type of time:", type(time))
         duration = time.time() - start
-        #print(f"\nTest took {duration:.5f} milliseconds and {duration/1000} seconds and {(duration/1000)/60} minutes")
-        #print("---------------------------------\n")
+        print(f"\nTest took {duration:.5f} milliseconds and {duration/1000} seconds and {(duration/1000)/60} minutes")
+        print("---------------------------------\n")
 
         print(f"Test {index} done!")
 
